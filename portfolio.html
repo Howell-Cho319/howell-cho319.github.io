@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio - Howell Cho</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <nav class="nav-container">
+            <div class="nav-content">
+                <div class="nav-brand">
+                    <a href="index.html">
+                        <h2></h2>
+                    </a>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="aboutme.html">About Me</a></li>
+                    <li><a href="portfolio.html" class="active">Portfolio</a></li>
+                    <li><a href="projects.html">Projects</a></li>
+                    <li><a href="reachme.html">Reach Me</a></li>
+                </ul>
+                <div class="hamburger">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Particle Canvas Background -->
+        <canvas id="particleCanvas"></canvas>
+
+        <!-- Portfolio Content -->
+        <main class="main-container">
+            <!-- Hero Section -->
+            <section class="portfolio-hero">
+                <div class="hero-content">
+                    <div class="hero-text">
+                        <h1 class="hero-title">
+                            <span class="text-gradient">My Portfolio</span>
+                        </h1>
+                        <p class="hero-subtitle">Gamified Tech Portfolio • Skill Quest Map • Achievement System</p>
+                        <div class="hero-stats">
+                            <div class="stat-item">
+                                <span class="stat-number">26+</span>
+                                <span class="stat-label">Projects</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">15+</span>
+                                <span class="stat-label">Certifications</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">100%</span>
+                                <span class="stat-label">Passion</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Skill Tree Section -->
+            <section class="skill-tree-section">
+                <div class="section-header">
+                    <h2 class="section-title">🎮 Skill Tree</h2>
+                    <p class="section-subtitle">Interactive skill progression map showing my technical expertise</p>
+                </div>
+
+                <div class="skill-tree-container">
+                    <!-- AI & ML Branch -->
+                    <div class="skill-branch ai-branch">
+                        <div class="branch-header">
+                            <div class="branch-icon">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <h3>AI & Machine Learning</h3>
+                            <div class="branch-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 85%"></div>
+                                </div>
+                                <span class="progress-text">85% Mastery</span>
+                            </div>
+                        </div>
+                        <div class="skill-nodes">
+                            <div class="skill-node mastered" data-skill="Python">
+                                <div class="node-icon"><i class="fab fa-python"></i></div>
+                                <span class="node-label">Python</span>
+                                <div class="node-level">Lv. 9</div>
+                            </div>
+                            <div class="skill-node mastered" data-skill="TensorFlow">
+                                <div class="node-icon"><i class="fas fa-brain"></i></div>
+                                <span class="node-label">TensorFlow</span>
+                                <div class="node-level">Lv. 8</div>
+                            </div>
+                            <div class="skill-node mastered" data-skill="Computer Vision">
+                                <div class="node-icon"><i class="fas fa-eye"></i></div>
+                                <span class="node-label">Computer Vision</span>
+                                <div class="node-level">Lv. 9</div>
+                            </div>
+                            <div class="skill-node learning" data-skill="Deep Learning">
+                                <div class="node-icon"><i class="fas fa-network-wired"></i></div>
+                                <span class="node-label">Deep Learning</span>
+                                <div class="node-level">Lv. 7</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Full-Stack Development Branch -->
+                    <div class="skill-branch fullstack-branch">
+                        <div class="branch-header">
+                            <div class="branch-icon">
+                                <i class="fas fa-code"></i>
+                            </div>
+                            <h3>Full-Stack Development</h3>
+                            <div class="branch-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 90%"></div>
+                                </div>
+                                <span class="progress-text">90% Mastery</span>
+                            </div>
+                        </div>
+                        <div class="skill-nodes">
+                            <div class="skill-node mastered" data-skill="JavaScript">
+                                <div class="node-icon"><i class="fab fa-js"></i></div>
+                                <span class="node-label">JavaScript</span>
+                                <div class="node-level">Lv. 9</div>
+                            </div>
+                            <div class="skill-node mastered" data-skill="React">
+                                <div class="node-icon"><i class="fab fa-react"></i></div>
+                                <span class="node-label">React</span>
+                                <div class="node-level">Lv. 8</div>
+                            </div>
+                            <div class="skill-node mastered" data-skill="Java">
+                                <div class="node-icon"><i class="fab fa-java"></i></div>
+                                <span class="node-label">Java</span>
+                                <div class="node-level">Lv. 8</div>
+                            </div>
+                            <div class="skill-node mastered" data-skill="Database">
+                                <div class="node-icon"><i class="fas fa-database"></i></div>
+                                <span class="node-label">Database</span>
+                                <div class="node-level">Lv. 9</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cloud & DevOps Branch -->
+                    <div class="skill-branch cloud-branch">
+                        <div class="branch-header">
+                            <div class="branch-icon">
+                                <i class="fas fa-cloud"></i>
+                            </div>
+                            <h3>Cloud & DevOps</h3>
+                            <div class="branch-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 75%"></div>
+                                </div>
+                                <span class="progress-text">75% Mastery</span>
+                            </div>
+                        </div>
+                        <div class="skill-nodes">
+                            <div class="skill-node mastered" data-skill="AWS">
+                                <div class="node-icon"><i class="fab fa-aws"></i></div>
+                                <span class="node-label">AWS</span>
+                                <div class="node-level">Lv. 7</div>
+                            </div>
+                            <div class="skill-node mastered" data-skill="Docker">
+                                <div class="node-icon"><i class="fab fa-docker"></i></div>
+                                <span class="node-label">Docker</span>
+                                <div class="node-level">Lv. 8</div>
+                            </div>
+                            <div class="skill-node learning" data-skill="Kubernetes">
+                                <div class="node-icon"><i class="fas fa-dharmachakra"></i></div>
+                                <span class="node-label">Kubernetes</span>
+                                <div class="node-level">Lv. 6</div>
+                            </div>
+                            <div class="skill-node mastered" data-skill="CI/CD">
+                                <div class="node-icon"><i class="fas fa-sync-alt"></i></div>
+                                <span class="node-label">CI/CD</span>
+                                <div class="node-level">Lv. 7</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Achievement Badges Section -->
+            <section class="achievements-section">
+                <div class="section-header">
+                    <h2 class="section-title">🏆 Achievement Badges</h2>
+                    <p class="section-subtitle">Unlocked achievements and milestones in my journey</p>
+                </div>
+
+                <div class="achievements-grid">
+                    <div class="achievement-badge legendary">
+                        <div class="badge-icon">
+                            <i class="fas fa-crown"></i>
+                        </div>
+                        <div class="badge-content">
+                            <h4>AI Research Master</h4>
+                            <p>Full-time AI Researcher at Top 30 University</p>
+                            <div class="badge-rarity">Legendary</div>
+                        </div>
+                        <div class="badge-glow"></div>
+                    </div>
+
+                    <div class="achievement-badge epic">
+                        <div class="badge-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div class="badge-content">
+                            <h4>Double Degree Scholar</h4>
+                            <p>APU/DMU Software Engineering Program</p>
+                            <div class="badge-rarity">Epic</div>
+                        </div>
+                        <div class="badge-glow"></div>
+                    </div>
+
+                    <div class="achievement-badge rare">
+                        <div class="badge-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="badge-content">
+                            <h4>Project Leader</h4>
+                            <p>Led all major academic projects</p>
+                            <div class="badge-rarity">Rare</div>
+                        </div>
+                        <div class="badge-glow"></div>
+                    </div>
+
+                    <div class="achievement-badge epic">
+                        <div class="badge-icon">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <div class="badge-content">
+                            <h4>Computer Vision Expert</h4>
+                            <p>Oil palm detection system with 92% accuracy</p>
+                            <div class="badge-rarity">Epic</div>
+                        </div>
+                        <div class="badge-glow"></div>
+                    </div>
+
+                    <div class="achievement-badge rare">
+                        <div class="badge-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="badge-content">
+                            <h4>Discipline Master</h4>
+                            <p>5 years as School Discipline Prefect</p>
+                            <div class="badge-rarity">Rare</div>
+                        </div>
+                        <div class="badge-glow"></div>
+                    </div>
+
+                    <div class="achievement-badge common">
+                        <div class="badge-icon">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <div class="badge-content">
+                            <h4>Head Librarian</h4>
+                            <p>Primary school library management</p>
+                            <div class="badge-rarity">Common</div>
+                        </div>
+                        <div class="badge-glow"></div>
+                    </div>
+
+                    <div class="achievement-badge rare">
+                        <div class="badge-icon">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <div class="badge-content">
+                            <h4>Award Winner</h4>
+                            <p>Multiple certifications and awards</p>
+                            <div class="badge-rarity">Rare</div>
+                        </div>
+                        <div class="badge-glow"></div>
+                    </div>
+
+                    <div class="achievement-badge epic">
+                        <div class="badge-icon">
+                            <i class="fas fa-language"></i>
+                        </div>
+                        <div class="badge-content">
+                            <h4>Polyglot</h4>
+                            <p>Fluent in English, Mandarin, Malay</p>
+                            <div class="badge-rarity">Epic</div>
+                        </div>
+                        <div class="badge-glow"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Certificate Wall Section -->
+            <section class="certificates-section">
+                <div class="section-header">
+                    <h2 class="section-title">📜 Certificate Wall</h2>
+                    <p class="section-subtitle">Professional certifications and academic achievements</p>
+                </div>
+
+                <div class="certificates-gallery">
+                    <div class="certificate-card">
+                        <div class="certificate-image">
+                            <img src="assets/images/resume/resume1.png" alt="Software Engineering Certificate" loading="lazy">
+                            <div class="certificate-overlay">
+                                <div class="overlay-content">
+                                    <h4>BSc Software Engineering</h4>
+                                    <p>APU/DMU Double Degree</p>
+                                    <span class="certificate-year">2024-2025</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="certificate-card">
+                        <div class="certificate-image">
+                            <img src="assets/images/resume/resume2.png" alt="AI Research Certificate" loading="lazy">
+                            <div class="certificate-overlay">
+                                <div class="overlay-content">
+                                    <h4>AI Research Position</h4>
+                                    <p>Top 30 University</p>
+                                    <span class="certificate-year">Current</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="certificate-card">
+                        <div class="certificate-image">
+                            <img src="assets/images/resume/resume3.png" alt="Diploma IT Certificate" loading="lazy">
+                            <div class="certificate-overlay">
+                                <div class="overlay-content">
+                                    <h4>Diploma in IT</h4>
+                                    <p>TAR UMT</p>
+                                    <span class="certificate-year">2023-2024</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="certificate-card">
+                        <div class="certificate-image">
+                            <img src="assets/images/resume/resume4.png" alt="Internship Certificate" loading="lazy">
+                            <div class="certificate-overlay">
+                                <div class="overlay-content">
+                                    <h4>AI Software Intern</h4>
+                                    <p>Aonic Sdn. Bhd.</p>
+                                    <span class="certificate-year">2024</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="certificate-card">
+                        <div class="certificate-image">
+                            <img src="assets/images/resume/resume5.png" alt="Leadership Certificate" loading="lazy">
+                            <div class="certificate-overlay">
+                                <div class="overlay-content">
+                                    <h4>Leadership Awards</h4>
+                                    <p>Multiple Institutions</p>
+                                    <span class="certificate-year">2018-2024</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="certificate-card">
+                        <div class="certificate-image">
+                            <img src="assets/images/resume/resume6.png" alt="Technical Certifications" loading="lazy">
+                            <div class="certificate-overlay">
+                                <div class="overlay-content">
+                                    <h4>Technical Certifications</h4>
+                                    <p>Various Platforms</p>
+                                    <span class="certificate-year">2023-2024</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Stats Dashboard Section -->
+            <section class="stats-dashboard">
+                <div class="section-header">
+                    <h2 class="section-title">📊 Performance Dashboard</h2>
+                    <p class="section-subtitle">Real-time statistics and metrics</p>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-code"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" data-target="50000">0</div>
+                            <div class="stat-label">Lines of Code</div>
+                            <div class="stat-trend positive">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>+15% this month</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-project-diagram"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" data-target="26">0</div>
+                            <div class="stat-label">Projects Completed</div>
+                            <div class="stat-trend positive">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>+3 this quarter</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" data-target="15">0</div>
+                            <div class="stat-label">Team Projects Led</div>
+                            <div class="stat-trend positive">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>100% success rate</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" data-target="92">0</div>
+                            <div class="stat-label">AI Model Accuracy %</div>
+                            <div class="stat-trend positive">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>Industry leading</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" data-target="2000">0</div>
+                            <div class="stat-label">Hours Coding</div>
+                            <div class="stat-trend positive">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>This year</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-certificate"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" data-target="15">0</div>
+                            <div class="stat-label">Certifications</div>
+                            <div class="stat-trend positive">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>+5 this year</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Interactive Photo Album -->
+            <section class="photo-album-section">
+                <div class="section-header">
+                    <h2 class="section-title">📸 Interactive Photo Album</h2>
+                    <p class="section-subtitle">Personal branding and professional moments</p>
+                </div>
+
+                <div class="photo-album-grid">
+                    <div class="photo-card" data-category="professional">
+                        <div class="photo-front">
+                            <img src="assets/images/personal/howell1.jpg" alt="Professional Photo 1" loading="lazy">
+                            <div class="photo-overlay">
+                                <i class="fas fa-flip-horizontal"></i>
+                                <span>Flip to see details</span>
+                            </div>
+                        </div>
+                        <div class="photo-back">
+                            <div class="photo-info">
+                                <h4>Professional Portrait</h4>
+                                <p>Software Engineering student and AI researcher, passionate about innovation and technology.</p>
+                                <div class="photo-tags">
+                                    <span class="tag">Professional</span>
+                                    <span class="tag">Portrait</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="photo-card" data-category="personal">
+                        <div class="photo-front">
+                            <img src="assets/images/personal/howell2.jpg" alt="Personal Photo 1" loading="lazy">
+                            <div class="photo-overlay">
+                                <i class="fas fa-flip-horizontal"></i>
+                                <span>Flip to see details</span>
+                            </div>
+                        </div>
+                        <div class="photo-back">
+                            <div class="photo-info">
+                                <h4>Personal Moment</h4>
+                                <p>Capturing life's precious moments and personal experiences.</p>
+                                <div class="photo-tags">
+                                    <span class="tag">Personal</span>
+                                    <span class="tag">Lifestyle</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="photo-card" data-category="couple">
+                        <div class="photo-front">
+                            <img src="assets/images/personal/couple1.jpg" alt="Couple Photo 1" loading="lazy">
+                            <div class="photo-overlay">
+                                <i class="fas fa-flip-horizontal"></i>
+                                <span>Flip to see details</span>
+                            </div>
+                        </div>
+                        <div class="photo-back">
+                            <div class="photo-info">
+                                <h4>Special Moments</h4>
+                                <p>Sharing beautiful moments with loved ones.</p>
+                                <div class="photo-tags">
+                                    <span class="tag">Couple</span>
+                                    <span class="tag">Love</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="photo-card" data-category="professional">
+                        <div class="photo-front">
+                            <img src="assets/images/personal/howell3.jpg" alt="Professional Photo 2" loading="lazy">
+                            <div class="photo-overlay">
+                                <i class="fas fa-flip-horizontal"></i>
+                                <span>Flip to see details</span>
+                            </div>
+                        </div>
+                        <div class="photo-back">
+                            <div class="photo-info">
+                                <h4>Tech Professional</h4>
+                                <p>Dedicated to advancing AI research and software engineering excellence.</p>
+                                <div class="photo-tags">
+                                    <span class="tag">Tech</span>
+                                    <span class="tag">AI Research</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="photo-card" data-category="personal">
+                        <div class="photo-front">
+                            <img src="assets/images/personal/howell4.jpg" alt="Personal Photo 2" loading="lazy">
+                            <div class="photo-overlay">
+                                <i class="fas fa-flip-horizontal"></i>
+                                <span>Flip to see details</span>
+                            </div>
+                        </div>
+                        <div class="photo-back">
+                            <div class="photo-info">
+                                <h4>Creative Side</h4>
+                                <p>Exploring creativity and personal expression beyond technology.</p>
+                                <div class="photo-tags">
+                                    <span class="tag">Creative</span>
+                                    <span class="tag">Personal</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="photo-card" data-category="couple">
+                        <div class="photo-front">
+                            <img src="assets/images/personal/couple2.jpg" alt="Couple Photo 2" loading="lazy">
+                            <div class="photo-overlay">
+                                <i class="fas fa-flip-horizontal"></i>
+                                <span>Flip to see details</span>
+                            </div>
+                        </div>
+                        <div class="photo-back">
+                            <div class="photo-info">
+                                <h4>Together</h4>
+                                <p>Building memories and sharing adventures together.</p>
+                                <div class="photo-tags">
+                                    <span class="tag">Adventure</span>
+                                    <span class="tag">Together</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="album-filters">
+                    <button class="filter-btn active" data-filter="all">All Photos</button>
+                    <button class="filter-btn" data-filter="professional">Professional</button>
+                    <button class="filter-btn" data-filter="personal">Personal</button>
+                    <button class="filter-btn" data-filter="couple">Couple</button>
+                </div>
+            </section>
+        </main>
+
+        <!-- AI Assistant Widget -->
+        <div class="ai-assistant" id="aiAssistant">
+            <div class="ai-toggle" id="aiToggle">
+                <i class="fas fa-robot"></i>
+            </div>
+            <div class="ai-chat" id="aiChat">
+                <div class="ai-header">
+                    <div class="ai-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="ai-info">
+                        <h4>AI Assistant</h4>
+                        <span class="ai-status">Online</span>
+                    </div>
+                    <button class="ai-close" id="aiClose">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="ai-messages" id="aiMessages">
+                    <div class="ai-message">
+                        <div class="message-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="message-content">
+                            <p>Hi! I'm Howell's AI assistant. Ask me about his skills, projects, or experience!</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="ai-input">
+                    <input type="text" id="aiInput" placeholder="Ask about my portfolio...">
+                    <button id="aiSend">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/portfolio.js"></script>
+</body>
+</html>

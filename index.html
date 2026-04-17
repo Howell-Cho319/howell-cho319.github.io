@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Howell Cho - AI Developer & Full-Stack Engineer | Code • Create • Lead">
+    <meta name="keywords" content="AI Developer, Full-Stack Engineer, Software Engineering, Machine Learning, Computer Vision, Howell Cho">
+    <meta name="author" content="Howell Cho">
+
+    <title>HOWELL CHO - AI Developer & Full-Stack Engineer</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="assets/css/main.css">
+
+    <!-- Preload critical resources -->
+    <link rel="preload" href="assets/images/personal/howell_image_2.jpg" as="image">
+</head>
+<body>
+    <!-- Particle Canvas Background -->
+    <canvas id="particleCanvas" class="particle-canvas"></canvas>
+
+    <!-- Navigation -->
+    <nav class="nav-container">
+        <div class="nav-content">
+            <div class="nav-brand">
+                <a href="index.html">
+                    <h2 class="brand-text">HOWELL</h2>
+                </a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="aboutme.html">About Me</a></li>
+                <li><a href="portfolio.html">Portfolio</a></li>
+                <li><a href="projects.html">Projects</a></li>
+                <li><a href="reachme.html">Reach Me</a></li>
+            </ul>
+            <div class="lang-switcher">
+                <button class="lang-btn active" data-lang="en">EN</button>
+                <button class="lang-btn" data-lang="my">MY</button>
+                <button class="lang-btn" data-lang="cn">CN</button>
+            </div>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Hero Section -->
+        <section id="home" class="hero-section">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <div class="hero-greeting" data-en="Hello, I'm" data-my="Halo, Saya" data-cn="你好，我是">Hello, I'm</div>
+                    <h1 class="hero-title glitch-effect" data-text="HOWELL CHO">
+                        HOWELL CHO
+                    </h1>
+                    <div class="hero-subtitle">
+                        <span class="typewriter" id="typewriter"></span>
+                        <span class="cursor">|</span>
+                    </div>
+                    <p class="hero-slogan" data-en="Code • Create • Lead" data-my="Kod • Cipta • Pimpin" data-cn="编程 • 创造 • 领导">Code • Create • Lead</p>
+                    <div class="hero-cta">
+                        <a href="projects.html" class="btn btn-primary neon-btn">
+                            <i class="fas fa-rocket"></i>
+                            <span data-en="Enter Lab" data-my="Masuk Lab" data-cn="进入实验室">Enter Lab</span>
+                        </a>
+                        <a href="portfolio.html" class="btn btn-secondary glass-btn">
+                            <i class="fas fa-briefcase"></i>
+                            <span data-en="View Portfolio" data-my="Lihat Portfolio" data-cn="查看作品集">View Portfolio</span>
+                        </a>
+                        <a href="assets/images/resume/resume1.png" class="btn btn-tertiary outline-btn" download>
+                            <i class="fas fa-download"></i>
+                            <span data-en="Download CV" data-my="Muat Turun CV" data-cn="下载简历">Download CV</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="profile-container">
+                        <div class="profile-ring"></div>
+                        <div class="profile-card glass-card">
+                            <img src="assets/images/personal/howell_image_2.jpg" alt="Howell Cho Profile" class="profile-image">
+                            <div class="profile-glow"></div>
+                        </div>
+                    </div>
+                    <div class="floating-stats">
+                        <div class="stat-badge glass-card float-animation" style="animation-delay: 0s;">
+                            <div class="stat-icon">🎓</div>
+                            <div class="stat-text">
+                                <span class="stat-number">3+</span>
+                                <span class="stat-label" data-en="Years Leadership" data-my="Tahun Kepimpinan" data-cn="年领导经验">Years Leadership</span>
+                            </div>
+                        </div>
+                        <div class="stat-badge glass-card float-animation" style="animation-delay: 0.5s;">
+                            <div class="stat-icon">🚀</div>
+                            <div class="stat-text">
+                                <span class="stat-number">10+</span>
+                                <span class="stat-label" data-en="Projects" data-my="Projek" data-cn="项目">Projects</span>
+                            </div>
+                        </div>
+                        <div class="stat-badge glass-card float-animation" style="animation-delay: 1s;">
+                            <div class="stat-icon">💼</div>
+                            <div class="stat-text">
+                                <span class="stat-number">2</span>
+                                <span class="stat-label" data-en="Internships" data-my="Latihan Industri" data-cn="实习">Internships</span>
+                            </div>
+                        </div>
+                        <div class="stat-badge glass-card float-animation" style="animation-delay: 1.5s;">
+                            <div class="stat-icon">📊</div>
+                            <div class="stat-text">
+                                <span class="stat-number">3.2</span>
+                                <span class="stat-label">GPA</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills Ticker -->
+        <section class="skills-ticker">
+            <div class="ticker-wrapper">
+                <div class="ticker-content">
+                    <span class="skill-tag">Python</span>
+                    <span class="skill-tag">Java</span>
+                    <span class="skill-tag">JavaScript</span>
+                    <span class="skill-tag">React</span>
+                    <span class="skill-tag">Node.js</span>
+                    <span class="skill-tag">AWS</span>
+                    <span class="skill-tag">Docker</span>
+                    <span class="skill-tag">TensorFlow</span>
+                    <span class="skill-tag">Computer Vision</span>
+                    <span class="skill-tag">Machine Learning</span>
+                    <span class="skill-tag">Flutter</span>
+                    <span class="skill-tag">Firebase</span>
+                    <span class="skill-tag">SQL</span>
+                    <span class="skill-tag">PHP</span>
+                    <span class="skill-tag">C/C++</span>
+                    <span class="skill-tag">R</span>
+                    <!-- Duplicate for seamless loop -->
+                    <span class="skill-tag">Python</span>
+                    <span class="skill-tag">Java</span>
+                    <span class="skill-tag">JavaScript</span>
+                    <span class="skill-tag">React</span>
+                    <span class="skill-tag">Node.js</span>
+                    <span class="skill-tag">AWS</span>
+                    <span class="skill-tag">Docker</span>
+                    <span class="skill-tag">TensorFlow</span>
+                    <span class="skill-tag">Computer Vision</span>
+                    <span class="skill-tag">Machine Learning</span>
+                    <span class="skill-tag">Flutter</span>
+                    <span class="skill-tag">Firebase</span>
+                    <span class="skill-tag">SQL</span>
+                    <span class="skill-tag">PHP</span>
+                    <span class="skill-tag">C/C++</span>
+                    <span class="skill-tag">R</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Stats Section -->
+        <section class="quick-stats">
+            <div class="container">
+                <div class="stats-grid">
+                    <div class="stat-card glass-card fade-in-up" data-delay="0">
+                        <div class="stat-icon">🎓</div>
+                        <h3 data-en="APU × DMU Double Degree" data-my="Ijazah Berganda APU × DMU" data-cn="APU × DMU 双学位">APU × DMU Double Degree</h3>
+                        <p data-en="BSc (Hons) Software Engineering" data-my="Sarjana Muda Kejuruteraan Perisian" data-cn="软件工程学士学位">BSc (Hons) Software Engineering</p>
+                    </div>
+                    <div class="stat-card glass-card fade-in-up" data-delay="0.2">
+                        <div class="stat-icon">🤖</div>
+                        <h3 data-en="AI & Computer Vision" data-my="AI & Penglihatan Komputer" data-cn="人工智能与计算机视觉">AI & Computer Vision</h3>
+                        <p data-en="Oil Palm Detection, Plant Disease Analysis" data-my="Pengesanan Kelapa Sawit, Analisis Penyakit Tumbuhan" data-cn="油棕检测，植物病害分析">Oil Palm Detection, Plant Disease Analysis</p>
+                    </div>
+                    <div class="stat-card glass-card fade-in-up" data-delay="0.4">
+                        <div class="stat-icon">☁️</div>
+                        <h3 data-en="AWS Cloud Certified" data-my="Sijil AWS Cloud" data-cn="AWS 云认证">AWS Cloud Certified</h3>
+                        <p data-en="Cloud Foundations, EC2, S3, Route53" data-my="Asas Awan, EC2, S3, Route53" data-cn="云基础，EC2，S3，Route53">Cloud Foundations, EC2, S3, Route53</p>
+                    </div>
+                    <div class="stat-card glass-card fade-in-up" data-delay="0.6">
+                        <div class="stat-icon">🏆</div>
+                        <h3 data-en="10+ Projects Delivered" data-my="10+ Projek Diselesaikan" data-cn="完成 10+ 项目">10+ Projects Delivered</h3>
+                        <p data-en="Full-Stack, AI/ML, Mobile Apps" data-my="Full-Stack, AI/ML, Aplikasi Mudah Alih" data-cn="全栈，AI/ML，移动应用">Full-Stack, AI/ML, Mobile Apps</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Sections Preview -->
+        <section class="featured-sections">
+            <div class="container">
+                <h2 class="section-title" data-en="Explore My World" data-my="Terokai Dunia Saya" data-cn="探索我的世界">Explore My World</h2>
+                <div class="featured-grid">
+                    <a href="aboutme.html" class="feature-card glass-card">
+                        <div class="feature-icon">👨‍💻</div>
+                        <h3 data-en="About Me" data-my="Tentang Saya" data-cn="关于我">About Me</h3>
+                        <p data-en="My journey, education, and leadership experience" data-my="Perjalanan, pendidikan, dan pengalaman kepimpinan saya" data-cn="我的旅程、教育和领导经验">My journey, education, and leadership experience</p>
+                        <div class="feature-arrow">→</div>
+                    </a>
+                    <a href="portfolio.html" class="feature-card glass-card">
+                        <div class="feature-icon">🎯</div>
+                        <h3 data-en="Portfolio" data-my="Portfolio" data-cn="作品集">Portfolio</h3>
+                        <p data-en="Skills, certifications, and achievements showcase" data-my="Kemahiran, sijil, dan pencapaian" data-cn="技能、认证和成就展示">Skills, certifications, and achievements showcase</p>
+                        <div class="feature-arrow">→</div>
+                    </a>
+                    <a href="projects.html" class="feature-card glass-card">
+                        <div class="feature-icon">🚀</div>
+                        <h3 data-en="Projects" data-my="Projek" data-cn="项目">Projects</h3>
+                        <p data-en="AI/ML, web development, and research projects" data-my="AI/ML, pembangunan web, dan projek penyelidikan" data-cn="AI/ML、网页开发和研究项目">AI/ML, web development, and research projects</p>
+                        <div class="feature-arrow">→</div>
+                    </a>
+                    <a href="reachme.html" class="feature-card glass-card">
+                        <div class="feature-icon">🤝</div>
+                        <h3 data-en="Reach Me" data-my="Hubungi Saya" data-cn="联系我">Reach Me</h3>
+                        <p data-en="Let's collaborate on innovative projects" data-my="Mari bekerjasama dalam projek inovatif" data-cn="让我们在创新项目上合作">Let's collaborate on innovative projects</p>
+                        <div class="feature-arrow">→</div>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- AI Assistant Widget -->
+    <div class="ai-widget">
+        <button class="ai-toggle" id="aiToggle">
+            <i class="fas fa-robot"></i>
+        </button>
+        <div class="ai-modal glass-card" id="aiModal">
+            <div class="ai-header">
+                <h3>🤖 AI Assistant</h3>
+                <button class="ai-close" id="aiClose">×</button>
+            </div>
+            <div class="ai-content">
+                <div class="ai-message bot-message">
+                    <span data-en="Hi! I'm Howell's AI assistant. Ask me anything!" data-my="Hai! Saya pembantu AI Howell. Tanya apa sahaja!" data-cn="你好！我是 Howell 的 AI 助手。问我任何问题！">Hi! I'm Howell's AI assistant. Ask me anything!</span>
+                </div>
+                <div class="ai-quick-actions">
+                    <button class="quick-btn" data-action="about" data-en="Who are you?" data-my="Siapa anda?" data-cn="你是谁？">Who are you?</button>
+                    <button class="quick-btn" data-action="skills" data-en="What are your skills?" data-my="Apa kemahiran anda?" data-cn="你的技能是什么？">What are your skills?</button>
+                    <button class="quick-btn" data-action="projects" data-en="Show projects" data-my="Tunjukkan projek" data-cn="显示项目">Show projects</button>
+                    <button class="quick-btn" data-action="contact" data-en="Contact info" data-my="Maklumat hubungan" data-cn="联系信息">Contact info</button>
+                    <button class="quick-btn" data-action="cv" data-en="Download CV" data-my="Muat turun CV" data-cn="下载简历">Download CV</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
