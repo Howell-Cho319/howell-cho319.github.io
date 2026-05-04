@@ -6,6 +6,7 @@ import { About } from "./pages/About";
 import { Portfolio } from "./pages/Portfolio";
 import { Certifications } from "./pages/Certifications";
 import { Contact } from "./pages/Contact";
+import { FocusFlow } from "./pages/FocusFlow";
 import { NotFound } from "./pages/NotFound";
 
 export const router = createBrowserRouter([
@@ -19,6 +20,7 @@ export const router = createBrowserRouter([
       { path: "portfolio", Component: Portfolio },
       { path: "certifications", Component: Certifications },
       { path: "contact", Component: Contact },
+      { path: "focusflow", Component: FocusFlow },
       { path: "*", Component: NotFound },
     ],
   },

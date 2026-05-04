@@ -14,6 +14,7 @@ export function Header() {
     { path: "/about", label: "About" },
     { path: "/portfolio", label: "Portfolio" },
     { path: "/certifications", label: "Achievements" },
+    { path: "/focusflow", label: "Study" },
     { path: "/contact", label: "Contact" },
   ];
 
@@ -40,12 +41,12 @@ export function Header() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
-            <nav className="flex items-center gap-8">
+            <nav className="flex items-center gap-8 relative">
               {navLinks.map((link) => (
                 <Link
                   key={link.path}
                   to={link.path}
-                  className={`relative text-sm transition-colors ${
+                  className={`relative text-sm transition-colors pb-1 ${
                     isActive(link.path)
                       ? "text-primary"
                       : "text-foreground/70 hover:text-foreground"
@@ -55,7 +56,7 @@ export function Header() {
                   {isActive(link.path) && (
                     <motion.div
                       layoutId="activeNav"
-                      className="absolute -bottom-6 left-0 right-0 h-0.5 bg-primary"
+                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full"
                       transition={{ type: "spring", stiffness: 380, damping: 30 }}
                     />
                   )}
