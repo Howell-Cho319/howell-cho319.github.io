@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import { ArrowRight, BookOpen, Briefcase, Award, Mail, FileText, X, ChevronLeft, ChevronRight, Clock, Volume2, ListChecks, CheckSquare, BarChart2, Info, Play, Smartphone, FlipHorizontal, Layers, Keyboard, Gamepad2 } from "lucide-react";
+import { ArrowRight, BookOpen, Briefcase, Award, Mail, FileText, X, ChevronLeft, ChevronRight, Clock, Volume2, ListChecks, CheckSquare, BarChart2, Info, Play, Smartphone, FlipHorizontal, Layers, Keyboard, Gamepad2, Heart } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { useState, useEffect } from "react";
@@ -855,6 +855,263 @@ export function Home() {
               />
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* RedWolf Character Showcase Section */}
+      <section className="bg-gradient-to-br from-gray-50 via-stone-50 to-amber-50/30 py-20 relative overflow-hidden border-y border-stone-200/50">
+        {/* Background decorative elements */}
+        <div className="absolute inset-0 opacity-15">
+          <div className="absolute top-20 left-10 w-32 h-32 rounded-full blur-3xl" style={{ backgroundColor: '#8A5F41' }}></div>
+          <div className="absolute bottom-20 right-10 w-40 h-40 rounded-full blur-3xl" style={{ backgroundColor: '#A77F60' }}></div>
+          <div className="absolute top-1/2 left-1/4 w-24 h-24 rounded-full blur-2xl" style={{ backgroundColor: '#CCD67F' }}></div>
+          <div className="absolute top-1/3 right-1/3 w-28 h-28 rounded-full blur-3xl bg-stone-300/40"></div>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-12"
+          >
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium mb-6" style={{ backgroundColor: '#8A5F41', color: '#F3E4C9' }}>
+              <Gamepad2 className="w-4 h-4" />
+              3D Character Design
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold mb-4" style={{ color: '#8A5F41' }}>
+              Meet RedWolf
+            </h2>
+            <p className="text-lg max-w-2xl mx-auto" style={{ color: '#A77F60' }}>
+              A cybernetic warrior created as a fusion of human-like instinct and machine-level accuracy for a 3D character project.
+            </p>
+          </motion.div>
+
+          <div className="grid lg:grid-cols-12 gap-8 items-center">
+            {/* Left Stats Panel */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="lg:col-span-3"
+            >
+              <div className="rounded-2xl p-6 text-white shadow-2xl" style={{ background: `linear-gradient(135deg, #8A5F41 0%, #A77F60 100%)`, border: '1px solid #CCD67F' }}>
+                {/* Level Display */}
+                <div className="mb-6">
+                  <div className="text-sm font-bold uppercase tracking-wider mb-2" style={{ color: '#F3E4C9' }}>LEVEL</div>
+                  <div className="text-5xl font-bold text-white mb-2">17</div>
+                  <div className="text-xs mb-2" style={{ color: '#F3E4C9' }}>EXP: 8,450 / 15,000</div>
+                  <div className="w-full rounded-full h-2" style={{ backgroundColor: 'rgba(204, 214, 127, 0.3)' }}>
+                    <div className="h-2 rounded-full" style={{ width: '56.3%', background: `linear-gradient(90deg, #CCD67F 0%, #F3E4C9 100%)` }}></div>
+                  </div>
+                </div>
+
+                {/* Stats */}
+                <div className="space-y-4">
+                  <div className="text-sm font-bold uppercase tracking-wider mb-3" style={{ color: '#F3E4C9' }}>STATS</div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Heart className="w-4 h-4" style={{ color: '#CCD67F' }} />
+                      <span className="text-sm">HEALTH</span>
+                    </div>
+                    <span className="text-sm">4,250 / 4,250</span>
+                  </div>
+                  <div className="w-full rounded-full h-1.5" style={{ backgroundColor: 'rgba(204, 214, 127, 0.3)' }}>
+                    <div className="h-1.5 rounded-full" style={{ width: '100%', backgroundColor: '#CCD67F' }}></div>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-4 h-4" style={{ color: '#F3E4C9' }} />
+                      <span className="text-sm">ENERGY</span>
+                    </div>
+                    <span className="text-sm">2,100 / 2,500</span>
+                  </div>
+                  <div className="w-full rounded-full h-1.5" style={{ backgroundColor: 'rgba(243, 228, 201, 0.3)' }}>
+                    <div className="h-1.5 rounded-full" style={{ width: '84%', backgroundColor: '#F3E4C9' }}></div>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <ArrowRight className="w-4 h-4" style={{ color: '#A77F60' }} />
+                      <span className="text-sm">ATTACK</span>
+                    </div>
+                    <span className="text-sm">850</span>
+                  </div>
+                  <div className="w-full rounded-full h-1.5" style={{ backgroundColor: 'rgba(167, 127, 96, 0.3)' }}>
+                    <div className="h-1.5 rounded-full" style={{ width: '68%', backgroundColor: '#A77F60' }}></div>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Award className="w-4 h-4" style={{ color: '#8A5F41' }} />
+                      <span className="text-sm">DEFENSE</span>
+                    </div>
+                    <span className="text-sm">620</span>
+                  </div>
+                  <div className="w-full rounded-full h-1.5" style={{ backgroundColor: 'rgba(138, 95, 65, 0.3)' }}>
+                    <div className="h-1.5 rounded-full" style={{ width: '52%', backgroundColor: '#8A5F41' }}></div>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <ChevronRight className="w-4 h-4" style={{ color: '#CCD67F' }} />
+                      <span className="text-sm">SPEED</span>
+                    </div>
+                    <span className="text-sm">780</span>
+                  </div>
+                  <div className="w-full rounded-full h-1.5" style={{ backgroundColor: 'rgba(204, 214, 127, 0.3)' }}>
+                    <div className="h-1.5 rounded-full" style={{ width: '65%', backgroundColor: '#CCD67F' }}></div>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Play className="w-4 h-4" style={{ color: '#F3E4C9' }} />
+                      <span className="text-sm">CRITICAL</span>
+                    </div>
+                    <span className="text-sm">18.5%</span>
+                  </div>
+                  <div className="w-full rounded-full h-1.5" style={{ backgroundColor: 'rgba(243, 228, 201, 0.3)' }}>
+                    <div className="h-1.5 rounded-full" style={{ width: '18.5%', backgroundColor: '#F3E4C9' }}></div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Center Video */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="lg:col-span-6 flex justify-center"
+            >
+              <div className="relative">
+                {/* Video container with animated starfield background */}
+                <div className="w-80 h-96 lg:w-96 lg:h-[500px] rounded-3xl overflow-hidden shadow-2xl border-4 p-1" style={{ background: `linear-gradient(135deg, #8A5F41 0%, #A77F60 50%, #CCD67F 100%)` }}>
+                  <div className="w-full h-full rounded-2xl overflow-hidden relative bg-black">
+                    {/* Animated starfield background */}
+                    <div className="absolute inset-0 bg-gradient-to-b from-gray-900 via-black to-gray-900">
+                      {/* Large stars */}
+                      <div className="absolute top-[10%] left-[15%] w-1 h-1 bg-white rounded-full animate-pulse"></div>
+                      <div className="absolute top-[25%] right-[20%] w-1.5 h-1.5 bg-blue-200 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
+                      <div className="absolute top-[40%] left-[25%] w-1 h-1 bg-yellow-200 rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
+                      <div className="absolute top-[60%] right-[15%] w-1 h-1 bg-white rounded-full animate-pulse" style={{ animationDelay: '1.5s' }}></div>
+                      <div className="absolute top-[75%] left-[35%] w-1.5 h-1.5 bg-blue-100 rounded-full animate-pulse" style={{ animationDelay: '2s' }}></div>
+                      <div className="absolute top-[85%] right-[30%] w-1 h-1 bg-yellow-100 rounded-full animate-pulse" style={{ animationDelay: '0.3s' }}></div>
+                      
+                      {/* Medium stars */}
+                      <div className="absolute top-[20%] left-[45%] w-0.5 h-0.5 bg-white rounded-full animate-pulse" style={{ animationDelay: '0.8s' }}></div>
+                      <div className="absolute top-[35%] right-[40%] w-0.5 h-0.5 bg-blue-200 rounded-full animate-pulse" style={{ animationDelay: '1.3s' }}></div>
+                      <div className="absolute top-[50%] left-[10%] w-0.5 h-0.5 bg-yellow-200 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+                      <div className="absolute top-[70%] right-[45%] w-0.5 h-0.5 bg-white rounded-full animate-pulse" style={{ animationDelay: '1.8s' }}></div>
+                      
+                      {/* Small twinkling stars */}
+                      <div className="absolute top-[15%] left-[60%] w-px h-px bg-white rounded-full animate-ping" style={{ animationDelay: '0.4s' }}></div>
+                      <div className="absolute top-[30%] right-[25%] w-px h-px bg-blue-100 rounded-full animate-ping" style={{ animationDelay: '0.9s' }}></div>
+                      <div className="absolute top-[45%] left-[70%] w-px h-px bg-yellow-100 rounded-full animate-ping" style={{ animationDelay: '1.4s' }}></div>
+                      <div className="absolute top-[65%] right-[35%] w-px h-px bg-white rounded-full animate-ping" style={{ animationDelay: '0.7s' }}></div>
+                      <div className="absolute top-[80%] left-[55%] w-px h-px bg-blue-200 rounded-full animate-ping" style={{ animationDelay: '1.9s' }}></div>
+                      
+                      {/* Nebula effect */}
+                      <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-purple-900/10 via-transparent to-blue-900/10"></div>
+                      <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-purple-600/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2.5s' }}></div>
+                      <div className="absolute bottom-1/4 right-1/4 w-24 h-24 bg-blue-600/5 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '3s' }}></div>
+                    </div>
+                    
+                    {/* Character video */}
+                    <video
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      className="w-full h-full object-contain relative z-10"
+                    >
+                      <source src="/video/RedWolf.webm" type="video/webm" />
+                      Your browser does not support the video tag.
+                    </video>
+                  </div>
+                </div>
+                
+                {/* Floating elements around video */}
+                <div className="absolute -top-4 -right-4 w-8 h-8 rounded-full animate-pulse shadow-lg" style={{ backgroundColor: '#8A5F41' }}></div>
+                <div className="absolute -bottom-4 -left-4 w-6 h-6 rounded-full animate-pulse shadow-lg" style={{ backgroundColor: '#CCD67F' }}></div>
+                <div className="absolute top-1/4 -left-6 w-4 h-4 rounded-full animate-bounce shadow-lg" style={{ backgroundColor: '#A77F60' }}></div>
+                <div className="absolute bottom-1/4 -right-6 w-5 h-5 rounded-full animate-bounce shadow-lg" style={{ backgroundColor: '#F3E4C9' }}></div>
+              </div>
+            </motion.div>
+
+            {/* Right Lore Panel */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+              className="lg:col-span-3"
+            >
+              <div className="rounded-2xl p-6 shadow-2xl" style={{ background: `linear-gradient(135deg, #F3E4C9 0%, #CCD67F 100%)`, border: '1px solid #A77F60' }}>
+                {/* Character Lore Header */}
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: `linear-gradient(135deg, #8A5F41 0%, #A77F60 100%)` }}>
+                    <FileText className="w-6 h-6" style={{ color: '#F3E4C9' }} />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold" style={{ color: '#8A5F41' }}>Character Lore</h3>
+                    <p className="text-xs uppercase tracking-wider" style={{ color: '#A77F60' }}>ORIGIN STORY</p>
+                  </div>
+                </div>
+
+                {/* Lore Content */}
+                <div className="space-y-4" style={{ color: '#8A5F41' }}>
+                  <p className="text-sm leading-relaxed">
+                    Born from childhood dreams and forged through years of artistic growth, RedWolf emerged from sketches in school notebooks to a fully realized 3D warrior.
+                  </p>
+                  <p className="text-sm leading-relaxed">
+                    What began as a simple wolf drawing evolved into a cybernetic legend - part organic instinct, part digital precision.
+                  </p>
+                  <p className="text-sm leading-relaxed">
+                    This character represents the journey from imagination to creation, embodying the fusion of childhood wonder with adult craftsmanship.
+                  </p>
+                </div>
+
+                {/* Set Bonus */}
+                <div className="mt-4 pt-4" style={{ borderTop: '1px solid #A77F60' }}>
+                  <div className="text-xs uppercase tracking-wider mb-2" style={{ color: '#A77F60' }}>• EQUIPMENT SET BONUS</div>
+                  <div className="rounded-lg p-3" style={{ backgroundColor: '#F3E4C9', border: '1px solid #CCD67F' }}>
+                    <div className="text-sm font-bold mb-2" style={{ color: '#8A5F41' }}>Crimson Wolf's Howl (4/4)</div>
+                    <div className="space-y-1 text-xs" style={{ color: '#A77F60' }}>
+                      <div>• Attack Power +15%</div>
+                      <div>• Critical Rate +10%</div>
+                      <div>• Skill Damage +20%</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Bottom Description */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.8 }}
+            className="text-center mt-16"
+          >
+            <div className="max-w-3xl mx-auto">
+              <h3 className="text-2xl font-bold mb-4" style={{ color: '#8A5F41' }}>Crafted with Passion</h3>
+              <p className="leading-relaxed" style={{ color: '#A77F60' }}>
+                RedWolf represents the culmination of my 3D modeling and animation skills. 
+                Every detail, from the cybernetic enhancements to the fluid movements, 
+                was meticulously crafted to bring this character to life. This project showcases 
+                my ability to blend organic forms with futuristic technology, creating a character 
+                that embodies both primal instinct and digital evolution.
+              </p>
+            </div>
+          </motion.div>
         </div>
       </section>
 
