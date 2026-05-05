@@ -53,8 +53,13 @@ const AMBIENT_SOUNDS = [
   { id: 'fire-forest', name: 'Campfire', nameZh: '林中火', icon: Flame, url: '/music/fire forest.mp3', category: 'Ambience' },
   { id: 'fire-ambience', name: 'Fire Ambience', nameZh: '火焰', icon: Flame, url: '/music/fire ambience.mp3', category: 'Ambience' },
   
-  // Music (Only the working small video file)
+  // Music - All compressed to 1 hour, ~55MB each
+  { id: 'jazz-cafe', name: 'Jazz Cafe', nameZh: '爵士咖啡', icon: CoffeeIcon, url: '/music/jazz-cafe.mp3', category: 'Music' },
+  { id: 'ghibli-chill', name: 'Ghibli Chill', nameZh: '吉卜力', icon: Music, url: '/music/ghibli-chill.mp3', category: 'Music' },
+  { id: 'lofi', name: 'Lofi Library', nameZh: 'Lofi', icon: Library, url: '/music/lofi-library.mp3', category: 'Music' },
+  { id: 'music-rain', name: 'Music & Rain', nameZh: '音乐雨声', icon: CloudRain, url: '/music/music-with-rain.mp3', category: 'Music' },
   { id: 'howls', name: 'Howl\'s Piano', nameZh: '哈尔钢琴', icon: Music, url: '/music/Howl\'s Moving Castle - Promise of the World (piano cover).mp4', category: 'Music' },
+  { id: 'love-letter', name: 'Love Letter', nameZh: '情书', icon: Heart, url: '/music/감성 영화음악 러브레터 OST 무손실 음원 🎧 Love Letter Soundtrack Full Track BGM.mp4', category: 'Music' },
 ];
   { id: 'rain-music', name: 'Rain Music', nameZh: '雨中乐', icon: Music, url: '/music/music with rain.mp4', category: 'Music' },
 ];
