@@ -1,12 +1,182 @@
 import { Link } from "react-router";
-import { ArrowRight, BookOpen, Briefcase, Award, Mail, FileText, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowRight, BookOpen, Briefcase, Award, Mail, FileText, X, ChevronLeft, ChevronRight, Clock, Volume2, ListChecks, CheckSquare, BarChart2, Info, Play, Smartphone } from "lucide-react";
 import { motion } from "motion/react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { useState } from "react";
 
+function FocusFlowTutorialModal({ onClose }: { onClose: () => void }) {
+  const [step, setStep] = useState(0);
+  
+  const TUTORIAL_STEPS = [
+    {
+      icon: Clock,
+      color: 'text-white',
+      bg: 'bg-amber-800',
+      title: 'Timer',
+      steps: [
+        'Pick a preset (Pomodoro, Deep Work…) or set a custom duration.',
+        'Press ▶ to start. The ring fills as time passes.',
+        'Use ↺ to reset or ⏭ to skip to break.',
+        'Select a Habit below the presets to track specific activities.',
+      ],
+    },
+    {
+      icon: Volume2,
+      color: 'text-white',
+      bg: 'bg-amber-800',
+      title: 'Ambient Sound',
+      steps: [
+        'Tap any sound tile to activate it — multiple sounds can play together.',
+        'A volume slider appears for each active sound.',
+        'Toggle the SOUND button to mute/unmute all at once.',
+        'Sounds only play while the timer is running.',
+      ],
+    },
+    {
+      icon: ListChecks,
+      color: 'text-white',
+      bg: 'bg-amber-800',
+      title: 'Habits',
+      steps: [
+        'Add habits with a name, icon, color, duration and type (Focus/Break).',
+        'Press ▶ on a habit card to start that habit\'s timer immediately.',
+        'Toggle habits on/off in the "All Habits" row at the bottom.',
+        'Today\'s progress bar shows how many minutes you\'ve spent on each habit.',
+      ],
+    },
+    {
+      icon: CheckSquare,
+      color: 'text-white',
+      bg: 'bg-amber-800',
+      title: 'Plan',
+      steps: [
+        'Add tasks for today with a title, time, duration and color.',
+        'Tap the circle ○ on a task to mark it done.',
+        'Progress bar at the top shows how many tasks are completed.',
+        'Plans reset each day — start fresh every morning.',
+      ],
+    },
+    {
+      icon: BarChart2,
+      color: 'text-white',
+      bg: 'bg-amber-800',
+      title: 'Today',
+      steps: [
+        'Score card shows your daily focus score (0–100) based on minutes, sessions and challenges.',
+        'Minutes / Sessions / Streak update automatically as you complete timers.',
+        'This Week bar chart shows your daily focus minutes for the past 7 days.',
+        'Complete all 4 daily challenges to earn bonus points.',
+      ],
+    },
+  ];
+
+  const current = TUTORIAL_STEPS[step];
+  const Icon = current.icon;
+  const isLast = step === TUTORIAL_STEPS.length - 1;
+
+  const nextStep = () => setStep(s => Math.min(TUTORIAL_STEPS.length - 1, s + 1));
+  const prevStep = () => setStep(s => Math.max(0, s - 1));
+
+  return (
+    <div
+      className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden relative"
+      style={{ backgroundColor: '#f5f1eb' }}
+      onClick={e => e.stopPropagation()}
+    >
+      {/* Close Button */}
+      <button 
+        onClick={onClose} 
+        className="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-white/80 hover:bg-white flex items-center justify-center transition-colors"
+      >
+        <X className="w-4 h-4 text-gray-600" />
+      </button>
+
+      {/* Navigation Arrows */}
+      {step > 0 && (
+        <button
+          onClick={prevStep}
+          className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white shadow-lg hover:shadow-xl flex items-center justify-center transition-all"
+        >
+          <ChevronLeft className="w-5 h-5 text-gray-600" />
+        </button>
+      )}
+      
+      {step < TUTORIAL_STEPS.length - 1 && (
+        <button
+          onClick={nextStep}
+          className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white shadow-lg hover:shadow-xl flex items-center justify-center transition-all"
+        >
+          <ChevronRight className="w-5 h-5 text-gray-600" />
+        </button>
+      )}
+
+      {/* Content */}
+      <div className="p-8">
+        {/* Header with Icon and Title */}
+        <div className="flex items-center gap-4 mb-6">
+          <div className={`w-16 h-16 rounded-2xl ${current.bg} flex items-center justify-center`}>
+            <Icon className={`w-8 h-8 ${current.color}`} />
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold text-amber-900 mb-1">{current.title}</h2>
+            <p className="text-sm text-amber-700">Step {step + 1} of {TUTORIAL_STEPS.length}</p>
+          </div>
+        </div>
+
+        {/* Steps List */}
+        <div className="space-y-4">
+          {current.steps.map((stepText, i) => (
+            <div key={i} className="flex gap-4 p-4 rounded-xl" style={{ backgroundColor: '#ede7dc' }}>
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-amber-800 text-white text-sm font-bold flex items-center justify-center">
+                {i + 1}
+              </div>
+              <p className="text-amber-900 leading-relaxed">{stepText}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Bottom Navigation */}
+      <div className="px-8 py-4 flex items-center justify-between" style={{ backgroundColor: '#ede7dc' }}>
+        {/* Step Indicators */}
+        <div className="flex gap-2">
+          {TUTORIAL_STEPS.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setStep(i)}
+              className={`w-3 h-3 rounded-full transition-all ${
+                i === step ? 'bg-amber-800' : i < step ? 'bg-amber-600' : 'bg-amber-300'
+              }`}
+            />
+          ))}
+        </div>
+
+        {/* Action Button */}
+        {isLast ? (
+          <Link
+            to="/focusflow"
+            onClick={onClose}
+            className="px-6 py-2 bg-amber-800 hover:bg-amber-900 text-white rounded-full font-medium transition-colors"
+          >
+            Start Using FocusFlow
+          </Link>
+        ) : (
+          <button
+            onClick={nextStep}
+            className="px-6 py-2 bg-amber-800 hover:bg-amber-900 text-white rounded-full font-medium transition-colors"
+          >
+            Next Step
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export function Home() {
   const [showResume, setShowResume] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
+  const [showFocusFlowTutorial, setShowFocusFlowTutorial] = useState(false);
 
   const resumePages = [
     "/images/resume/cv.png",
@@ -169,6 +339,204 @@ export function Home() {
               </motion.div>
             );
           })}
+        </div>
+      </section>
+
+      {/* FocusFlow Introduction Section */}
+      <section className="bg-gradient-to-br from-primary/5 via-background to-blue-500/5 py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-10 items-center">
+            {/* Left Content */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="order-2 lg:order-1"
+            >
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium mb-5">
+                <Clock className="w-4 h-4" />
+                Study Tool
+              </div>
+              
+              <h2 className="text-3xl md:text-4xl font-bold mb-5 leading-tight">
+                Focus & Learn
+                <span className="block text-primary">Grow Faster</span>
+              </h2>
+              
+              <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
+                Boost your productivity with FocusFlow - a comprehensive study companion featuring 
+                Pomodoro timers, ambient sounds, habit tracking, and progress analytics.
+              </p>
+
+              {/* Feature Highlights */}
+              <div className="grid sm:grid-cols-2 gap-3 mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 bg-primary/10 rounded-xl flex items-center justify-center">
+                    <Clock className="w-4 h-4 text-primary" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-sm">Smart Timer</h4>
+                    <p className="text-xs text-muted-foreground">Pomodoro & custom sessions</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 bg-blue-500/10 rounded-xl flex items-center justify-center">
+                    <Volume2 className="w-4 h-4 text-blue-500" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-sm">Ambient Sounds</h4>
+                    <p className="text-xs text-muted-foreground">Multiple sounds & volume control</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 bg-green-500/10 rounded-xl flex items-center justify-center">
+                    <ListChecks className="w-4 h-4 text-green-500" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-sm">Habit Tracking</h4>
+                    <p className="text-xs text-muted-foreground">Build consistent routines</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 bg-orange-500/10 rounded-xl flex items-center justify-center">
+                    <BarChart2 className="w-4 h-4 text-orange-500" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-sm">Progress Analytics</h4>
+                    <p className="text-xs text-muted-foreground">Track your growth</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-wrap gap-3">
+                <Link
+                  to="/focusflow"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground rounded-full hover:opacity-90 transition-opacity"
+                >
+                  <Play className="w-4 h-4" />
+                  Start Focusing
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+                <button
+                  onClick={() => setShowFocusFlowTutorial(true)}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-accent text-accent-foreground rounded-full hover:bg-accent/80 transition-colors"
+                >
+                  <Info className="w-4 h-4" />
+                  Learn More
+                </button>
+              </div>
+            </motion.div>
+
+            {/* Right Content - Phone Mockup */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="order-1 lg:order-2 relative"
+            >
+              <div className="relative max-w-xs mx-auto">
+                {/* Phone Frame */}
+                <div className="relative bg-gradient-to-br from-gray-900 to-black rounded-[2.5rem] p-2 shadow-2xl">
+                  <div className="bg-background rounded-[2rem] overflow-hidden">
+                    {/* Phone Screen Content */}
+                    <div className="aspect-[9/19.5] bg-gradient-to-br from-background via-primary/5 to-blue-500/10 p-5 flex flex-col">
+                      {/* Header */}
+                      <div className="text-center mb-5">
+                        <h3 className="text-base font-bold">FocusFlow</h3>
+                        <p className="text-xs text-muted-foreground">Focus · Learn · Grow</p>
+                      </div>
+
+                      {/* Timer Circle */}
+                      <div className="flex-1 flex items-center justify-center mb-5">
+                        <div className="relative w-28 h-28">
+                          <div className="absolute inset-0 rounded-full border-4 border-muted"></div>
+                          <div className="absolute inset-0 rounded-full border-4 border-primary border-t-transparent animate-spin" style={{ animationDuration: '3s' }}></div>
+                          <div className="absolute inset-3 rounded-full bg-primary/10 flex items-center justify-center">
+                            <div className="text-center">
+                              <div className="text-lg font-bold">25:00</div>
+                              <div className="text-xs text-muted-foreground">Focus</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Quick Stats */}
+                      <div className="grid grid-cols-3 gap-2 mb-3">
+                        <div className="bg-card rounded-lg p-2.5 text-center border">
+                          <div className="text-sm font-bold text-primary">4</div>
+                          <div className="text-xs text-muted-foreground">Sessions</div>
+                        </div>
+                        <div className="bg-card rounded-lg p-2.5 text-center border">
+                          <div className="text-sm font-bold text-green-500">120m</div>
+                          <div className="text-xs text-muted-foreground">Minutes</div>
+                        </div>
+                        <div className="bg-card rounded-lg p-2.5 text-center border">
+                          <div className="text-sm font-bold text-orange-500">7</div>
+                          <div className="text-xs text-muted-foreground">Streak</div>
+                        </div>
+                      </div>
+
+                      {/* Bottom Navigation */}
+                      <div className="flex justify-around py-2">
+                        <div className="flex flex-col items-center">
+                          <div className="w-7 h-7 bg-primary/10 rounded-lg flex items-center justify-center mb-1">
+                            <ListChecks className="w-3.5 h-3.5 text-primary" />
+                          </div>
+                          <span className="text-xs text-primary font-medium">Habits</span>
+                        </div>
+                        <div className="flex flex-col items-center">
+                          <div className="w-7 h-7 bg-muted rounded-lg flex items-center justify-center mb-1">
+                            <CheckSquare className="w-3.5 h-3.5 text-muted-foreground" />
+                          </div>
+                          <span className="text-xs text-muted-foreground">Plan</span>
+                        </div>
+                        <div className="flex flex-col items-center">
+                          <div className="w-7 h-7 bg-muted rounded-lg flex items-center justify-center mb-1">
+                            <BarChart2 className="w-3.5 h-3.5 text-muted-foreground" />
+                          </div>
+                          <span className="text-xs text-muted-foreground">Today</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Phone Notch */}
+                  <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-16 h-5 bg-black rounded-b-xl"></div>
+                </div>
+
+                {/* Floating Elements */}
+                <div className="absolute -top-3 -right-3 w-12 h-12 bg-primary/20 rounded-full blur-xl"></div>
+                <div className="absolute -bottom-3 -left-3 w-16 h-16 bg-blue-500/20 rounded-full blur-xl"></div>
+                
+                {/* Feature Callouts */}
+                <div className="absolute -left-6 top-1/4 hidden lg:block">
+                  <div className="bg-card border border-border rounded-lg p-2.5 shadow-lg max-w-28">
+                    <div className="flex items-center gap-1.5 mb-1">
+                      <Volume2 className="w-3 h-3 text-blue-500" />
+                      <span className="text-xs font-medium">Ambient</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground">Rain, cafe sounds</p>
+                  </div>
+                </div>
+                
+                <div className="absolute -right-6 top-3/4 hidden lg:block">
+                  <div className="bg-card border border-border rounded-lg p-2.5 shadow-lg max-w-28">
+                    <div className="flex items-center gap-1.5 mb-1">
+                      <BarChart2 className="w-3 h-3 text-orange-500" />
+                      <span className="text-xs font-medium">Analytics</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground">Track progress</p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
         </div>
       </section>
 
@@ -431,6 +799,13 @@ export function Home() {
           </Link>
         </motion.div>
       </section>
+
+      {/* FocusFlow Tutorial Modal */}
+      {showFocusFlowTutorial && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" onClick={() => setShowFocusFlowTutorial(false)}>
+          <FocusFlowTutorialModal onClose={() => setShowFocusFlowTutorial(false)} />
+        </div>
+      )}
 
       {/* Resume Modal */}
       {showResume && (
