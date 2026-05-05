@@ -61,8 +61,6 @@ const AMBIENT_SOUNDS = [
   { id: 'howls', name: 'Howl\'s Piano', nameZh: '哈尔钢琴', icon: Music, url: '/music/Howl\'s Moving Castle - Promise of the World (piano cover).mp4', category: 'Music' },
   { id: 'love-letter', name: 'Love Letter', nameZh: '情书', icon: Heart, url: '/music/감성 영화음악 러브레터 OST 무손실 음원 🎧 Love Letter Soundtrack Full Track BGM.mp4', category: 'Music' },
 ];
-  { id: 'rain-music', name: 'Rain Music', nameZh: '雨中乐', icon: Music, url: '/music/music with rain.mp4', category: 'Music' },
-];
 
 const CIRCLE_RADIUS = 120;
 const CIRCLE_RADIUS_LG = 140;
