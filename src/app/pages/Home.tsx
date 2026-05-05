@@ -670,21 +670,18 @@ export function Home() {
       </section>
 
       {/* Games Sliding Section */}
-      <section className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 py-20 text-white overflow-hidden relative min-h-[600px] flex items-center group/slider">
-        {/* Background pixel pattern */}
-        <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
-        
+      <section className="bg-[#f8f5f0] py-20 border-y border-amber-100/50 overflow-hidden relative min-h-[600px] flex items-center group/slider">
         {/* Navigation Buttons */}
         <button
           onClick={() => setActiveGameSlide((prev) => (prev - 1 + 2) % 2)}
-          className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-40 p-3 rounded-full bg-white/5 hover:bg-white/10 text-white/40 hover:text-white transition-all opacity-0 group-hover/slider:opacity-100 backdrop-blur-sm border border-white/10"
+          className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-40 p-3 rounded-full bg-white/40 hover:bg-white/60 text-amber-900/40 hover:text-amber-900 transition-all opacity-0 group-hover/slider:opacity-100 backdrop-blur-sm border border-amber-200/30 shadow-sm"
         >
           <ChevronLeft className="w-6 h-6" />
         </button>
 
         <button
           onClick={() => setActiveGameSlide((prev) => (prev + 1) % 2)}
-          className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-40 p-3 rounded-full bg-white/5 hover:bg-white/10 text-white/40 hover:text-white transition-all opacity-0 group-hover/slider:opacity-100 backdrop-blur-sm border border-white/10"
+          className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-40 p-3 rounded-full bg-white/40 hover:bg-white/60 text-amber-900/40 hover:text-amber-900 transition-all opacity-0 group-hover/slider:opacity-100 backdrop-blur-sm border border-amber-200/30 shadow-sm"
         >
           <ChevronRight className="w-6 h-6" />
         </button>
@@ -702,40 +699,40 @@ export function Home() {
               >
                 {/* Left Content - Text Info */}
                 <div>
-                  <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/10 text-gray-300 rounded-full text-sm font-medium mb-6 backdrop-blur-sm border border-white/10">
-                    <Gamepad2 className="w-4 h-4 text-green-400" />
+                  <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-amber-100 text-amber-900 rounded-full text-sm font-medium mb-6 font-sans">
+                    <Gamepad2 className="w-4 h-4 text-amber-900" />
                     Nokia Edition
                   </div>
                   
-                  <h2 className="text-4xl md:text-5xl font-bold mb-6 font-mono tracking-tighter">
+                  <h2 className="text-4xl md:text-5xl font-bold mb-6 text-amber-950 font-serif italic">
                     Nokia Tetris
                   </h2>
                   
-                  <p className="text-xl text-gray-300 mb-8 leading-relaxed font-mono opacity-80">
+                  <p className="text-xl text-amber-900/80 mb-8 leading-relaxed font-serif">
                     A faithful recreation of the classic Tetris game styled after the iconic Nokia mobile phone era. 
                     Nostalgic olive-green LCD, chunky D-pad, and monochrome pixel aesthetic.
                   </p>
 
                   <div className="grid sm:grid-cols-2 gap-6 mb-10">
                     <div className="space-y-2">
-                      <h3 className="text-green-400 font-bold uppercase tracking-wider text-xs">The Vibe</h3>
-                      <p className="text-sm text-gray-400">Late 90s monochrome pixel art and authentic phone shell design.</p>
+                      <h3 className="text-amber-900 font-bold uppercase tracking-wider text-xs font-sans">The Vibe</h3>
+                      <p className="text-sm text-amber-900/60 font-sans">Late 90s monochrome pixel art and authentic phone shell design.</p>
                     </div>
                     <div className="space-y-2">
-                      <h3 className="text-green-400 font-bold uppercase tracking-wider text-xs">Features</h3>
-                      <p className="text-sm text-gray-400">Ghost pieces, increasing speed levels, and full keyboard support.</p>
+                      <h3 className="text-amber-900 font-bold uppercase tracking-wider text-xs font-sans">Features</h3>
+                      <p className="text-sm text-amber-900/60 font-sans">Ghost pieces, increasing speed levels, and full keyboard support.</p>
                     </div>
                   </div>
 
                   <div className="flex flex-wrap gap-4">
                     <Link
                       to="/tetris"
-                      className="inline-flex items-center gap-2 px-8 py-3.5 bg-green-500 text-black rounded-full hover:bg-green-400 transition-all shadow-lg shadow-green-500/20 font-bold uppercase tracking-tighter"
+                      className="inline-flex items-center gap-2 px-8 py-3.5 bg-amber-900 text-white rounded-full hover:bg-amber-950 transition-all shadow-lg shadow-amber-900/20 font-sans font-medium"
                     >
-                      <Play className="w-4 h-4 fill-black" />
+                      <Play className="w-4 h-4" />
                       Start Playing
                     </Link>
-                    <div className="inline-flex items-center gap-2 px-6 py-3.5 text-gray-500 font-mono text-xs uppercase tracking-widest">
+                    <div className="inline-flex items-center gap-2 px-6 py-3.5 text-amber-900/40 font-sans text-xs uppercase tracking-widest">
                        Pure Nostalgia • No Ads
                     </div>
                   </div>
@@ -778,40 +775,40 @@ export function Home() {
               >
                 {/* Left Content - Text Info */}
                 <div>
-                  <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/10 text-gray-300 rounded-full text-sm font-medium mb-6 backdrop-blur-sm border border-white/10">
-                    <Smartphone className="w-4 h-4 text-green-400" />
+                  <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-amber-100 text-amber-900 rounded-full text-sm font-medium mb-6 font-sans">
+                    <Smartphone className="w-4 h-4 text-amber-900" />
                     Snake Edition
                   </div>
                   
-                  <h2 className="text-4xl md:text-5xl font-bold mb-6 font-mono tracking-tighter">
+                  <h2 className="text-4xl md:text-5xl font-bold mb-6 text-amber-950 font-serif italic">
                     Nokia Snake
                   </h2>
                   
-                  <p className="text-xl text-gray-300 mb-8 leading-relaxed font-mono opacity-80">
+                  <p className="text-xl text-amber-900/80 mb-8 leading-relaxed font-serif">
                     The legendary game that defined mobile gaming. Experience Snake in its purest form, 
                     with classic Nokia 3310 aesthetics and a modern "Warp" mode.
                   </p>
 
                   <div className="grid sm:grid-cols-2 gap-6 mb-10">
                     <div className="space-y-2">
-                      <h3 className="text-green-400 font-bold uppercase tracking-wider text-xs">Gameplay</h3>
-                      <p className="text-sm text-gray-400">Classic growth mechanics with smooth, responsive controls.</p>
+                      <h3 className="text-amber-900 font-bold uppercase tracking-wider text-xs font-sans">Gameplay</h3>
+                      <p className="text-sm text-amber-900/60 font-sans">Classic growth mechanics with smooth, responsive controls.</p>
                     </div>
                     <div className="space-y-2">
-                      <h3 className="text-green-400 font-bold uppercase tracking-wider text-xs">New Mode</h3>
-                      <p className="text-sm text-gray-400">Warp through walls and avoid tactical bombs in Mode 2.</p>
+                      <h3 className="text-amber-900 font-bold uppercase tracking-wider text-xs font-sans">New Mode</h3>
+                      <p className="text-sm text-amber-900/60 font-sans">Warp through walls and avoid tactical bombs in Mode 2.</p>
                     </div>
                   </div>
 
                   <div className="flex flex-wrap gap-4">
                     <Link
                       to="/snake"
-                      className="inline-flex items-center gap-2 px-8 py-3.5 bg-green-500 text-black rounded-full hover:bg-green-400 transition-all shadow-lg shadow-green-500/20 font-bold uppercase tracking-tighter"
+                      className="inline-flex items-center gap-2 px-8 py-3.5 bg-amber-900 text-white rounded-full hover:bg-amber-950 transition-all shadow-lg shadow-amber-900/20 font-sans font-medium"
                     >
-                      <Play className="w-4 h-4 fill-black" />
+                      <Play className="w-4 h-4" />
                       Start Playing
                     </Link>
-                    <div className="inline-flex items-center gap-2 px-6 py-3.5 text-gray-500 font-mono text-xs uppercase tracking-widest">
+                    <div className="inline-flex items-center gap-2 px-6 py-3.5 text-amber-900/40 font-sans text-xs uppercase tracking-widest">
                        Authentic Sound • Dual Mode
                     </div>
                   </div>
@@ -819,10 +816,10 @@ export function Home() {
 
                 {/* Right Content - Visual Preview */}
                 <div className="relative flex justify-center">
-                  <div className="w-[240px] bg-[#3a3a2e] rounded-[18px_18px_40px_40px] p-3 shadow-2xl border border-white/5 relative transform -rotate-6 hover:rotate-0 transition-transform duration-500">
+                  <div className="w-[240px] bg-[#3a3a2e] rounded-[18px_18px_40px_40px] p-3 shadow-2xl border border-amber-900/10 relative transform -rotate-6 hover:rotate-0 transition-transform duration-500">
                      <div className="bg-[#1a1a14] rounded-lg p-1.5 mb-3 shadow-inner">
                        <div className="bg-[#8bac0f] aspect-[10/12] rounded flex flex-col items-center justify-center gap-1 overflow-hidden relative">
-                          <div className="absolute top-2 left-2 text-[6px] text-[#1a2800] opacity-40">SCR: 042</div>
+                          <div className="absolute top-2 left-2 text-[6px] text-[#1a2800] opacity-40 font-mono">SCR: 042</div>
                           <div className="w-1.5 h-1.5 bg-[#1a2800] absolute top-1/2 left-1/4"></div>
                           <div className="flex flex-col gap-0.5 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
                              <div className="w-2 h-2 bg-[#0f1a00] rounded-sm"></div>
@@ -830,7 +827,7 @@ export function Home() {
                              <div className="w-2 h-2 bg-[#1a2800] rounded-sm"></div>
                              <div className="w-2 h-2 bg-[#1a2800] rounded-sm"></div>
                           </div>
-                          <div className="text-[10px] font-bold text-[#1a2800] tracking-widest mt-auto mb-2 opacity-20">SNAKE</div>
+                          <div className="text-[10px] font-bold text-[#1a2800] tracking-widest mt-auto mb-2 opacity-20 font-mono">SNAKE</div>
                        </div>
                      </div>
                      <div className="w-10 h-10 bg-[#2a2a20] rounded-full mx-auto mb-2 flex items-center justify-center">
@@ -853,7 +850,7 @@ export function Home() {
                 key={i}
                 onClick={() => setActiveGameSlide(i)}
                 className={`w-12 h-1 rounded-full transition-all duration-300 ${
-                  activeGameSlide === i ? 'bg-green-500 w-20' : 'bg-white/20 hover:bg-white/40'
+                  activeGameSlide === i ? 'bg-amber-900 w-20' : 'bg-amber-900/20 hover:bg-amber-900/40'
                 }`}
               />
             ))}
