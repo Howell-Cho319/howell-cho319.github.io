@@ -7,6 +7,8 @@ import { Portfolio } from "./pages/Portfolio";
 import { Certifications } from "./pages/Certifications";
 import { Contact } from "./pages/Contact";
 import { FocusFlow } from "./pages/FocusFlow";
+import { DoMemo } from "./pages/DoMemo";
+import { DoMemoTool } from "./pages/DoMemoTool";
 import { NotFound } from "./pages/NotFound";
 
 export const router = createBrowserRouter([
@@ -21,6 +23,8 @@ export const router = createBrowserRouter([
       { path: "certifications", Component: Certifications },
       { path: "contact", Component: Contact },
       { path: "focusflow", Component: FocusFlow },
+      { path: "domemo", Component: DoMemo },
+      { path: "domemo/app", Component: DoMemoTool },
       { path: "*", Component: NotFound },
     ],
   },

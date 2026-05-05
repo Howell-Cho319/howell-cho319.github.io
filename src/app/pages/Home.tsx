@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import { ArrowRight, BookOpen, Briefcase, Award, Mail, FileText, X, ChevronLeft, ChevronRight, Clock, Volume2, ListChecks, CheckSquare, BarChart2, Info, Play, Smartphone } from "lucide-react";
+import { ArrowRight, BookOpen, Briefcase, Award, Mail, FileText, X, ChevronLeft, ChevronRight, Clock, Volume2, ListChecks, CheckSquare, BarChart2, Info, Play, Smartphone, FlipHorizontal, Layers, Keyboard } from "lucide-react";
 import { motion } from "motion/react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { useState } from "react";
@@ -534,6 +534,124 @@ export function Home() {
                     <p className="text-xs text-muted-foreground">Track progress</p>
                   </div>
                 </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* DoMemo Introduction Section */}
+      <section className="bg-[#fdfcfb] py-20 border-y border-amber-100/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Left Content - Visual Preview */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="relative order-2 lg:order-1"
+            >
+              <div className="relative aspect-[4/3] bg-white rounded-3xl shadow-xl border border-amber-100 overflow-hidden p-8 flex flex-col gap-6">
+                {/* Paper Mockup */}
+                <div className="flex-1 bg-[#fffdfa] border border-amber-50 shadow-inner rounded-xl p-6 relative group cursor-pointer transition-all hover:shadow-md">
+                   <div className="absolute top-4 right-4 text-amber-900/20 group-hover:text-amber-900/40 transition-colors">
+                     <FlipHorizontal className="w-5 h-5" />
+                   </div>
+                   <div className="space-y-4">
+                     <div className="h-2 w-3/4 bg-amber-900/10 rounded"></div>
+                     <div className="h-2 w-1/2 bg-amber-900/10 rounded"></div>
+                     <div className="h-2 w-2/3 bg-amber-900/10 rounded"></div>
+                     <div className="h-32"></div>
+                     <div className="pt-8 border-t border-amber-900/5 italic text-amber-900/40 text-sm">
+                       "Reading is not the same as remembering..."
+                     </div>
+                   </div>
+                </div>
+                
+                {/* Controls Mockup */}
+                <div className="flex justify-center gap-4">
+                  <div className="px-4 py-2 rounded-full bg-amber-100/50 text-amber-900/60 text-xs font-bold font-sans tracking-wider uppercase">Flip (F)</div>
+                  <div className="px-4 py-2 rounded-full bg-amber-100/50 text-amber-900/60 text-xs font-bold font-sans tracking-wider uppercase">Hide (H)</div>
+                  <div className="px-4 py-2 rounded-full bg-amber-100/50 text-amber-900/60 text-xs font-bold font-sans tracking-wider uppercase">Clear (Del)</div>
+                </div>
+              </div>
+              
+              {/* Decorative background blur */}
+              <div className="absolute -top-10 -left-10 w-40 h-40 bg-amber-200/20 rounded-full blur-3xl -z-10"></div>
+              <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-orange-200/20 rounded-full blur-3xl -z-10"></div>
+            </motion.div>
+
+            {/* Right Content - Text Info */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="order-1 lg:order-2"
+            >
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-amber-100 text-amber-900 rounded-full text-sm font-medium mb-6 font-sans">
+                <FileText className="w-4 h-4" />
+                New Study Tool
+              </div>
+              
+              <h2 className="text-4xl md:text-5xl font-bold mb-6 text-amber-950 font-serif italic">
+                DoMemo
+              </h2>
+              
+              <p className="text-xl text-amber-900/80 mb-8 leading-relaxed font-serif">
+                A distraction-free memory desk for anyone who learns by writing. 
+                Built on the principle that true learning happens through active recall, not passive reading.
+              </p>
+
+              <div className="space-y-6 mb-10">
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center border border-amber-100">
+                    <FlipHorizontal className="w-6 h-6 text-amber-900" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-amber-950 font-sans mb-1">Active Recall</h3>
+                    <p className="text-amber-900/70 text-sm">Flip your notes to test your memory instantly.</p>
+                  </div>
+                </div>
+
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center border border-amber-100">
+                    <Layers className="w-6 h-6 text-amber-900" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-amber-950 font-sans mb-1">Dual Paper System</h3>
+                    <p className="text-amber-900/70 text-sm">Use a second sheet for hints, translations, or context.</p>
+                  </div>
+                </div>
+
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center border border-amber-100">
+                    <Keyboard className="w-6 h-6 text-amber-900" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-amber-950 font-sans mb-1">Keyboard First</h3>
+                    <p className="text-amber-900/70 text-sm">Full control without your hands ever leaving the keys.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap gap-4">
+                <Link
+                  to="/domemo/app"
+                  className="inline-flex items-center gap-2 px-8 py-3.5 bg-amber-900 text-white rounded-full hover:bg-amber-950 transition-colors shadow-lg shadow-amber-900/20 font-sans font-medium"
+                >
+                  <Play className="w-4 h-4" />
+                  Open DoMemo
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+                <Link
+                  to="/domemo"
+                  className="inline-flex items-center gap-2 px-8 py-3.5 bg-amber-100 text-amber-900 rounded-full hover:bg-amber-200 transition-colors font-sans font-medium"
+                >
+                  <Info className="w-4 h-4" />
+                  Read More
+                </Link>
               </div>
             </motion.div>
           </div>
