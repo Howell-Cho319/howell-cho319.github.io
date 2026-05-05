@@ -1,0 +1,355 @@
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+  .nokia-wrap {
+    display: flex; justify-content: center; align-items: flex-start;
+    padding: 20px 0; min-height: 700px; outline: none;
+  }
+  .nokia-body {
+    width: 320px; background: #3a3a2e;
+    border-radius: 24px 24px 50px 50px;
+    padding: 16px 16px 28px;
+    box-shadow: inset 0 2px 4px rgba(255,255,255,0.05), inset 0 -4px 8px rgba(0,0,0,0.4);
+    position: relative; font-family: 'Share Tech Mono', monospace;
+  }
+  .speaker-grille { display: flex; justify-content: center; gap: 4px; margin-bottom: 10px; }
+  .speaker-grille span { width: 3px; height: 14px; background: #2a2a20; border-radius: 2px; }
+  .screen-bezel {
+    background: #1a1a14; border-radius: 12px; padding: 8px;
+    margin-bottom: 14px; box-shadow: inset 0 3px 8px rgba(0,0,0,0.7);
+  }
+  .screen {
+    background: #8a9a2a; border-radius: 6px; width: 100%;
+    height: 260px; position: relative; overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+  .screen-scanlines {
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(0deg, rgba(0,0,0,0.04) 0px, rgba(0,0,0,0.04) 1px, transparent 1px, transparent 3px);
+    pointer-events: none; z-index: 10;
+  }
+  .screen-inner { display: flex; width: 100%; height: 100%; padding: 4px; gap: 4px; }
+  .game-area { flex: 1; position: relative; }
+  canvas#tetrisCanvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; }
+  .side-panel { width: 56px; display: flex; flex-direction: column; gap: 6px; padding: 2px; }
+  .side-label { font-size: 7px; color: #3a4010; text-transform: uppercase; letter-spacing: 0.5px; font-family: 'Share Tech Mono', monospace; }
+  .side-value { font-size: 11px; color: #2a3008; font-family: 'Share Tech Mono', monospace; font-weight: bold; }
+  .nokia-brand { text-align: center; color: #5a6030; font-size: 9px; letter-spacing: 3px; margin-bottom: 10px; font-family: 'Share Tech Mono', monospace; }
+  .dpad-container { display: flex; justify-content: center; align-items: center; margin-bottom: 10px; }
+  .dpad { position: relative; width: 120px; height: 120px; }
+  .dpad-btn {
+    position: absolute; background: #2a2a20; border: none; border-radius: 6px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-size: 11px; color: #8a9a50; transition: background 0.1s;
+    user-select: none; -webkit-user-select: none;
+  }
+  .dpad-btn:active, .dpad-btn.pressed { background: #1a1a10; }
+  .dpad-up { top: 0; left: 50%; transform: translateX(-50%); width: 36px; height: 36px; border-radius: 6px 6px 2px 2px; }
+  .dpad-down { bottom: 0; left: 50%; transform: translateX(-50%); width: 36px; height: 36px; border-radius: 2px 2px 6px 6px; }
+  .dpad-left { left: 0; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; border-radius: 6px 2px 2px 6px; }
+  .dpad-right { right: 0; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; border-radius: 2px 6px 6px 2px; }
+  .dpad-center {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 38px; height: 38px; background: #2a2a20; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; color: #8a9a50; cursor: pointer; border: none;
+  }
+  .dpad-center:active, .dpad-center.pressed { background: #1a1a10; }
+  .bottom-btns { display: flex; justify-content: space-between; align-items: center; padding: 0 8px; }
+  .action-btn {
+    background: #2a2a20; border: none; border-radius: 8px;
+    padding: 8px 18px; color: #8a9a50; font-family: 'Share Tech Mono', monospace;
+    font-size: 11px; cursor: pointer; letter-spacing: 1px; transition: background 0.1s;
+  }
+  .action-btn:active { background: #1a1a10; }
+  .overlay-screen {
+    position: absolute; inset: 0; background: #8a9a2a;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 6px; z-index: 20;
+  }
+  .overlay-title { font-family: 'Share Tech Mono', monospace; font-size: 18px; color: #2a3008; letter-spacing: 2px; }
+  .overlay-sub { font-family: 'Share Tech Mono', monospace; font-size: 9px; color: #3a4a10; letter-spacing: 2px; }
+  .overlay-blink {
+    font-family: 'Share Tech Mono', monospace; font-size: 9px; color: #2a3008;
+    letter-spacing: 1px; animation: blink 1s step-end infinite; margin-top: 8px;
+  }
+  .kb-hint {
+    text-align: center; font-family: 'Share Tech Mono', monospace;
+    font-size: 8px; color: #5a6030; margin-top: 8px; letter-spacing: 0.5px;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+</style>
+
+<div class="nokia-wrap" id="gameWrap" tabindex="0">
+  <div class="nokia-body">
+    <div class="speaker-grille">
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+    <div class="screen-bezel">
+      <div class="screen">
+        <div class="screen-scanlines"></div>
+        <div id="startScreen" class="overlay-screen">
+          <div style="height:30px"></div>
+          <div class="overlay-title">TETRIS</div>
+          <div class="overlay-sub">NOKIA EDITION</div>
+          <div class="overlay-blink">PRESS START</div>
+        </div>
+        <div id="gameOverScreen" class="overlay-screen" style="display:none">
+          <div class="overlay-title" style="font-size:13px">GAME OVER</div>
+          <div class="overlay-sub" id="goScore"></div>
+          <div class="overlay-blink">PRESS START</div>
+        </div>
+        <div id="pauseScreen" class="overlay-screen" style="display:none; background: rgba(138,154,42,0.9);">
+          <div class="overlay-title" style="font-size:14px">PAUSED</div>
+          <div class="overlay-blink">PRESS P TO RESUME</div>
+        </div>
+        <div class="screen-inner">
+          <div class="game-area">
+            <canvas id="tetrisCanvas" width="100" height="200"></canvas>
+          </div>
+          <div class="side-panel">
+            <div class="side-label">SCORE</div>
+            <div class="side-value" id="scoreVal">0</div>
+            <div class="side-label" style="margin-top:4px">LINES</div>
+            <div class="side-value" id="linesVal">0</div>
+            <div class="side-label" style="margin-top:4px">LEVEL</div>
+            <div class="side-value" id="levelVal">1</div>
+            <div class="side-label" style="margin-top:6px">NEXT</div>
+            <canvas id="nextCanvas" width="44" height="44"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="nokia-brand">NOKIA</div>
+    <div class="dpad-container">
+      <div class="dpad">
+        <button class="dpad-btn dpad-up" id="btnUp">▲</button>
+        <button class="dpad-btn dpad-down" id="btnDown">▼</button>
+        <button class="dpad-btn dpad-left" id="btnLeft">◀</button>
+        <button class="dpad-btn dpad-right" id="btnRight">▶</button>
+        <button class="dpad-center" id="btnOK">OK</button>
+      </div>
+    </div>
+    <div class="bottom-btns">
+      <button class="action-btn" id="btnStart">START</button>
+      <button class="action-btn" id="btnPause">PAUSE</button>
+    </div>
+    <div class="kb-hint">↑ ROTATE &nbsp; ↓ SOFT DROP &nbsp; SPACE HARD DROP &nbsp; P PAUSE</div>
+  </div>
+</div>
+
+<script>
+const COLS = 10, ROWS = 20, BLOCK = 10;
+const C = { empty: '#8a9a2a', filled: '#2a3008', ghost: '#6a7a1a' };
+
+const PIECES = [
+  [[1,1,1,1]],
+  [[1,1],[1,1]],
+  [[0,1,0],[1,1,1]],
+  [[0,1,1],[1,1,0]],
+  [[1,1,0],[0,1,1]],
+  [[1,0,0],[1,1,1]],
+  [[0,0,1],[1,1,1]],
+];
+
+const canvas = document.getElementById('tetrisCanvas');
+const ctx = canvas.getContext('2d');
+const nextCanvas = document.getElementById('nextCanvas');
+const nextCtx = nextCanvas.getContext('2d');
+const wrap = document.getElementById('gameWrap');
+
+let board, piece, nextPiece, score, lines, level, gameLoop, running, paused;
+
+function newBoard() { return Array.from({length: ROWS}, () => Array(COLS).fill(0)); }
+
+function rndPiece() {
+  const sh = PIECES[Math.floor(Math.random() * PIECES.length)];
+  return { shape: sh.map(r => [...r]), x: Math.floor(COLS/2) - Math.floor(sh[0].length/2), y: 0 };
+}
+
+function rotate(sh) { return sh[0].map((_, i) => sh.map(r => r[i]).reverse()); }
+
+function valid(sh, ox, oy) {
+  for (let r = 0; r < sh.length; r++)
+    for (let c = 0; c < sh[r].length; c++)
+      if (sh[r][c]) {
+        const nx = ox + c, ny = oy + r;
+        if (nx < 0 || nx >= COLS || ny >= ROWS) return false;
+        if (ny >= 0 && board[ny][nx]) return false;
+      }
+  return true;
+}
+
+function place() {
+  for (let r = 0; r < piece.shape.length; r++)
+    for (let c = 0; c < piece.shape[r].length; c++)
+      if (piece.shape[r][c] && piece.y + r >= 0)
+        board[piece.y + r][piece.x + c] = 1;
+  clearLines();
+  piece = nextPiece;
+  nextPiece = rndPiece();
+  if (!valid(piece.shape, piece.x, piece.y)) { endGame(); return; }
+  drawNext(); draw();
+}
+
+function clearLines() {
+  let cleared = 0;
+  for (let r = ROWS - 1; r >= 0; r--) {
+    if (board[r].every(c => c)) {
+      board.splice(r, 1);
+      board.unshift(Array(COLS).fill(0));
+      cleared++; r++;
+    }
+  }
+  if (cleared) {
+    lines += cleared;
+    score += [0,100,300,500,800][cleared] * level;
+    level = Math.floor(lines / 10) + 1;
+    document.getElementById('scoreVal').textContent = score;
+    document.getElementById('linesVal').textContent = lines;
+    document.getElementById('levelVal').textContent = level;
+    clearInterval(gameLoop);
+    gameLoop = setInterval(tick, Math.max(80, 600 - (level-1)*55));
+  }
+}
+
+function ghostY() {
+  let gy = piece.y;
+  while (valid(piece.shape, piece.x, gy + 1)) gy++;
+  return gy;
+}
+
+function draw() {
+  ctx.fillStyle = C.empty;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  for (let r = 0; r < ROWS; r++)
+    for (let c = 0; c < COLS; c++)
+      if (board[r][c]) {
+        ctx.fillStyle = C.filled;
+        ctx.fillRect(c*BLOCK+1, r*BLOCK+1, BLOCK-2, BLOCK-2);
+      }
+  if (piece && running) {
+    const gy = ghostY();
+    for (let r = 0; r < piece.shape.length; r++)
+      for (let c = 0; c < piece.shape[r].length; c++)
+        if (piece.shape[r][c]) {
+          ctx.fillStyle = C.ghost;
+          ctx.fillRect((piece.x+c)*BLOCK+1, (gy+r)*BLOCK+1, BLOCK-2, BLOCK-2);
+          if (piece.y + r >= 0) {
+            ctx.fillStyle = C.filled;
+            ctx.fillRect((piece.x+c)*BLOCK+1, (piece.y+r)*BLOCK+1, BLOCK-2, BLOCK-2);
+          }
+        }
+  }
+  ctx.strokeStyle = 'rgba(0,0,0,0.07)'; ctx.lineWidth = 0.5;
+  for (let r = 0; r <= ROWS; r++) { ctx.beginPath(); ctx.moveTo(0,r*BLOCK); ctx.lineTo(COLS*BLOCK,r*BLOCK); ctx.stroke(); }
+  for (let c = 0; c <= COLS; c++) { ctx.beginPath(); ctx.moveTo(c*BLOCK,0); ctx.lineTo(c*BLOCK,ROWS*BLOCK); ctx.stroke(); }
+}
+
+function drawNext() {
+  nextCtx.fillStyle = C.empty;
+  nextCtx.fillRect(0, 0, 44, 44);
+  if (!nextPiece) return;
+  const sh = nextPiece.shape, bw = 9;
+  const ox = Math.floor((4 - sh[0].length) / 2);
+  const oy = Math.floor((4 - sh.length) / 2);
+  for (let r = 0; r < sh.length; r++)
+    for (let c = 0; c < sh[r].length; c++)
+      if (sh[r][c]) {
+        nextCtx.fillStyle = C.filled;
+        nextCtx.fillRect((ox+c)*bw+1, (oy+r)*bw+1, bw-2, bw-2);
+      }
+}
+
+function tick() {
+  if (!running || paused) return;
+  if (valid(piece.shape, piece.x, piece.y + 1)) piece.y++;
+  else place();
+  draw();
+}
+
+function startGame() {
+  board = newBoard(); score = 0; lines = 0; level = 1;
+  document.getElementById('scoreVal').textContent = '0';
+  document.getElementById('linesVal').textContent = '0';
+  document.getElementById('levelVal').textContent = '1';
+  piece = rndPiece(); nextPiece = rndPiece();
+  running = true; paused = false;
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('gameOverScreen').style.display = 'none';
+  document.getElementById('pauseScreen').style.display = 'none';
+  clearInterval(gameLoop);
+  gameLoop = setInterval(tick, 600);
+  drawNext(); draw();
+  wrap.focus();
+}
+
+function endGame() {
+  running = false; clearInterval(gameLoop);
+  document.getElementById('goScore').textContent = 'SCORE: ' + score;
+  document.getElementById('gameOverScreen').style.display = 'flex';
+}
+
+function setPause(val) {
+  if (!running) return;
+  paused = val;
+  document.getElementById('pauseScreen').style.display = paused ? 'flex' : 'none';
+}
+
+function doRotate() {
+  if (!running || paused) return;
+  const r = rotate(piece.shape);
+  if (valid(r, piece.x, piece.y)) piece.shape = r;
+  else if (valid(r, piece.x+1, piece.y)) { piece.shape = r; piece.x++; }
+  else if (valid(r, piece.x-1, piece.y)) { piece.shape = r; piece.x--; }
+  draw();
+}
+function doLeft() { if (!running||paused) return; if (valid(piece.shape,piece.x-1,piece.y)) piece.x--; draw(); }
+function doRight() { if (!running||paused) return; if (valid(piece.shape,piece.x+1,piece.y)) piece.x++; draw(); }
+function doDown() { if (!running||paused) return; if (valid(piece.shape,piece.x,piece.y+1)) piece.y++; else place(); draw(); }
+function doHard() {
+  if (!running||paused) return;
+  while (valid(piece.shape, piece.x, piece.y+1)) piece.y++;
+  place(); draw();
+}
+
+document.getElementById('btnStart').addEventListener('click', startGame);
+document.getElementById('btnPause').addEventListener('click', () => setPause(!paused));
+document.getElementById('btnUp').addEventListener('click', doRotate);
+document.getElementById('btnDown').addEventListener('click', doDown);
+document.getElementById('btnLeft').addEventListener('click', doLeft);
+document.getElementById('btnRight').addEventListener('click', doRight);
+document.getElementById('btnOK').addEventListener('click', doHard);
+
+function highlight(id, on) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle('pressed', on);
+}
+
+const keyMap = {
+  'ArrowLeft':  { fn: doLeft,    id: 'btnLeft'  },
+  'ArrowRight': { fn: doRight,   id: 'btnRight' },
+  'ArrowDown':  { fn: doDown,    id: 'btnDown'  },
+  'ArrowUp':    { fn: doRotate,  id: 'btnUp'    },
+  ' ':          { fn: doHard,    id: 'btnOK'    },
+};
+
+window.addEventListener('keydown', e => {
+  if (e.key === 'Enter') { startGame(); return; }
+  if (e.key === 'p' || e.key === 'P') { setPause(!paused); return; }
+  if (keyMap[e.key]) {
+    e.preventDefault();
+    highlight(keyMap[e.key].id, true);
+    keyMap[e.key].fn();
+  }
+});
+
+window.addEventListener('keyup', e => {
+  if (keyMap[e.key]) highlight(keyMap[e.key].id, false);
+});
+
+wrap.addEventListener('click', () => wrap.focus());
+wrap.focus();
+draw();
+</script>

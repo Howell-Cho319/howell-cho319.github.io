@@ -1,0 +1,449 @@
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+.nokia-wrap { display:flex; justify-content:center; padding:20px 0; min-height:800px; }
+.nokia-body {
+  width:320px;
+  background:linear-gradient(160deg,#42423a 0%,#32322a 60%,#28281e 100%);
+  border-radius:22px 22px 54px 54px;
+  padding:14px 16px 30px;
+  box-shadow:inset 0 2px 3px rgba(255,255,255,0.07),inset 0 -5px 10px rgba(0,0,0,0.5),0 8px 32px rgba(0,0,0,0.5);
+  font-family:'Share Tech Mono',monospace;
+}
+.speaker-grille { display:flex; justify-content:center; gap:4px; margin-bottom:10px; }
+.speaker-grille span { width:3px; height:13px; background:#222218; border-radius:2px; }
+.screen-bezel {
+  background:#111108; border-radius:10px; padding:7px; margin-bottom:12px;
+  box-shadow:inset 0 4px 12px rgba(0,0,0,0.8),0 1px 0 rgba(255,255,255,0.04);
+}
+.screen {
+  background:#8bac0f; border-radius:5px;
+  width:100%; height:270px; position:relative; overflow:hidden;
+}
+.screen-scanlines {
+  position:absolute; inset:0; pointer-events:none; z-index:10;
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,0.05) 0px,rgba(0,0,0,0.05) 1px,transparent 1px,transparent 3px);
+}
+.screen-vignette { position:absolute; inset:0; pointer-events:none; z-index:11; box-shadow:inset 0 0 20px rgba(0,0,0,0.25); }
+canvas#snakeCanvas { display:block; width:100%; height:100%; image-rendering:pixelated; }
+.overlay {
+  position:absolute; inset:0; z-index:20; background:#8bac0f;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px;
+}
+.overlay-title { font-family:'Share Tech Mono',monospace; font-size:18px; color:#1a2800; letter-spacing:3px; font-weight:bold; }
+.overlay-sub { font-family:'Share Tech Mono',monospace; font-size:8px; color:#3a5000; letter-spacing:2px; }
+.overlay-row { font-family:'Share Tech Mono',monospace; font-size:10px; color:#1a2800; letter-spacing:1px; }
+.overlay-blink { font-family:'Share Tech Mono',monospace; font-size:9px; color:#1a2800; letter-spacing:1px; animation:blink 1s step-end infinite; margin-top:4px; }
+@keyframes blink { 50%{opacity:0;} }
+.mode-select { display:flex; gap:8px; margin-top:6px; }
+.mode-btn {
+  font-family:'Share Tech Mono',monospace; font-size:8px; color:#1a2800;
+  background:#7a9c0a; border:2px solid #1a2800; border-radius:3px;
+  padding:4px 8px; cursor:pointer; letter-spacing:1px; transition:all 0.1s;
+}
+.mode-btn.active, .mode-btn:hover { background:#1a2800; color:#8bac0f; }
+.nokia-brand { text-align:center; color:#5a6030; font-size:9px; letter-spacing:3px; margin-bottom:8px; }
+.dpad-container { display:flex; justify-content:center; margin-bottom:10px; }
+.dpad { position:relative; width:124px; height:124px; }
+.dpad-cross { position:absolute; inset:0; display:grid; grid-template-columns:38px 48px 38px; grid-template-rows:38px 48px 38px; }
+.dpad-btn {
+  background:#222218; border:none; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  font-size:11px; color:#7a8a40; transition:background 0.08s; user-select:none;
+}
+.dpad-btn:active,.dpad-btn.pressed { background:#111108; color:#aabb50; }
+.dpad-btn.empty { background:transparent; cursor:default; pointer-events:none; }
+.dpad-up    { border-radius:6px 6px 2px 2px; grid-column:2; grid-row:1; }
+.dpad-mid   { grid-column:1/4; grid-row:2; display:flex; }
+.dpad-left  { border-radius:6px 2px 2px 6px; }
+.dpad-center { flex:1; background:#1a1a10; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:8px; color:#6a7a30; cursor:pointer; border:none; }
+.dpad-center:active,.dpad-center.pressed { background:#0a0a06; }
+.dpad-right { border-radius:2px 6px 6px 2px; }
+.dpad-down  { border-radius:2px 2px 6px 6px; grid-column:2; grid-row:3; }
+.bottom-btns { display:flex; justify-content:space-between; padding:0 8px; margin-bottom:6px; }
+.action-btn { background:#222218; border:none; border-radius:8px; padding:8px 14px; color:#7a8a40; font-family:'Share Tech Mono',monospace; font-size:10px; cursor:pointer; letter-spacing:1px; transition:background 0.08s; }
+.action-btn:active { background:#111108; }
+.action-btn.active-mode { background:#1a2800; color:#8bac0f; }
+.kb-hint { text-align:center; font-family:'Share Tech Mono',monospace; font-size:7px; color:#4a5020; letter-spacing:0.3px; padding:0 4px; }
+</style>
+
+<div class="nokia-wrap" id="gameWrap">
+  <div class="nokia-body">
+    <div class="speaker-grille"><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="screen-bezel">
+      <div class="screen">
+        <div class="screen-scanlines"></div>
+        <div class="screen-vignette"></div>
+        <div id="startScreen" class="overlay">
+          <div class="overlay-title">SNAKE</div>
+          <div class="overlay-sub">NOKIA EDITION</div>
+          <div style="margin-top:8px;font-family:'Share Tech Mono',monospace;font-size:8px;color:#1a2800;">SELECT MODE:</div>
+          <div class="mode-select">
+            <div class="mode-btn active" id="modeBtn1" onclick="selectMode(1)">MODE 1<br><span style="font-size:7px">CLASSIC</span></div>
+            <div class="mode-btn" id="modeBtn2" onclick="selectMode(2)">MODE 2<br><span style="font-size:7px">WARP+BOMB</span></div>
+          </div>
+          <div class="overlay-blink" style="margin-top:8px">PRESS START</div>
+        </div>
+        <div id="gameOverScreen" class="overlay" style="display:none">
+          <div class="overlay-title" style="font-size:13px">GAME OVER</div>
+          <div class="overlay-row" id="goScore"></div>
+          <div class="overlay-row" id="goHigh"></div>
+          <div class="overlay-row" id="goMode"></div>
+          <div class="overlay-blink">PRESS START</div>
+        </div>
+        <div id="pauseScreen" class="overlay" style="display:none;background:rgba(139,172,15,0.93);">
+          <div class="overlay-title" style="font-size:14px">PAUSED</div>
+          <div class="overlay-blink">P TO RESUME</div>
+        </div>
+        <canvas id="snakeCanvas" width="288" height="270"></canvas>
+      </div>
+    </div>
+    <div class="nokia-brand">NOKIA</div>
+    <div class="dpad-container">
+      <div class="dpad">
+        <div class="dpad-cross">
+          <div class="dpad-btn empty"></div>
+          <button class="dpad-btn dpad-up" id="btnUp">▲</button>
+          <div class="dpad-btn empty"></div>
+          <div class="dpad-mid">
+            <button class="dpad-btn dpad-left" style="flex:1" id="btnLeft">◀</button>
+            <button class="dpad-center" id="btnOK">OK</button>
+            <button class="dpad-btn dpad-right" style="flex:1" id="btnRight">▶</button>
+          </div>
+          <div class="dpad-btn empty"></div>
+          <button class="dpad-btn dpad-down" id="btnDown">▼</button>
+          <div class="dpad-btn empty"></div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-btns">
+      <button class="action-btn" id="btnStart">START</button>
+      <button class="action-btn" id="btnMode">MODE 1</button>
+      <button class="action-btn" id="btnPause">PAUSE</button>
+    </div>
+    <div class="kb-hint">ARROWS/WASD MOVE | SPACE/P PAUSE | M MODE | ENTER START</div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('snakeCanvas');
+const ctx = canvas.getContext('2d');
+const CW = canvas.width, CH = canvas.height;
+const CELL = 18;
+const COLS = Math.floor(CW / CELL);
+const ROWS = Math.floor(CH / CELL);
+const OX = Math.floor((CW - COLS*CELL)/2);
+const OY = Math.floor((CH - ROWS*CELL)/2);
+
+const COL = {
+  bg:'#8bac0f', grid:'rgba(0,0,0,0.06)', snake:'#1a2800', head:'#0f1a00',
+  eye:'#8bac0f', food:'#306030', foodX:'#1a3010',
+  bomb:'#1a2800', bombFuse:'#3a5010', bombFlash:'#0f1a00',
+  warpEdge:'rgba(26,40,0,0.35)', border:'#0f1a00', text:'#1a2800', textDim:'#3a5010',
+};
+
+let snake, dir, nextDir, items, score, highScore1, highScore2, running, paused, gameLoop;
+let speed, mode, bombTimer, explosions, frameCount;
+highScore1 = 0; highScore2 = 0;
+let selectedMode = 1;
+
+function selectMode(m) {
+  selectedMode = m;
+  document.getElementById('modeBtn1').classList.toggle('active', m===1);
+  document.getElementById('modeBtn2').classList.toggle('active', m===2);
+  document.getElementById('btnMode').textContent = 'MODE '+m;
+  document.getElementById('btnMode').classList.toggle('active-mode', m===2);
+}
+
+function rnd(a,b) { return Math.floor(Math.random()*(b-a))+a; }
+
+function occupied(x,y) {
+  if (snake.some(s=>s.x===x&&s.y===y)) return true;
+  if (items.some(i=>i.x===x&&i.y===y)) return true;
+  return false;
+}
+
+function freeCell() {
+  let p, tries=0;
+  do { p={x:rnd(0,COLS),y:rnd(0,ROWS)}; tries++; } while(occupied(p.x,p.y)&&tries<200);
+  return p;
+}
+
+function spawnFood() { const p=freeCell(); items.push({type:'food',x:p.x,y:p.y,age:0}); }
+
+function spawnBomb() {
+  const p=freeCell();
+  const ttl = 8 + rnd(0,6);
+  items.push({type:'bomb',x:p.x,y:p.y,ttl:ttl,maxTtl:ttl,age:0});
+}
+
+function startGame() {
+  mode = selectedMode;
+  const mx=Math.floor(COLS/2), my=Math.floor(ROWS/2);
+  snake=[{x:mx,y:my},{x:mx-1,y:my},{x:mx-2,y:my}];
+  dir={x:1,y:0}; nextDir={x:1,y:0};
+  score=0; speed=200; items=[]; explosions=[]; frameCount=0;
+  running=true; paused=false;
+  document.getElementById('startScreen').style.display='none';
+  document.getElementById('gameOverScreen').style.display='none';
+  document.getElementById('pauseScreen').style.display='none';
+  spawnFood();
+  if (mode===2) { spawnBomb(); }
+  clearInterval(gameLoop);
+  gameLoop=setInterval(tick,speed);
+  draw();
+}
+
+function endGame() {
+  running=false; clearInterval(gameLoop);
+  if (mode===1 && score>highScore1) highScore1=score;
+  if (mode===2 && score>highScore2) highScore2=score;
+  const hi = mode===1?highScore1:highScore2;
+  document.getElementById('goScore').textContent='SCORE: '+score;
+  document.getElementById('goHigh').textContent='BEST:  '+hi;
+  document.getElementById('goMode').textContent='MODE:  '+(mode===1?'CLASSIC':'WARP+BOMB');
+  document.getElementById('gameOverScreen').style.display='flex';
+}
+
+function setPause(val) {
+  if(!running) return;
+  paused=val;
+  document.getElementById('pauseScreen').style.display=paused?'flex':'none';
+  if(!paused) { clearInterval(gameLoop); gameLoop=setInterval(tick,speed); }
+  else clearInterval(gameLoop);
+}
+
+function wrapCoord(x,y) {
+  return { x: (x+COLS)%COLS, y: (y+ROWS)%ROWS };
+}
+
+function tick() {
+  if(!running||paused) return;
+  frameCount++;
+  dir={...nextDir};
+  let nx=snake[0].x+dir.x, ny=snake[0].y+dir.y;
+
+  if (mode===1) {
+    if(nx<0||nx>=COLS||ny<0||ny>=ROWS){endGame();return;}
+  } else {
+    const w=wrapCoord(nx,ny); nx=w.x; ny=w.y;
+  }
+
+  if(snake.some(s=>s.x===nx&&s.y===ny)){endGame();return;}
+
+  const head={x:nx,y:ny};
+
+  const hitBomb = items.findIndex(i=>i.type==='bomb'&&i.x===nx&&i.y===ny);
+  if(hitBomb!==-1){endGame();return;}
+
+  snake.unshift(head);
+
+  const hitFood = items.findIndex(i=>i.type==='food'&&i.x===nx&&i.y===ny);
+  if(hitFood!==-1){
+    score++;
+    items.splice(hitFood,1);
+    spawnFood();
+    const lvl=Math.floor(score/5);
+    speed=Math.max(60,200-lvl*14);
+    clearInterval(gameLoop);
+    gameLoop=setInterval(tick,speed);
+  } else {
+    snake.pop();
+  }
+
+  if(mode===2){
+    items.forEach(item=>{
+      item.age++;
+      if(item.type==='bomb'){
+        item.ttl--;
+        if(item.ttl<=0){
+          explosions.push({x:item.x,y:item.y,frames:6});
+          items.splice(items.indexOf(item),1);
+          const adj=[{x:item.x,y:item.y},{x:item.x-1,y:item.y},{x:item.x+1,y:item.y},{x:item.x,y:item.y-1},{x:item.x,y:item.y+1}];
+          for(const c of adj){
+            if(snake.some(s=>s.x===c.x&&s.y===c.y)){endGame();return;}
+          }
+        }
+      }
+    });
+
+    if(frameCount%12===0) {
+      const foodCount = items.filter(i=>i.type==='food').length;
+      if(foodCount<2) spawnFood();
+    }
+    if(frameCount%20===0){
+      const bombCount=items.filter(i=>i.type==='bomb').length;
+      if(bombCount<3) spawnBomb();
+    }
+  }
+
+  explosions=explosions.filter(e=>{e.frames--;return e.frames>0;});
+  draw();
+}
+
+function drawCell(x,y,color,r){
+  const px=OX+x*CELL,py=OY+y*CELL;
+  ctx.fillStyle=color;
+  if(r){ctx.beginPath();ctx.roundRect(px+1,py+1,CELL-2,CELL-2,r);ctx.fill();}
+  else{ctx.fillRect(px+1,py+1,CELL-2,CELL-2);}
+}
+
+function draw(){
+  ctx.fillStyle=COL.bg;
+  ctx.fillRect(0,0,CW,CH);
+
+  ctx.strokeStyle=COL.grid; ctx.lineWidth=0.5;
+  for(let c=0;c<=COLS;c++){ctx.beginPath();ctx.moveTo(OX+c*CELL,OY);ctx.lineTo(OX+c*CELL,OY+ROWS*CELL);ctx.stroke();}
+  for(let r=0;r<=ROWS;r++){ctx.beginPath();ctx.moveTo(OX,OY+r*CELL);ctx.lineTo(OX+COLS*CELL,OY+r*CELL);ctx.stroke();}
+
+  if(mode===2){
+    ctx.strokeStyle='rgba(26,40,0,0.5)'; ctx.lineWidth=2;
+    ctx.setLineDash([4,4]);
+    ctx.strokeRect(OX+1,OY+1,COLS*CELL-2,ROWS*CELL-2);
+    ctx.setLineDash([]);
+  } else {
+    ctx.strokeStyle=COL.border; ctx.lineWidth=1.5;
+    ctx.strokeRect(OX,OY,COLS*CELL,ROWS*CELL);
+  }
+
+  items.forEach(item=>{
+    const px=OX+item.x*CELL, py=OY+item.y*CELL;
+    if(item.type==='food'){
+      ctx.fillStyle=COL.food;
+      ctx.beginPath();ctx.roundRect(px+3,py+3,CELL-6,CELL-6,3);ctx.fill();
+      ctx.fillStyle=COL.foodX;
+      ctx.fillRect(px+CELL/2-1,py+2,2,4);
+      ctx.fillRect(px+2,py+CELL/2-1,4,2);
+      ctx.fillRect(px+CELL-6,py+CELL/2-1,4,2);
+      ctx.fillRect(px+CELL/2-1,py+CELL-6,2,4);
+    } else if(item.type==='bomb'){
+      const danger = item.ttl<=3;
+      const flash = danger && Math.floor(Date.now()/150)%2===0;
+      ctx.fillStyle = flash ? COL.bombFlash : COL.bomb;
+      ctx.beginPath();
+      ctx.arc(px+CELL/2, py+CELL/2+1, CELL/2-3, 0, Math.PI*2);
+      ctx.fill();
+      ctx.fillStyle=COL.bombFuse;
+      ctx.fillRect(px+CELL/2-1,py+1,2,5);
+      ctx.fillRect(px+CELL/2+1,py+2,3,2);
+      const pct = item.ttl/item.maxTtl;
+      ctx.strokeStyle = danger ? COL.bombFlash : COL.bombFuse;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.arc(px+CELL/2, py+CELL/2+1, CELL/2-3, -Math.PI/2, -Math.PI/2+Math.PI*2*pct);
+      ctx.stroke();
+      if(danger){
+        ctx.fillStyle='rgba(26,40,0,0.15)';
+        ctx.beginPath();
+        ctx.arc(px+CELL/2,py+CELL/2+1,CELL-3,0,Math.PI*2);
+        ctx.fill();
+      }
+    }
+  });
+
+  explosions.forEach(e=>{
+    const px=OX+e.x*CELL, py=OY+e.y*CELL;
+    const r=(6-e.frames)*4;
+    ctx.fillStyle=`rgba(26,40,0,${e.frames/6*0.5})`;
+    ctx.beginPath();ctx.arc(px+CELL/2,py+CELL/2,r,0,Math.PI*2);ctx.fill();
+    [-1,0,1].forEach(dx=>[-1,0,1].forEach(dy=>{
+      if(dx===0&&dy===0) return;
+      const nx2=e.x+dx, ny2=e.y+dy;
+      if(nx2>=0&&nx2<COLS&&ny2>=0&&ny2<ROWS){
+        ctx.fillStyle=`rgba(26,40,0,${e.frames/6*0.3})`;
+        ctx.fillRect(OX+nx2*CELL+1,OY+ny2*CELL+1,CELL-2,CELL-2);
+      }
+    }));
+  });
+
+  for(let i=snake.length-1;i>=0;i--){
+    const s=snake[i];
+    const isHead=i===0;
+    drawCell(s.x,s.y,isHead?COL.head:COL.snake,isHead?4:2);
+    if(isHead){
+      const px=OX+s.x*CELL,py=OY+s.y*CELL;
+      ctx.fillStyle=COL.eye;
+      const es=2.5;
+      let e1x,e1y,e2x,e2y;
+      if(dir.x===1){e1x=px+CELL-5;e1y=py+4;e2x=px+CELL-5;e2y=py+CELL-7;}
+      else if(dir.x===-1){e1x=px+3;e1y=py+4;e2x=px+3;e2y=py+CELL-7;}
+      else if(dir.y===-1){e1x=px+4;e1y=py+3;e2x=px+CELL-7;e2y=py+3;}
+      else{e1x=px+4;e1y=py+CELL-5;e2x=px+CELL-7;e2y=py+CELL-5;}
+      ctx.beginPath();ctx.arc(e1x,e1y,es,0,Math.PI*2);ctx.fill();
+      ctx.beginPath();ctx.arc(e2x,e2y,es,0,Math.PI*2);ctx.fill();
+    }
+  }
+
+  if(mode===2){
+    const arrows=[
+      {x:OX+COLS*CELL/2,y:OY+3,t:'↕'},{x:OX+3,y:OY+ROWS*CELL/2,t:'↔'},
+      {x:OX+COLS*CELL/2,y:OY+ROWS*CELL-4,t:'↕'},{x:OX+COLS*CELL-4,y:OY+ROWS*CELL/2,t:'↔'}
+    ];
+    ctx.fillStyle='rgba(26,40,0,0.4)'; ctx.font='8px monospace'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    arrows.forEach(a=>ctx.fillText(a.t,a.x,a.y));
+    ctx.textBaseline='alphabetic';
+  }
+
+  ctx.fillStyle=COL.text;
+  ctx.font='bold 10px "Share Tech Mono",monospace';
+  ctx.textAlign='left';
+  ctx.fillText('SCR:'+String(score).padStart(3,'0'),OX+2,12);
+  ctx.textAlign='right';
+  const hi=mode===1?highScore1:highScore2;
+  ctx.fillText('HI:'+String(hi).padStart(3,'0'),OX+COLS*CELL-2,12);
+  ctx.textAlign='center';
+  ctx.fillStyle=COL.textDim;
+  ctx.font='8px "Share Tech Mono",monospace';
+  const modeLabel = mode===2?'WARP':'WALL';
+  ctx.fillText(modeLabel,OX+COLS*CELL/2,11);
+  ctx.textAlign='left';
+
+  if(mode===2&&running){
+    const bombCount=items.filter(i=>i.type==='bomb').length;
+    ctx.fillStyle=COL.textDim;
+    ctx.font='7px "Share Tech Mono",monospace';
+    ctx.textAlign='left';
+    ctx.fillText('BOMBS:'+bombCount,OX+2,CH-3);
+    ctx.textAlign='right';
+    ctx.fillText('LVL:'+(Math.floor(score/5)+1),OX+COLS*CELL-2,CH-3);
+    ctx.textAlign='left';
+  }
+}
+
+function setDir(dx,dy){
+  if(!running||paused) return;
+  if(dx===-dir.x&&dy===-dir.y) return;
+  nextDir={x:dx,y:dy};
+}
+
+const keyMap={
+  'ArrowUp':[0,-1,'btnUp'],'ArrowDown':[0,1,'btnDown'],
+  'ArrowLeft':[-1,0,'btnLeft'],'ArrowRight':[1,0,'btnRight'],
+  'w':[0,-1,'btnUp'],'W':[0,-1,'btnUp'],
+  'a':[-1,0,'btnLeft'],'A':[-1,0,'btnLeft'],
+  's':[0,1,'btnDown'],'S':[0,1,'btnDown'],
+  'd':[1,0,'btnRight'],'D':[1,0,'btnRight'],
+};
+
+function highlight(id,on){const el=document.getElementById(id);if(el)el.classList.toggle('pressed',on);}
+
+window.addEventListener('keydown',e=>{
+  if(e.key==='Enter'){startGame();return;}
+  if(e.key===' '||e.key==='p'||e.key==='P'){e.preventDefault();setPause(!paused);return;}
+  if(e.key==='m'||e.key==='M'){selectMode(selectedMode===1?2:1);return;}
+  if(keyMap[e.key]){e.preventDefault();const[dx,dy,id]=keyMap[e.key];setDir(dx,dy);highlight(id,true);}
+});
+window.addEventListener('keyup',e=>{if(keyMap[e.key])highlight(keyMap[e.key][2],false);});
+
+document.getElementById('btnStart').addEventListener('click',startGame);
+document.getElementById('btnPause').addEventListener('click',()=>setPause(!paused));
+document.getElementById('btnMode').addEventListener('click',()=>selectMode(selectedMode===1?2:1));
+document.getElementById('btnUp').addEventListener('click',()=>setDir(0,-1));
+document.getElementById('btnDown').addEventListener('click',()=>setDir(0,1));
+document.getElementById('btnLeft').addEventListener('click',()=>setDir(-1,0));
+document.getElementById('btnRight').addEventListener('click',()=>setDir(1,0));
+document.getElementById('btnOK').addEventListener('click',()=>setPause(!paused));
+
+draw();
+</script>
