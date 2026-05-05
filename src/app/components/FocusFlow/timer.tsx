@@ -46,18 +46,16 @@ const AMBIENT_SOUNDS = [
   { id: 'garden', name: 'Garden', nameZh: '花园', icon: Sun, url: '/music/garden sunny.mp3', category: 'Nature' },
   
   // Ambience
-  { id: 'cafe-jazz', name: 'Jazz Cafe', nameZh: '爵士咖啡', icon: CoffeeIcon, url: '/music/4K Cozy Coffee Shop with Smooth Piano Jazz Music for Relaxing, Studying and Working.mp4', category: 'Ambience' },
   { id: 'cafe-noise', name: 'Cafe Noise', nameZh: '咖啡馆', icon: CoffeeIcon, url: '/music/cafe noise.mp3', category: 'Ambience' },
   { id: 'street-cafe', name: 'Street Cafe', nameZh: '街边咖啡', icon: Bike, url: '/music/street cafe busy motorcycle stopping.mp3', category: 'Ambience' },
   { id: 'city', name: 'City', nameZh: '城市', icon: Building2, url: '/music/city sounds.mp3', category: 'Ambience' },
   { id: 'fire-relax', name: 'Fireplace', nameZh: '篝火', icon: Flame, url: '/music/fire relaxing.mp3', category: 'Ambience' },
   { id: 'fire-forest', name: 'Campfire', nameZh: '林中火', icon: Flame, url: '/music/fire forest.mp3', category: 'Ambience' },
+  { id: 'fire-ambience', name: 'Fire Ambience', nameZh: '火焰', icon: Flame, url: '/music/fire ambience.mp3', category: 'Ambience' },
   
-  // Music
-  { id: 'ghibli-chill', name: 'Ghibli Chill', nameZh: '吉卜力', icon: Music, url: '/music/Ghibli Chill 🌊 Studying, coffee, reading, healing 🎧 Ghibli Music.mp4', category: 'Music' },
-  { id: 'howls', name: 'Howl\'s', nameZh: '哈尔', icon: Music, url: '/music/Howl\'s Moving Castle - Promise of the World (piano cover).mp4', category: 'Music' },
-  { id: 'lofi', name: 'Lofi', nameZh: 'Lofi', icon: Library, url: '/music/LofiLibrary.mp4', category: 'Music' },
-  { id: 'love-letter', name: 'Love Letter', nameZh: '情书', icon: Heart, url: '/music/감성 영화음악 러브레터 OST 무손실 음원 🎧 Love Letter Soundtrack Full Track BGM.mp4', category: 'Music' },
+  // Music (Only the working small video file)
+  { id: 'howls', name: 'Howl\'s Piano', nameZh: '哈尔钢琴', icon: Music, url: '/music/Howl\'s Moving Castle - Promise of the World (piano cover).mp4', category: 'Music' },
+];
   { id: 'rain-music', name: 'Rain Music', nameZh: '雨中乐', icon: Music, url: '/music/music with rain.mp4', category: 'Music' },
 ];
 
