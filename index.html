@@ -17,15 +17,15 @@
           const ctx = canvas.getContext('2d');
           // Circle clip
           ctx.beginPath();
-          ctx.arc(32, 32, 31, 0, Math.PI * 2);
+          ctx.arc(32, 32, 32, 0, Math.PI * 2);
           ctx.clip();
-          // Draw Avatar
+          // Draw Avatar (slightly larger to fill space)
           ctx.drawImage(img, 0, 0, 64, 64);
-          // Simple Border
+          // Simple Border (moved to extreme edge to maximize image size)
           ctx.beginPath();
-          ctx.arc(32, 32, 30, 0, Math.PI * 2);
+          ctx.arc(32, 32, 31, 0, Math.PI * 2);
           ctx.strokeStyle = '#A77F60';
-          ctx.lineWidth = 4;
+          ctx.lineWidth = 2;
           ctx.stroke();
           // Update favicon
           const link = document.querySelector("link[rel*='icon']");
