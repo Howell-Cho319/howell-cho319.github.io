@@ -6,6 +6,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Howell Cho - Personal Portfolio</title>
     <link rel="icon" type="image/png" href="/images/HowellAvatar.png" />
+    <script>
+      // Dynamically create a rounded favicon with a border
+      (function() {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          canvas.width = 64;
+          canvas.height = 64;
+          const ctx = canvas.getContext('2d');
+          // Circle clip
+          ctx.beginPath();
+          ctx.arc(32, 32, 31, 0, Math.PI * 2);
+          ctx.clip();
+          // Draw Avatar
+          ctx.drawImage(img, 0, 0, 64, 64);
+          // Simple Border
+          ctx.beginPath();
+          ctx.arc(32, 32, 30, 0, Math.PI * 2);
+          ctx.strokeStyle = '#A77F60';
+          ctx.lineWidth = 4;
+          ctx.stroke();
+          // Update favicon
+          const link = document.querySelector("link[rel*='icon']");
+          if (link) link.href = canvas.toDataURL('image/png');
+        };
+        img.src = '/images/HowellAvatar.png';
+      })();
+    </script>
     <style>html, body { height: 100%; margin: 0; } #root { height: 100%; }</style>
     
     <!-- Start Single Page Apps for GitHub Pages -->
