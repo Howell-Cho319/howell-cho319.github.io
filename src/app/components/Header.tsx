@@ -33,7 +33,7 @@ export function Header() {
           <Link to="/" className="flex items-center gap-2 group">
             <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center group-hover:scale-110 transition-transform ring-2 ring-primary/20">
               <img 
-                src="/images/Howell Avatar.png" 
+                src="/images/HowellAvatar.png" 
                 alt="Cho Sin Hong" 
                 className="w-full h-full object-cover"
               />
