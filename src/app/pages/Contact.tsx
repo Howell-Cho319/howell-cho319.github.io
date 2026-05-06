@@ -34,7 +34,7 @@ export function Contact() {
     {
       icon: Phone,
       label: "Phone",
-      value: "+60 11-233 4736",
+      value: "For inquiries, please prefer email communication.",
       link: "tel:+60112334736",
     },
     {
