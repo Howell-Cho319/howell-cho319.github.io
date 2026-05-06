@@ -27,6 +27,7 @@ import {
   CloudLightning,
   Sun,
   Bike,
+  Bell,
 } from 'lucide-react';
 
 const formatTime = (seconds: number): string => {
@@ -77,8 +78,8 @@ export function Timer() {
     startTimer,
     pauseTimer,
     resetTimer,
+    playAlarm,
     skipToBreak,
-    skipBreak,
     recordSession,
     updateCustomConfig,
     getWeeklyData,
@@ -86,13 +87,13 @@ export function Timer() {
     toggleAmbientSound,
     setAmbientVolume,
     setSoundEnabled,
+    setAlarmVolume,
   } = useFocusFlow();
 
-  const { activeSession, habits, presets, stats, language, ambientSound, ambientSounds, soundVolumes, soundEnabled } = state;
+  const { activeSession, habits, presets, stats, language, ambientSound, ambientSounds, soundVolumes, soundEnabled, alarmVolume } = state;
   const [showCustom, setShowCustom] = useState(false);
   const [customMinutes, setCustomMinutes] = useState(30);
   const [breakMinutes, setBreakMinutes] = useState(5);
-  const audioRef = useRef<AudioContext | null>(null);
   // Map of soundId -> HTMLAudioElement
   const ambientAudiosRef = useRef<Map<string, HTMLAudioElement>>(new Map());
   const lastTimeRef = useRef<number>(activeSession.remainingTime);
@@ -117,6 +118,7 @@ export function Timer() {
     days: language === 'zh' ? '天' : 'days',
     skip: language === 'zh' ? '跳过' : 'Skip',
     continue: language === 'zh' ? '继续' : 'Continue',
+    alarmVolume: language === 'zh' ? '闹钟音量' : 'Alarm Volume',
   };
 
   // Multi-track ambient audio handling
@@ -160,35 +162,36 @@ export function Timer() {
   }, [ambientSounds, soundVolumes, activeSession.isRunning, soundEnabled]);
 
   const playCompletionSound = useCallback(() => {
-    if (!audioRef.current) {
-      audioRef.current = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+    try {
+      const audioCtx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+      const audio = new Audio('/music/alarm.mp3');
+      const source = audioCtx.createMediaElementSource(audio);
+      const gainNode = audioCtx.createGain();
+      
+      gainNode.gain.value = alarmVolume;
+      source.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      
+      audio.play().catch(err => console.error('Alarm playback failed:', err));
+      
+      audio.onended = () => {
+        audioCtx.close();
+      };
+    } catch (e) {
+      const audio = new Audio('/music/alarm.mp3');
+      audio.volume = Math.min(1, alarmVolume);
+      audio.play().catch(err => console.error('Fallback alarm failed:', err));
     }
-    const ctx = audioRef.current;
-    const oscillator = ctx.createOscillator();
-    const gainNode = ctx.createGain();
-    
-    oscillator.connect(gainNode);
-    gainNode.connect(ctx.destination);
-    
-    oscillator.frequency.value = 800;
-    oscillator.type = 'sine';
-    
-    gainNode.gain.setValueAtTime(0.3, ctx.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
-    
-    oscillator.start(ctx.currentTime);
-    oscillator.stop(ctx.currentTime + 0.5);
-  }, []);
+  }, [alarmVolume]);
 
   useEffect(() => {
     if (lastTimeRef.current === 1 && activeSession.remainingTime === 0) {
       if (soundEnabled) {
         playCompletionSound();
       }
-      recordSession(true);
     }
     lastTimeRef.current = activeSession.remainingTime;
-  }, [activeSession.remainingTime, soundEnabled, playCompletionSound, recordSession]);
+  }, [activeSession.remainingTime, soundEnabled, playCompletionSound]);
 
   const progress = activeSession.totalDuration > 0
     ? (activeSession.totalDuration - activeSession.remainingTime) / activeSession.totalDuration
@@ -326,29 +329,35 @@ export function Timer() {
           <RotateCcw className="w-5 h-5 lg:w-6 lg:h-6" />
         </Button>
 
-        {!isBreakMode && activeSession.remainingTime > 0 && (
-          <Button
-            size="lg"
-            variant="outline"
-            onClick={skipToBreak}
-            className="w-14 h-14 lg:w-16 lg:h-16 rounded-full border-2 btn-press"
-            title={t.skip}
-          >
-            <SkipForward className="w-5 h-5 lg:w-6 lg:h-6" />
-          </Button>
-        )}
+        <Button
+          size="lg"
+          variant="outline"
+          onClick={skipToBreak}
+          className="w-14 h-14 lg:w-16 lg:h-16 rounded-full border-2 btn-press"
+          title={t.skip}
+        >
+          <SkipForward className="w-5 h-5 lg:w-6 lg:h-6" />
+        </Button>
+      </div>
 
-        {isBreakMode && (
-          <Button
-            size="lg"
-            variant="outline"
-            onClick={skipBreak}
-            className="w-14 h-14 lg:w-16 lg:h-16 rounded-full border-2 btn-press"
-            title={t.continue}
-          >
-            <Coffee className="w-5 h-5 lg:w-6 lg:h-6" />
-          </Button>
-        )}
+      {/* Alarm Volume Control */}
+      <div className="flex flex-col gap-2 mb-1">
+        <div className="flex items-center justify-between px-1">
+          <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{t.alarmVolume}</h3>
+          <span className="text-[10px] font-bold text-primary">{Math.round(alarmVolume * 100)}%</span>
+        </div>
+        <div className="flex items-center gap-2 px-1">
+          <Bell className="w-4 h-4 text-primary flex-shrink-0" />
+          <Slider
+            value={[Math.round(alarmVolume * 100)]}
+            onValueChange={([v]) => setAlarmVolume(v / 100)}
+            onValueCommit={() => playAlarm()}
+            min={0}
+            max={200}
+            step={1}
+            className="flex-1 [&_[role=slider]]:bg-primary [&_[role=slider]]:border-primary [&_[role=slider]]:w-3 [&_[role=slider]]:h-3"
+          />
+        </div>
       </div>
 
       {/* Ambient Sound Selection */}

@@ -11,6 +11,8 @@ import { DoMemo } from "./pages/DoMemo";
 import { DoMemoTool } from "./pages/DoMemoTool";
 import { Tetris } from "./pages/Tetris";
 import { Snake } from "./pages/Snake";
+import { RapidRoll } from "./pages/RapidRoll";
+import { BillSplitter } from "./pages/BillSplitter";
 import { NotFound } from "./pages/NotFound";
 
 export const router = createBrowserRouter([
@@ -29,6 +31,8 @@ export const router = createBrowserRouter([
       { path: "domemo/app", Component: DoMemoTool },
       { path: "tetris", Component: Tetris },
       { path: "snake", Component: Snake },
+      { path: "rapidroll", Component: RapidRoll },
+      { path: "bill-splitter", Component: BillSplitter },
       { path: "*", Component: NotFound },
     ],
   },

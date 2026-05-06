@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Rapid Roll · Nokia Edition</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Press+Start+2P&display=swap');
+
+*{box-sizing:border-box;margin:0;padding:0;}
+button {
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
+}
+  /* Modern Layout Integration */
+  :root {
+    --background: #fdfcfb;
+    --foreground: #4a4238;
+    --card: #FFFFFF;
+    --card-foreground: #4a4238;
+    --primary: #6F4E37;
+    --primary-foreground: #FAF7F2;
+    --secondary: #EDD9C0;
+    --secondary-foreground: #3D2817;
+    --muted: #E8DED1;
+    --muted-foreground: #8B7355;
+    --accent: #A8B89F;
+    --accent-foreground: #3D2817;
+    --border: rgba(111, 78, 55, 0.15);
+    --radius: 0.75rem;
+    --amber-100: #fef3c7;
+    --amber-900: #78350f;
+    --amber-950: #451a03;
+  }
+
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  /* Main Website Header Styles */
+  .main-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    width: 100%;
+  }
+
+  .header-outer-container {
+    max-width: 80rem;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .header-inner-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    padding: 0 1rem;
+  }
+
+  @media (min-width: 640px) { .header-inner-container { padding: 0 1.5rem; } }
+  @media (min-width: 1024px) { .header-inner-container { padding: 0 2rem; } }
+
+  @media (min-width: 768px) {
+    .header-inner-container { height: 80px; }
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: var(--foreground);
+    font-weight: 600;
+    font-size: 1.25rem;
+  }
+
+  .logo-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    background: var(--primary);
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-foreground);
+    transition: transform 0.2s;
+  }
+
+  .logo:hover .logo-icon {
+    transform: scale(1.1);
+  }
+
+  .nav-desktop-container {
+    display: none;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  @media (min-width: 768px) {
+    .nav-desktop-container { display: flex; }
+  }
+
+  .nav-desktop {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .nav-link {
+    position: relative;
+    text-decoration: none;
+    color: rgba(61, 40, 23, 0.7);
+    font-size: 0.875rem;
+    transition: color 0.2s;
+    padding-bottom: 4px;
+  }
+
+  .nav-link:hover { color: var(--foreground); }
+  .nav-link.active { color: var(--primary); font-weight: 500; }
+  .nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--primary);
+    border-radius: 9999px;
+  }
+
+  /* Music Controls in Header */
+  .music-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .music-btn {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 9999px;
+    background: rgba(111, 78, 55, 0.1);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+    cursor: pointer;
+    transition: all 0.2s;
+    padding: 0;
+  }
+
+  .music-btn:hover { background: rgba(111, 78, 55, 0.2); }
+  .music-btn svg { width: 1.25rem; height: 1.25rem; }
+
+  .music-controls-mobile {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .music-controls-mobile { display: none !important; }
+  }
+
+  .menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    background: none;
+    border: none;
+    color: var(--foreground);
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .now-playing {
+    display: none;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    background: rgba(111, 78, 55, 0.1);
+    border-radius: 9999px;
+    color: var(--primary);
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+
+  /* Show only when active and on larger screens */
+  @media (min-width: 640px) {
+    .now-playing.active { display: flex; }
+  }
+
+  .visualizer { display: flex; gap: 2px; height: 12px; align-items: center; }
+  .visualizer-bar {
+    width: 2px; height: 100%; background: var(--primary); border-radius: 9999px;
+    animation: bounce 0.8s infinite;
+  }
+  .visualizer-bar:nth-child(2) { animation-delay: 0.2s; }
+  .visualizer-bar:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes bounce { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(1.5); } }
+
+  /* Game Sub-Header (Simplified like Snake/Tetris) */
+  .game-sub-header {
+    max-width: 56rem; /* max-w-4xl */
+    margin: 0 auto;
+    width: 100%;
+    padding: 2.5rem 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .back-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: rgba(111, 78, 55, 0.6);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .back-btn:hover { color: var(--primary); }
+
+  .game-title-header {
+    font-size: 1.5rem; /* text-2xl */
+    font-weight: 700;
+    color: var(--foreground);
+    letter-spacing: -0.025em;
+  }
+
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0 1rem 4rem;
+  }
+
+  /* Phone Styles */
+  .phone {
+    width: 340px;
+    background: linear-gradient(170deg, #42412e 0%, #2d2c1d 35%, #1f1e12 100%);
+    border-radius: 38px;
+    padding: 16px 16px 26px;
+    box-shadow: 0 0 0 1.5px #111108, 0 0 0 3px #1e1d10, 0 10px 50px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.08), inset 0 -3px 8px rgba(0, 0, 0, 0.5);
+    user-select: none;
+    position: relative;
+    margin-bottom: 2rem;
+  }
+
+  /* Info Section (Amber themed like Snake/Tetris) */
+  .game-info-section {
+    max-width: 56rem;
+    margin: 0 auto;
+    width: 100%;
+    padding: 4rem 1.5rem;
+    border-top: 1px solid #fef3c7; /* border-amber-100 */
+  }
+
+  .game-info-grid { display: grid; gap: 3rem; }
+  @media (min-width: 768px) { .game-info-grid { grid-template-columns: repeat(2, 1fr); } }
+
+  .game-info-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: #451a03; /* text-amber-950 */
+  }
+
+  .game-info-text {
+    color: rgba(120, 53, 15, 0.7); /* text-amber-900/70 */
+    line-height: 1.625;
+  }
+
+  /* Main Website Footer Styles */
+  .main-footer {
+    background: #FFFFFF;
+    border-top: 1px solid var(--border);
+    padding: 3rem 0;
+    margin-top: 5rem;
+  }
+
+  .footer-container {
+    max-width: 80rem;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  @media (min-width: 640px) { .footer-container { padding: 0 1.5rem; } }
+  @media (min-width: 1024px) { .footer-container { padding: 0 2rem; } }
+
+  .footer-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+  @media (min-width: 768px) { .footer-grid { grid-template-columns: 2fr 1fr 1fr; } }
+
+  .footer-brand p { color: var(--muted-foreground); font-size: 0.875rem; margin-top: 1rem; max-width: 28rem; }
+  .footer-title { font-weight: 600; margin-bottom: 1rem; color: var(--foreground); }
+  .footer-links { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+  .footer-links a { text-decoration: none; color: var(--muted-foreground); font-size: 0.875rem; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--primary); }
+
+  .social-links { display: flex; gap: 0.75rem; }
+  .social-icon {
+    width: 2.5rem; height: 2.5rem; background: var(--secondary); border-radius: 9999px;
+    display: flex; align-items: center; justify-content: center; color: var(--secondary-foreground);
+    text-decoration: none; transition: all 0.2s;
+  }
+  .social-icon:hover { background: var(--primary); color: var(--primary-foreground); }
+
+  .footer-bottom {
+    border-top: 1px solid var(--border); margin-top: 2rem; padding-top: 2rem;
+    text-align: center; font-size: 0.875rem; color: var(--muted-foreground);
+  }
+.phone::before{
+  content:'';position:absolute;inset:0;border-radius:38px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='1' height='1' fill='rgba(255,255,255,0.015)'/%3E%3C/svg%3E");
+  pointer-events:none;
+}
+.speaker{display:flex;gap:5px;justify-content:center;margin-bottom:12px;}
+.speaker span{width:3px;height:16px;background:rgba(0,0,0,0.5);border-radius:2px;box-shadow:inset 0 1px 2px rgba(0,0,0,0.8);}
+.screen-bezel{
+  background:#0a0a06;border-radius:14px;padding:8px;
+  box-shadow:inset 0 3px 10px rgba(0,0,0,0.9),inset 0 0 0 1px rgba(0,0,0,0.8),0 2px 6px rgba(0,0,0,0.4);
+  margin-bottom:16px;position:relative;
+}
+.screen-bezel::after{
+  content:'';position:absolute;top:8px;left:8px;right:8px;height:40%;
+  background:linear-gradient(180deg,rgba(255,255,255,0.04) 0%,transparent 100%);
+  border-radius:8px 8px 0 0;pointer-events:none;z-index:10;
+}
+#gameCanvas{display:block;border-radius:6px;width:100%;image-rendering:pixelated;}
+.nokia-label{
+  text-align:center;font-family:'Share Tech Mono',monospace;
+  font-size:10px;letter-spacing:5px;color:rgba(200,195,130,0.28);margin-bottom:12px;
+}
+.controls{display:flex;flex-direction:column;align-items:center;gap:2px;margin-bottom:16px;}
+.dpad-row{display:flex;gap:4px;align-items:center;}
+.btn{
+  background:linear-gradient(155deg,#303022 0%,#1c1c10 100%);
+  border:none;border-radius:11px;color:rgba(190,185,110,0.65);
+  font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:0.5px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 5px 10px rgba(0,0,0,0.6),0 1px 0 rgba(255,255,255,0.06),inset 0 -2px 4px rgba(0,0,0,0.4);
+  transition:transform 0.07s,box-shadow 0.07s;
+  -webkit-tap-highlight-color:transparent;touch-action:none;
+}
+.btn:active,.btn.pressed{
+  transform:translateY(3px);
+  box-shadow:0 2px 5px rgba(0,0,0,0.6),inset 0 1px 3px rgba(0,0,0,0.4);
+}
+.btn-arrow{width:50px;height:50px;font-size:18px;}
+.btn-ok{width:50px;height:50px;font-size:10px;letter-spacing:1px;border-radius:50%;}
+.btn-spacer{width:50px;height:50px;background:transparent;box-shadow:none;pointer-events:none;}
+.bottom-btns{display:flex;justify-content:space-between;padding:0 6px;margin-bottom:12px;}
+.btn-wide{width:108px;height:40px;border-radius:13px;font-size:10px;letter-spacing:2px;}
+.kbd-hint{text-align:center;font-size:8px;letter-spacing:1.5px;color:rgba(180,175,100,0.2);}
+</style>
+</head>
+<body>
+  <header class="main-header">
+    <div class="header-outer-container">
+      <div class="header-inner-container">
+        <a href="/" class="logo">
+          <div class="logo-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><line x1="6" x2="6" y1="2" y2="4"/><line x1="10" x2="10" y1="2" y2="4"/><line x1="14" x2="14" y1="2" y2="4"/></svg>
+          </div>
+          <span class="logo-text">Cho Sin Hong</span>
+        </a>
+        
+        <div class="nav-desktop-container">
+          <nav class="nav-desktop">
+            <a href="/" class="nav-link">Home</a>
+            <a href="/blog" class="nav-link">Diary</a>
+            <a href="/about" class="nav-link">About</a>
+            <a href="/portfolio" class="nav-link">Portfolio</a>
+            <a href="/certifications" class="nav-link">Achievements</a>
+            <a href="/focusflow" class="nav-link active">Study</a>
+            <a href="/contact" class="nav-link">Contact</a>
+          </nav>
+          
+          <div class="music-controls">
+            <button class="music-btn" id="toggleMusic" title="Play music">
+              <svg id="playIcon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              <svg id="pauseIcon" style="display:none;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+            </button>
+            <button class="music-btn" id="toggleMute" title="Mute music">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2V15H6L11 19V5Z"/><path d="M19.07 4.93C20.9461 6.80655 22.0001 9.35122 22.0001 12C22.0001 14.6488 20.9461 17.1935 19.07 19.07"/><path d="M15.54 8.46C16.4774 9.39764 17.0044 10.6692 17.0044 11.995C17.0044 13.3208 16.4774 14.5924 15.54 15.53"/></svg>
+            </button>
+            <div class="now-playing" id="nowPlaying">
+              <div class="visualizer">
+                <div class="visualizer-bar"></div>
+                <div class="visualizer-bar"></div>
+                <div class="visualizer-bar"></div>
+              </div>
+              <span>Howl's Moving Castle</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="music-controls-mobile">
+          <div class="music-controls">
+            <button class="music-btn" id="toggleMusicMobile" title="Play music">
+              <svg id="playIconMobile" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              <svg id="pauseIconMobile" style="display:none;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+            </button>
+          </div>
+          <button class="menu-btn" id="toggleMenu" aria-label="Toggle menu">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div id="mobileMenu" style="display:none; position:fixed; top:64px; left:0; right:0; background:var(--card); z-index:40; border-bottom:1px solid var(--border); padding:1rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+    <nav style="display:flex; flex-direction:column; gap:0.5rem;">
+      <a href="/" class="nav-link" style="padding:0.75rem 1rem; border-radius:0.5rem;">Home</a>
+      <a href="/blog" class="nav-link" style="padding:0.75rem 1rem; border-radius:0.5rem;">Diary</a>
+      <a href="/about" class="nav-link" style="padding:0.75rem 1rem; border-radius:0.5rem;">About</a>
+      <a href="/portfolio" class="nav-link" style="padding:0.75rem 1rem; border-radius:0.5rem;">Portfolio</a>
+      <a href="/certifications" class="nav-link" style="padding:0.75rem 1rem; border-radius:0.5rem;">Achievements</a>
+      <a href="/focusflow" class="nav-link active" style="padding:0.75rem 1rem; border-radius:0.5rem; background:var(--primary); color:var(--primary-foreground);">Study</a>
+      <a href="/contact" class="nav-link" style="padding:0.75rem 1rem; border-radius:0.5rem;">Contact</a>
+    </nav>
+  </div>
+
+  <div class="game-sub-header">
+    <a href="/" class="back-btn">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+      Back to Home
+    </a>
+    <div class="game-title-header">Rapid Roll</div>
+  </div>
+
+  <main>
+    <div class="phone">
+      <div class="speaker"><span></span><span></span><span></span><span></span><span></span></div>
+      <div class="screen-bezel">
+        <canvas id="gameCanvas" width="308" height="308"></canvas>
+      </div>
+      <div class="nokia-label">N O K I A</div>
+      <div class="controls">
+        <div class="dpad-row">
+          <div class="btn-spacer"></div>
+          <button class="btn btn-arrow" id="btnUp">&#8743;</button>
+          <div class="btn-spacer"></div>
+        </div>
+        <div class="dpad-row">
+          <button class="btn btn-arrow" id="btnLeft">&#8249;</button>
+          <button class="btn btn-ok" id="btnOk">OK</button>
+          <button class="btn btn-arrow" id="btnRight">&#8250;</button>
+        </div>
+        <div class="dpad-row">
+          <div class="btn-spacer"></div>
+          <button class="btn btn-arrow" id="btnDown">&#8744;</button>
+          <div class="btn-spacer"></div>
+        </div>
+      </div>
+      <div class="bottom-btns">
+        <button class="btn btn-wide" id="btnStart">START</button>
+        <button class="btn btn-wide" id="btnPause">PAUSE</button>
+      </div>
+      <div class="kbd-hint">&#8592; &#8594; MOVE &nbsp;&#183;&nbsp; P PAUSE &nbsp;&#183;&nbsp; START / OK</div>
+    </div>
+  </main>
+
+  <section class="game-info-section">
+    <div class="game-info-grid">
+      <div>
+        <h3 class="game-info-title">Classic Rapid Roll</h3>
+        <p class="game-info-text">
+          The addictive platform survival game from the Nokia era. Keep the ball on the platforms as they move up, avoiding the spikes at the top and the bottomless pit.
+        </p>
+      </div>
+      <div>
+        <h3 class="game-info-title">Survival Challenge</h3>
+        <p class="game-info-text">
+          Experience the high-speed survival challenge. Use Left and Right to guide the ball through the maze of platforms. How long can you survive?
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="main-footer">
+    <div class="footer-container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+            <div class="logo-icon" style="width: 2.5rem; height: 2.5rem;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><line x1="6" x2="6" y1="2" y2="4"/><line x1="10" x2="10" y1="2" y2="4"/><line x1="14" x2="14" y1="2" y2="4"/></svg>
+            </div>
+            <span style="font-size: 1.25rem; font-weight: 600;">Cho Sin Hong</span>
+          </div>
+          <p class="footer-brand p">
+            Double Degree Student in Software Engineering | Asia Pacific University (APU) & De Montfort University (UK). 
+            Passionate about AI, leadership, and creating innovative tech solutions.
+          </p>
+        </div>
+
+        <div>
+          <h3 class="footer-title">Quick Links</h3>
+          <ul class="footer-links">
+            <li><a href="/blog">Diary</a></li>
+            <li><a href="/portfolio">Portfolio</a></li>
+            <li><a href="/certifications">Achievements</a></li>
+            <li><a href="/contact">Contact</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 class="footer-title">Connect</h3>
+          <div class="social-links">
+            <a href="https://github.com/ChoSinHong" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="GitHub">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+            </a>
+            <a href="https://www.linkedin.com/in/cho-sin-hong-9139a3378/" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="LinkedIn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+            </a>
+            <a href="https://www.instagram.com/howellcho/" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Instagram">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+            </a>
+            <a href="mailto:howell.cho319@gmail.com" class="social-icon" aria-label="Email">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© <span id="currentYear">2026</span> Cho Sin Hong. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+<script>
+/* ====================================================
+   RAPID ROLL — Authentic Nokia logic
+   
+   Core rules (faithful to original):
+   1. Platforms scroll continuously UPWARD
+   2. Ball sits on platform top — moves up WITH the platform
+   3. Ball falls under gravity when no platform underfoot
+   4. ONLY left/right input — no jumping whatsoever
+   5. Die: fall off bottom screen edge
+   6. Die: platform carries ball into top wall (crushed)
+   7. Every platform row has a guaranteed passable gap
+   8. Speed increases over time — platforms scroll faster
+   9. Score = time survived (ticks every ~40 frames)
+   ==================================================== */
+
+const canvas = document.getElementById('gameCanvas');
+const ctx    = canvas.getContext('2d');
+const W = 308, H = 308;
+
+// ── MUSIC & UI LOGIC ─────────────────────────────
+const audio = new Audio('/music/Howl\'s Moving Castle - Promise of the World (piano cover).mp4');
+audio.loop = true;
+audio.volume = 0.3;
+audio.preload = 'auto';
+
+const toggleMusicBtn = document.getElementById('toggleMusic');
+const toggleMusicMobileBtn = document.getElementById('toggleMusicMobile');
+const toggleMuteBtn = document.getElementById('toggleMute');
+const playIcon = document.getElementById('playIcon');
+const pauseIcon = document.getElementById('pauseIcon');
+const playIconMobile = document.getElementById('playIconMobile');
+const pauseIconMobile = document.getElementById('pauseIconMobile');
+const nowPlaying = document.getElementById('nowPlaying');
+const toggleMenuBtn = document.getElementById('toggleMenu');
+const mobileMenu = document.getElementById('mobileMenu');
+const currentYearSpan = document.getElementById('currentYear');
+
+if (currentYearSpan) {
+  currentYearSpan.textContent = new Date().getFullYear();
+}
+
+let isPlaying = false;
+
+function updateMusicUI(playing) {
+  isPlaying = playing;
+  if (playing) {
+    playIcon.style.display = 'none';
+    pauseIcon.style.display = 'block';
+    playIconMobile.style.display = 'none';
+    pauseIconMobile.style.display = 'block';
+    nowPlaying.classList.add('active');
+    toggleMusicBtn.title = 'Pause music';
+  } else {
+    playIcon.style.display = 'block';
+    pauseIcon.style.display = 'none';
+    playIconMobile.style.display = 'block';
+    pauseIconMobile.style.display = 'none';
+    nowPlaying.classList.remove('active');
+    toggleMusicBtn.title = 'Play music';
+  }
+}
+
+async function toggleMusic() {
+  try {
+    if (audio.paused) {
+      await audio.play();
+      updateMusicUI(true);
+    } else {
+      audio.pause();
+      updateMusicUI(false);
+    }
+  } catch (err) {
+    console.log('Playback interaction required');
+  }
+}
+
+toggleMusicBtn.addEventListener('click', toggleMusic);
+toggleMusicMobileBtn.addEventListener('click', toggleMusic);
+
+toggleMuteBtn.addEventListener('click', () => {
+  audio.muted = !audio.muted;
+  toggleMuteBtn.title = audio.muted ? 'Unmute music' : 'Mute music';
+  toggleMuteBtn.style.opacity = audio.muted ? '0.5' : '1';
+});
+
+toggleMenuBtn.addEventListener('click', () => {
+  const isOpen = mobileMenu.style.display === 'block';
+  mobileMenu.style.display = isOpen ? 'none' : 'block';
+});
+
+// Robust Autoplay Logic (Matches Home Page)
+const handleFirstInteraction = async () => {
+  if (!isPlaying) {
+    try {
+      await audio.play();
+      updateMusicUI(true);
+      console.log('Music started after user interaction');
+      removeInteractionListeners();
+    } catch (error) {
+      console.log('Autoplay prevented');
+    }
+  }
+};
+
+const interactionEvents = ['mousedown', 'touchstart', 'keydown', 'scroll'];
+const removeInteractionListeners = () => {
+  interactionEvents.forEach(event => {
+    document.removeEventListener(event, handleFirstInteraction);
+  });
+};
+
+// Try immediate autoplay first
+const initMusic = async () => {
+  try {
+    // Chrome and others often block this until interaction
+    await audio.play();
+    updateMusicUI(true);
+    console.log('Immediate autoplay success');
+  } catch (err) {
+    console.log('Immediate autoplay blocked, waiting for interaction');
+    interactionEvents.forEach(event => {
+      document.addEventListener(event, handleFirstInteraction, { once: true });
+    });
+  }
+};
+
+// Small delay to ensure DOM is ready and audio is preloaded
+setTimeout(initMusic, 500);
+
+// ── TUNING ───────────────────────────────────────
+const BALL_R       = 9;
+const PLAT_H       = 7;
+const HUD_H        = 24;
+const PLAT_GAP     = 58;       // vertical distance between platform rows
+const MIN_GAP_W    = 30;       // minimum horizontal gap width (ball can just fit: 2*BALL_R=18)
+const MOVE_ACCEL   = 0.55;     // acceleration per frame when key held
+const MOVE_MAX     = 3.2;      // max horizontal speed
+const FRICTION     = 0.78;     // friction when no key (quick stop — Nokia feel)
+const GRAVITY      = 0.32;     // fall acceleration
+const MAX_FALL     = 9;        // terminal velocity
+const SPD_START    = 1.05;     // initial scroll speed (px/frame)
+const SPD_MAX      = 3.6;      // max scroll speed
+const SPD_RAMP     = 0.00014;  // speed increase per frame
+
+// Colour palette
+const PLAT_COLORS = [
+  ['#ff5e3a','#ff8a65'],
+  ['#22bb6e','#4dd690'],
+  ['#2277e8','#55aaff'],
+  ['#9933cc','#c066ee'],
+  ['#dd8800','#ffbb33'],
+  ['#e81e7a','#f566b0'],
+  ['#00a8cc','#33d4e8'],
+  ['#888833','#cccc44'],
+];
+
+// ── GAME STATE ────────────────────────────────────
+const ST = {TITLE:0, PLAYING:1, PAUSED:2, DEAD:3};
+let state = ST.TITLE;
+let hiScore = 0;
+
+let ball, platforms;
+let scrollSpeed, frameCount, score, scoreTimer, lives;
+let shakeFrames = 0, titleTick = 0;
+let deathCause = '';
+let keys = {}, leftHeld = false, rightHeld = false;
+
+// ── PLATFORM LOGIC ────────────────────────────────
+// Platform rows are generated at absolute "world Y" positions.
+// worldScrolled = total px scrolled so far.
+// A platform's screen Y = platform.wy (we update wy directly each frame).
+
+function spawnRow(wy) {
+  // Build one row: two slabs separated by a guaranteed gap
+  // Gap position is random; gap width is at least MIN_GAP_W + some margin
+  const margin  = BALL_R * 2 + 10;           // safe passage
+  const maxGap  = Math.min(W * 0.5, 140);
+  const gapW    = margin + Math.random() * (maxGap - margin);
+  const gapX    = 4 + Math.random() * (W - gapW - 8);
+
+  const ci = Math.floor(Math.random() * PLAT_COLORS.length);
+  const useSpike = score > 25 && Math.random() < 0.20;
+
+  const result = [];
+
+  // Left slab
+  if (gapX > 8) {
+    result.push(buildSlab(0, gapX, wy, ci, false, 0));
+  }
+  // Right slab
+  const rx = gapX + gapW;
+  if (W - rx > 8) {
+    result.push(buildSlab(rx, W - rx, wy, ci, useSpike, rx));
+  }
+
+  return result;
+}
+
+function buildSlab(x, w, wy, ci, hasSpike, rx) {
+  // Place spike somewhere safe on the slab (not right at edge)
+  let spikeX = 0;
+  if (hasSpike && w > BALL_R * 4) {
+    spikeX = x + BALL_R * 1.5 + Math.random() * (w - BALL_R * 3);
+  } else {
+    hasSpike = false;
+  }
+  return { x, w, wy, ci, hasSpike, spikeX };
+}
+
+function initPlatforms() {
+  platforms = [];
+  // Seed platforms filling the screen from bottom upward
+  // Bottommost platform well below ball, topmost near top
+  for (let row = 0; row < 7; row++) {
+    let wy = HUD_H + 30 + row * PLAT_GAP;
+    platforms.push(...spawnRow(wy));
+  }
+}
+
+function ensurePlatforms() {
+  // If the lowest platform has scrolled too high, spawn a new row at the bottom
+  let lowestWY = Math.max(...platforms.map(p => p.wy));
+  while (lowestWY < H + PLAT_GAP) {
+    lowestWY += PLAT_GAP;
+    platforms.push(...spawnRow(lowestWY));
+  }
+  // Remove platforms that have scrolled above the HUD
+  platforms = platforms.filter(p => p.wy > -PLAT_H - 10);
+}
+
+// ── START / RESET ─────────────────────────────────
+function startGame() {
+  score       = 0;
+  scoreTimer  = 0;
+  lives       = 3;
+  scrollSpeed = SPD_START;
+  frameCount  = 0;
+  deathCause  = '';
+  shakeFrames = 0;
+
+  initPlatforms();
+
+  // Place ball on the second platform from the top of the initial batch,
+  // centred over it
+  const startPlat = platforms
+    .filter(p => p.wy > HUD_H + PLAT_GAP * 1.2)
+    .sort((a, b) => a.wy - b.wy)[0];
+
+  ball = {
+    x: startPlat ? startPlat.x + startPlat.w / 2 : W / 2,
+    y: startPlat ? startPlat.wy - BALL_R : HUD_H + PLAT_GAP * 1.5,
+    vx: 0,
+    vy: 0,
+    onPlat: false,
+    lastPlatY: 0,
+  };
+
+  state = ST.PLAYING;
+}
+
+// ── UPDATE ────────────────────────────────────────
+function update() {
+  if (state !== ST.PLAYING) return;
+
+  frameCount++;
+  scrollSpeed = Math.min(SPD_MAX, SPD_START + frameCount * SPD_RAMP);
+
+  // ── HORIZONTAL INPUT ──
+  const goLeft  = leftHeld  || keys['ArrowLeft']  || keys['a'] || keys['A'];
+  const goRight = rightHeld || keys['ArrowRight'] || keys['d'] || keys['D'];
+
+  if (goLeft) {
+    ball.vx -= MOVE_ACCEL;
+    if (ball.vx < -MOVE_MAX) ball.vx = -MOVE_MAX;
+  } else if (goRight) {
+    ball.vx += MOVE_ACCEL;
+    if (ball.vx > MOVE_MAX) ball.vx = MOVE_MAX;
+  } else {
+    ball.vx *= FRICTION;
+    if (Math.abs(ball.vx) < 0.05) ball.vx = 0;
+  }
+
+  // ── SCROLL — move all platforms upward ──
+  for (let p of platforms) p.wy -= scrollSpeed;
+  ensurePlatforms();
+
+  // ── GRAVITY (only when airborne) ──
+  if (!ball.onPlat) {
+    ball.vy += GRAVITY;
+    if (ball.vy > MAX_FALL) ball.vy = MAX_FALL;
+  } else {
+    // Riding a platform — ball moves up with the scroll
+    ball.y -= scrollSpeed;
+    ball.vy = 0;
+  }
+
+  // ── APPLY MOVEMENT ──
+  ball.x += ball.vx;
+  ball.y += ball.vy;
+
+  // ── WRAP HORIZONTAL ──
+  if (ball.x + BALL_R < 0)  ball.x = W + BALL_R;
+  if (ball.x - BALL_R > W)  ball.x = -BALL_R;
+
+  // ── PLATFORM COLLISION ──
+  ball.onPlat = false;
+  for (let p of platforms) {
+    const inX = ball.x + BALL_R * 0.7 > p.x && ball.x - BALL_R * 0.7 < p.x + p.w;
+    if (!inX) continue;
+
+    const ballBottom = ball.y + BALL_R;
+    const tolerance  = scrollSpeed + ball.vy + 3;
+
+    // Landing on top of platform
+    if (ball.vy >= -0.1 && ballBottom >= p.wy && ballBottom <= p.wy + PLAT_H + tolerance) {
+      // Spike collision
+      if (p.hasSpike && Math.abs(ball.x - p.spikeX) < BALL_R + 4) {
+        doLoseLife('spike');
+        return;
+      }
+      ball.y     = p.wy - BALL_R;
+      ball.vy    = 0;
+      ball.onPlat = true;
+      break;
+    }
+  }
+
+  // ── SCORE TICK ──
+  scoreTimer++;
+  if (scoreTimer >= 38) { scoreTimer = 0; score++; }
+
+  // ── DEATH: fell off bottom ──
+  if (ball.y - BALL_R > H + 10) {
+    doLoseLife('bottom');
+    return;
+  }
+
+  // ── DEATH: crushed into top wall ──
+  if (ball.y - BALL_R < HUD_H && ball.onPlat) {
+    doLoseLife('crush');
+    return;
+  }
+
+  if (shakeFrames > 0) shakeFrames--;
+}
+
+function doLoseLife(cause) {
+  deathCause = cause;
+  shakeFrames = 16;
+  lives--;
+
+  if (lives <= 0) {
+    if (score > hiScore) hiScore = score;
+    state = ST.DEAD;
+    return;
+  }
+
+  // Respawn: find a low, safe platform
+  const safe = platforms
+    .filter(p => p.wy > H * 0.55 && p.wy < H * 0.85)
+    .sort((a, b) => b.wy - a.wy)[0];
+
+  if (safe) {
+    ball.x = safe.x + safe.w / 2;
+    ball.y = safe.wy - BALL_R;
+  } else {
+    ball.x = W / 2;
+    ball.y = H * 0.65;
+  }
+  ball.vx   = 0;
+  ball.vy   = 0;
+  ball.onPlat = false;
+}
+
+// ── DRAW HELPERS ──────────────────────────────────
+function lerpColor(c1, c2, t) {
+  const p = (s, i) => parseInt(s.slice(i, i+2), 16);
+  const r = Math.round(p(c1,1) + (p(c2,1) - p(c1,1)) * t);
+  const g = Math.round(p(c1,3) + (p(c2,3) - p(c1,3)) * t);
+  const b = Math.round(p(c1,5) + (p(c2,5) - p(c1,5)) * t);
+  return `rgb(${r},${g},${b})`;
+}
+
+function drawBackground() {
+  // Sky colour warms as speed increases
+  const t = Math.min(1, (scrollSpeed - SPD_START) / (SPD_MAX - SPD_START));
+  const grad = ctx.createLinearGradient(0, 0, 0, H);
+  grad.addColorStop(0, lerpColor('#4488cc', '#995522', t * 0.5));
+  grad.addColorStop(1, lerpColor('#aaddff', '#ffdd88', t * 0.4));
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, W, H);
+}
+
+function drawPlatforms() {
+  for (const p of platforms) {
+    const [c1, c2] = PLAT_COLORS[p.ci % PLAT_COLORS.length];
+    // Shadow
+    ctx.fillStyle = 'rgba(0,0,0,0.22)';
+    ctx.beginPath();
+    ctx.roundRect(p.x + 2, p.wy + 5, p.w, PLAT_H, 4);
+    ctx.fill();
+    // Body
+    const grd = ctx.createLinearGradient(0, p.wy, 0, p.wy + PLAT_H);
+    grd.addColorStop(0, c2);
+    grd.addColorStop(1, c1);
+    ctx.fillStyle = grd;
+    ctx.beginPath();
+    ctx.roundRect(p.x, p.wy, p.w, PLAT_H, 4);
+    ctx.fill();
+    // Shine
+    ctx.fillStyle = 'rgba(255,255,255,0.35)';
+    ctx.fillRect(p.x + 4, p.wy + 1, p.w - 8, 2);
+
+    // Spike
+    if (p.hasSpike) {
+      const sx = p.spikeX, sy = p.wy;
+      ctx.fillStyle = '#ff1a1a';
+      ctx.beginPath();
+      ctx.moveTo(sx, sy - 12);
+      ctx.lineTo(sx - 6, sy);
+      ctx.lineTo(sx + 6, sy);
+      ctx.closePath();
+      ctx.fill();
+      ctx.fillStyle = 'rgba(255,130,130,0.7)';
+      ctx.beginPath();
+      ctx.moveTo(sx, sy - 9);
+      ctx.lineTo(sx - 3, sy - 1);
+      ctx.lineTo(sx + 3, sy - 1);
+      ctx.closePath();
+      ctx.fill();
+    }
+  }
+}
+
+function drawBall() {
+  const {x, y} = ball;
+  // Cast shadow on nearest platform below
+  let nearestY = null;
+  for (const p of platforms) {
+    if (p.wy > y + BALL_R && x > p.x && x < p.x + p.w) {
+      if (nearestY === null || p.wy < nearestY) nearestY = p.wy;
+    }
+  }
+  if (nearestY !== null) {
+    const dist  = nearestY - y - BALL_R;
+    const alpha = Math.max(0, 0.4 - dist / 120);
+    ctx.fillStyle = `rgba(0,0,0,${alpha.toFixed(2)})`;
+    ctx.beginPath();
+    ctx.ellipse(x, nearestY, BALL_R * 0.85, 3.5, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // Ball gradient
+  const grad = ctx.createRadialGradient(x - 3, y - 3, 1, x, y, BALL_R);
+  grad.addColorStop(0,   '#ff9999');
+  grad.addColorStop(0.4, '#ff3333');
+  grad.addColorStop(1,   '#990808');
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.arc(x, y, BALL_R, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Primary shine
+  ctx.fillStyle = 'rgba(255,255,255,0.55)';
+  ctx.beginPath();
+  ctx.ellipse(x - 3, y - 3.5, 3.5, 2.5, -0.4, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function drawHUD() {
+  ctx.fillStyle = 'rgba(0,0,0,0.5)';
+  ctx.fillRect(0, 0, W, HUD_H);
+  ctx.fillStyle = 'rgba(0,0,0,0.2)';
+  ctx.fillRect(0, HUD_H, W, 1);
+
+  ctx.fillStyle = '#fffde7';
+  ctx.font = '11px "Share Tech Mono"';
+  ctx.textAlign = 'left';
+  ctx.fillText('SCORE ' + String(score).padStart(4, '0'), 8, 15);
+
+  ctx.fillStyle = 'rgba(255,253,200,0.45)';
+  ctx.font = '9px "Share Tech Mono"';
+  ctx.textAlign = 'center';
+  ctx.fillText('BEST ' + hiScore, W / 2, 15);
+
+  // Hearts
+  for (let i = 0; i < 3; i++) {
+    ctx.fillStyle = i < lives ? '#ff3b3b' : 'rgba(255,60,60,0.15)';
+    drawHeart(W - 14 - i * 18, 12, 6);
+  }
+
+  // Danger flash at top
+  if (ball && ball.y - BALL_R < HUD_H + 36) {
+    const intensity = Math.max(0, 1 - (ball.y - BALL_R - HUD_H) / 36);
+    ctx.fillStyle = `rgba(255,50,0,${(intensity * 0.3).toFixed(2)})`;
+    ctx.fillRect(0, HUD_H, W, 14);
+  }
+
+  ctx.textAlign = 'left';
+}
+
+function drawHeart(x, y, r) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.beginPath();
+  ctx.moveTo(0, r * 0.3);
+  ctx.bezierCurveTo(-r * 0.1, -r * 0.5, -r * 1.1, r * 0.2, 0, r * 1.2);
+  ctx.bezierCurveTo(r * 1.1, r * 0.2, r * 0.1, -r * 0.5, 0, r * 0.3);
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawSpeedBar() {
+  const t = Math.min(1, (scrollSpeed - SPD_START) / (SPD_MAX - SPD_START));
+  const bw = Math.round(W * t);
+  ctx.fillStyle = 'rgba(0,0,0,0.35)';
+  ctx.fillRect(0, H - 4, W, 4);
+  // Green -> yellow -> red
+  const r = Math.round(t < 0.5 ? 60 + t * 2 * 180 : 240);
+  const g = Math.round(t < 0.5 ? 200 : 200 - (t - 0.5) * 2 * 180);
+  ctx.fillStyle = `rgb(${r},${g},50)`;
+  ctx.fillRect(0, H - 4, bw, 4);
+}
+
+// ── SCREENS ───────────────────────────────────────
+function drawTitle() {
+  // Deep space bg
+  const bg = ctx.createLinearGradient(0, 0, 0, H);
+  bg.addColorStop(0, '#090920');
+  bg.addColorStop(1, '#180828');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+
+  // Stars
+  for (let i = 0; i < 65; i++) {
+    const tx = (i * 83.7 + titleTick * 0.25) % W;
+    const ty = (i * 59.3) % (H * 0.75);
+    const a  = 0.35 + 0.65 * Math.abs(Math.sin(titleTick * 0.05 + i * 0.8));
+    ctx.fillStyle = `rgba(255,255,220,${a.toFixed(2)})`;
+    ctx.fillRect(Math.round(tx), Math.round(ty), 1, 1);
+  }
+
+  // Bouncing ball demo
+  const dby = H * 0.56 + Math.sin(titleTick * 0.065) * 16;
+  const dg  = ctx.createRadialGradient(W/2 - 3, dby - 3, 1, W/2, dby, 9);
+  dg.addColorStop(0, '#ff9999');
+  dg.addColorStop(1, '#cc0000');
+  ctx.fillStyle = dg;
+  ctx.beginPath();
+  ctx.arc(W / 2, dby, 9, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.beginPath();
+  ctx.ellipse(W/2 - 3, dby - 3, 3, 2, -0.4, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.textAlign = 'center';
+  ctx.shadowColor = '#ff6600';
+  ctx.shadowBlur = 22;
+  ctx.fillStyle = '#ffd700';
+  ctx.font = 'bold 23px "Press Start 2P"';
+  ctx.fillText('RAPID', W / 2, H * 0.21);
+  ctx.fillText('ROLL', W / 2, H * 0.33);
+  ctx.shadowBlur = 0;
+
+  ctx.fillStyle = 'rgba(255,215,0,0.45)';
+  ctx.font = '7px "Press Start 2P"';
+  ctx.fillText('NOKIA  EDITION', W / 2, H * 0.42);
+
+  ctx.fillStyle = '#ffffff';
+  ctx.font = '9px "Share Tech Mono"';
+  if (Math.floor(titleTick / 28) % 2 === 0)
+    ctx.fillText('PRESS START / OK', W / 2, H * 0.71);
+
+  ctx.fillStyle = 'rgba(255,253,200,0.38)';
+  ctx.font = '9px "Share Tech Mono"';
+  ctx.fillText('BEST: ' + hiScore, W / 2, H * 0.82);
+
+  ctx.fillStyle = 'rgba(255,255,255,0.2)';
+  ctx.font = '8px "Share Tech Mono"';
+  ctx.fillText('\u25c4  \u25ba  MOVE   \u00b7   P PAUSE', W / 2, H * 0.92);
+
+  ctx.textAlign = 'left';
+  titleTick++;
+}
+
+function drawPaused() {
+  ctx.fillStyle = 'rgba(0,0,0,0.62)';
+  ctx.fillRect(0, 0, W, H);
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#ffd700';
+  ctx.font = '13px "Press Start 2P"';
+  ctx.fillText('PAUSED', W / 2, H / 2 - 14);
+  ctx.fillStyle = 'rgba(255,255,255,0.65)';
+  ctx.font = '9px "Share Tech Mono"';
+  ctx.fillText('PRESS PAUSE OR P', W / 2, H / 2 + 10);
+  ctx.fillText('TO RESUME', W / 2, H / 2 + 24);
+  ctx.textAlign = 'left';
+}
+
+function drawDead() {
+  ctx.fillStyle = 'rgba(6,0,0,0.80)';
+  ctx.fillRect(0, 0, W, H);
+  ctx.textAlign = 'center';
+
+  const blink = Math.floor(Date.now() / 340) % 2;
+  ctx.shadowColor = '#ff0000';
+  ctx.shadowBlur  = blink ? 20 : 6;
+  ctx.fillStyle   = blink ? '#ff4444' : '#bb1111';
+  ctx.font = '13px "Press Start 2P"';
+  ctx.fillText('GAME OVER', W / 2, H * 0.27);
+  ctx.shadowBlur = 0;
+
+  const causeText = {bottom:'YOU FELL!', crush:'CRUSHED!', spike:'SPIKED!'};
+  ctx.fillStyle = 'rgba(255,180,120,0.85)';
+  ctx.font = '8px "Press Start 2P"';
+  ctx.fillText(causeText[deathCause] || '', W / 2, H * 0.37);
+
+  ctx.fillStyle = '#ffd700';
+  ctx.font = '9px "Press Start 2P"';
+  ctx.fillText('SCORE', W / 2, H * 0.49);
+  ctx.font = '14px "Press Start 2P"';
+  ctx.fillText(String(score).padStart(4, '0'), W / 2, H * 0.59);
+
+  if (score > 0 && score >= hiScore) {
+    const b2 = Math.floor(Date.now() / 420) % 2;
+    ctx.fillStyle = b2 ? '#ffd700' : 'rgba(255,215,0,0.4)';
+    ctx.font = '7px "Press Start 2P"';
+    ctx.fillText('\u2605  NEW  RECORD  \u2605', W / 2, H * 0.68);
+  }
+
+  ctx.fillStyle = 'rgba(255,253,200,0.38)';
+  ctx.font = '9px "Share Tech Mono"';
+  ctx.fillText('BEST: ' + hiScore, W / 2, H * 0.76);
+
+  ctx.fillStyle = '#ffffff';
+  ctx.font = '9px "Share Tech Mono"';
+  if (Math.floor(Date.now() / 480) % 2)
+    ctx.fillText('PRESS START / OK', W / 2, H * 0.88);
+
+  ctx.textAlign = 'left';
+}
+
+// ── MAIN LOOP ─────────────────────────────────────
+function loop() {
+  ctx.save();
+  if (shakeFrames > 0) {
+    ctx.translate((Math.random() - 0.5) * 5, (Math.random() - 0.5) * 5);
+    shakeFrames--;
+  }
+
+  switch (state) {
+    case ST.TITLE:
+      drawTitle();
+      break;
+    case ST.PLAYING:
+      update();
+      drawBackground();
+      drawPlatforms();
+      drawBall();
+      drawSpeedBar();
+      drawHUD();
+      break;
+    case ST.PAUSED:
+      drawBackground();
+      drawPlatforms();
+      drawBall();
+      drawSpeedBar();
+      drawHUD();
+      drawPaused();
+      break;
+    case ST.DEAD:
+      drawBackground();
+      drawPlatforms();
+      drawSpeedBar();
+      drawHUD();
+      drawDead();
+      break;
+  }
+
+  ctx.restore();
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+// ── INPUT ─────────────────────────────────────────
+function togglePause() {
+  if (state === ST.PLAYING) state = ST.PAUSED;
+  else if (state === ST.PAUSED) state = ST.PLAYING;
+}
+function handleStart() {
+  if (state === ST.TITLE || state === ST.DEAD) startGame();
+  else togglePause();
+}
+function handleOk() {
+  if (state === ST.TITLE || state === ST.DEAD) startGame();
+  else togglePause();
+}
+
+document.addEventListener('keydown', e => {
+  if (keys[e.key]) return; // ignore repeats for actions
+  keys[e.key] = true;
+  if (e.key === 'p' || e.key === 'P') togglePause();
+  if (e.key === ' ')  { e.preventDefault(); handleStart(); }
+  if (e.key === 'Enter') handleOk();
+  if (['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)) e.preventDefault();
+});
+document.addEventListener('keyup', e => { keys[e.key] = false; });
+
+document.getElementById('btnStart').addEventListener('click', handleStart);
+document.getElementById('btnPause').addEventListener('click', togglePause);
+document.getElementById('btnOk').addEventListener('click', handleOk);
+document.getElementById('btnUp').addEventListener('click', () => {});
+document.getElementById('btnDown').addEventListener('click', () => {});
+
+function holdBtn(id, onDown, onUp) {
+  const el = document.getElementById(id);
+  const dn = () => { onDown(); el.classList.add('pressed'); };
+  const up = () => { onUp();   el.classList.remove('pressed'); };
+  el.addEventListener('mousedown', dn);
+  el.addEventListener('mouseup',   up);
+  el.addEventListener('mouseleave',up);
+  el.addEventListener('touchstart', e => { e.preventDefault(); dn(); }, {passive:false});
+  el.addEventListener('touchend',   e => { e.preventDefault(); up(); }, {passive:false});
+  el.addEventListener('touchcancel',e => { e.preventDefault(); up(); }, {passive:false});
+}
+holdBtn('btnLeft',  () => { leftHeld = true;  }, () => { leftHeld = false;  });
+holdBtn('btnRight', () => { rightHeld = true; }, () => { rightHeld = false; });
+
+// Canvas touch swipe
+let touchX0 = null;
+canvas.addEventListener('touchstart', e => {
+  e.preventDefault();
+  touchX0 = e.touches[0].clientX;
+  leftHeld = rightHeld = false;
+}, {passive:false});
+canvas.addEventListener('touchmove', e => {
+  e.preventDefault();
+  if (touchX0 === null) return;
+  const dx = e.touches[0].clientX - touchX0;
+  leftHeld  = dx < -10;
+  rightHeld = dx >  10;
+}, {passive:false});
+canvas.addEventListener('touchend', e => {
+  e.preventDefault();
+  leftHeld = rightHeld = false;
+  touchX0  = null;
+  if (state === ST.TITLE || state === ST.DEAD) startGame();
+}, {passive:false});
+</script>
+</body>
+</html>

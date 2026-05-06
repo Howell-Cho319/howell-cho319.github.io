@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState, useRef, useEffect } from 'r
 interface MusicContextType {
   isPlaying: boolean;
   toggleMusic: () => void;
+  pauseMusic: () => void;
   volume: number;
   setVolume: (volume: number) => void;
 }
@@ -22,110 +23,80 @@ interface MusicProviderProps {
 }
 
 export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [volume, setVolume] = useState(0.3); // Default volume at 30%
-  const [hasUserInteracted, setHasUserInteracted] = useState(false);
-  const [autoPlayAttempted, setAutoPlayAttempted] = useState(false);
+  // Initialize state from localStorage
+  const [isPlaying, setIsPlaying] = useState(() => {
+    const saved = localStorage.getItem('music_playing');
+    // Default to true for new users, but browsers might still block it
+    return saved !== null ? JSON.parse(saved) : true;
+  });
+  
+  const [volume, setVolume] = useState(() => {
+    const saved = localStorage.getItem('music_volume');
+    return saved !== null ? JSON.parse(saved) : 0.3;
+  });
+
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  // Sync state changes to localStorage
   useEffect(() => {
-    // Create audio element
-    audioRef.current = new Audio('/music/Howl\'s Moving Castle - Promise of the World (piano cover).mp4');
-    audioRef.current.loop = true;
-    audioRef.current.volume = volume;
-    
-    // Preload the audio
-    audioRef.current.preload = 'auto';
+    localStorage.setItem('music_playing', JSON.stringify(isPlaying));
+  }, [isPlaying]);
 
-    // Additional event listeners to ensure continuous playback
-    const handleAudioEnd = () => {
-      // Fallback: manually restart if loop fails
-      if (audioRef.current && isPlaying) {
-        audioRef.current.currentTime = 0;
-        audioRef.current.play().catch(console.error);
-      }
-    };
+  useEffect(() => {
+    localStorage.setItem('music_volume', JSON.stringify(volume));
+  }, [volume]);
 
-    const handleAudioError = (e: Event) => {
-      console.error('Audio error:', e);
-      // Try to reload and restart if there's an error
-      if (audioRef.current && isPlaying) {
-        audioRef.current.load();
-        setTimeout(() => {
-          if (audioRef.current) {
-            audioRef.current.play().catch(console.error);
-          }
-        }, 1000);
-      }
-    };
-
-    // Add event listeners for robust playback
-    if (audioRef.current) {
-      audioRef.current.addEventListener('ended', handleAudioEnd);
-      audioRef.current.addEventListener('error', handleAudioError);
+  useEffect(() => {
+    if (!audioRef.current) {
+      audioRef.current = new Audio('/music/Howl\'s Moving Castle - Promise of the World (piano cover).mp4');
+      audioRef.current.loop = true;
+      audioRef.current.volume = volume;
+      audioRef.current.playbackRate = 1.0;
+      audioRef.current.preload = 'auto';
     }
 
-    // Try immediate autoplay (works in some browsers)
-    const tryImmediateAutoplay = async () => {
-      if (!autoPlayAttempted && audioRef.current) {
-        setAutoPlayAttempted(true);
-        try {
-          await audioRef.current.play();
-          setIsPlaying(true);
-          setHasUserInteracted(true);
-          console.log('Music auto-started successfully');
-        } catch (error) {
-          console.log('Immediate autoplay blocked, waiting for user interaction');
-          // Set up interaction listeners if immediate autoplay fails
-          setupInteractionListeners();
-        }
+    const audio = audioRef.current;
+
+    const tryPlay = async () => {
+      // ONLY try to play if the user's preference is actually set to playing
+      if (!isPlaying) return;
+      
+      try {
+        audio.playbackRate = 1.0;
+        await audio.play();
+        setIsPlaying(true);
+        // Remove listeners once it successfully plays
+        removeListeners();
+      } catch (err) {
+        console.log('Autoplay blocked by browser. Waiting for user interaction...');
       }
     };
 
-    // Auto-start music on first user interaction
-    const handleFirstInteraction = async () => {
-      if (!hasUserInteracted && audioRef.current) {
-        setHasUserInteracted(true);
-        try {
-          await audioRef.current.play();
-          setIsPlaying(true);
-          console.log('Music started after user interaction');
-        } catch (error) {
-          console.log('Autoplay prevented by browser policy');
-        }
-      }
+    const handleInteraction = () => {
+      tryPlay();
     };
 
-    const setupInteractionListeners = () => {
-      // Listen for various user interaction events
-      const events = ['click', 'touchstart', 'keydown', 'mousemove', 'scroll'];
-      events.forEach(event => {
-        document.addEventListener(event, handleFirstInteraction, { once: true });
+    const removeListeners = () => {
+      ['mousedown', 'touchstart', 'keydown', 'scroll'].forEach(event => {
+        document.removeEventListener(event, handleInteraction);
       });
-
-      // Clean up function for interaction listeners
-      return () => {
-        events.forEach(event => {
-          document.removeEventListener(event, handleFirstInteraction);
-        });
-      };
     };
 
-    // Try immediate autoplay first
-    const timeoutId = setTimeout(tryImmediateAutoplay, 100);
+    // Add listeners for interaction to trigger autoplay if it was blocked
+    if (isPlaying) {
+      ['mousedown', 'touchstart', 'keydown', 'scroll'].forEach(event => {
+        document.addEventListener(event, handleInteraction, { once: true });
+      });
+      // Try immediate autoplay
+      tryPlay();
+    }
 
     return () => {
-      clearTimeout(timeoutId);
-      if (audioRef.current) {
-        // Remove event listeners
-        audioRef.current.removeEventListener('ended', handleAudioEnd);
-        audioRef.current.removeEventListener('error', handleAudioError);
-        audioRef.current.pause();
-        audioRef.current = null;
-      }
+      removeListeners();
     };
-  }, [autoPlayAttempted, hasUserInteracted, volume]);
+  }, []); // Only on mount
 
+  // Handle volume changes separately
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.volume = volume;
@@ -142,10 +113,10 @@ export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
       } else {
         await audioRef.current.play();
         setIsPlaying(true);
-        setHasUserInteracted(true);
       }
     } catch (error) {
-      console.error('Error playing audio:', error);
+      console.error('Error toggling music:', error);
+      // If play failed, ensure state reflects that
       setIsPlaying(false);
     }
   };
@@ -154,11 +125,19 @@ export const MusicProvider: React.FC<MusicProviderProps> = ({ children }) => {
     setVolume(newVolume);
   };
 
+  const pauseMusic = () => {
+    if (audioRef.current && isPlaying) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    }
+  };
+
   return (
     <MusicContext.Provider
       value={{
         isPlaying,
         toggleMusic,
+        pauseMusic,
         volume,
         setVolume: handleVolumeChange,
       }}

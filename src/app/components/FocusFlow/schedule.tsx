@@ -26,6 +26,7 @@ import {
   Dumbbell,
   Moon,
   Waves,
+  RotateCcw,
 } from 'lucide-react';
 
 const PRESET_ICONS = [
@@ -53,7 +54,8 @@ export function Schedule() {
     selectHabit, 
     getTodayData,
     startTimer,
-    pauseTimer
+    pauseTimer,
+    resetAllHabits,
   } = useFocusFlow();
   const { habits, activeSession, language } = state;
   const todayData = getTodayData();
@@ -97,6 +99,7 @@ export function Schedule() {
     confirmDelete: language === 'zh' ? '确认删除' : 'Delete?',
     deleteMsg: language === 'zh' ? '确定要删除这个习惯吗？' : 'Delete this habit?',
     delete: language === 'zh' ? '删除' : 'Delete',
+    restartAll: language === 'zh' ? '重置全部' : 'Restart All',
   };
 
   const openAddDialog = () => {
@@ -174,14 +177,27 @@ export function Schedule() {
             <span className="font-bold text-primary">{activeHabits.length}</span> {t.activeHabits} · <span className="font-bold text-primary">{Math.floor(totalActiveMinutes)}</span> {t.minutes}
           </p>
         </div>
-        <Button 
-          size="default" 
-          onClick={openAddDialog}
-          className="bg-gradient-to-r from-primary to-primary/80 hover:to-primary text-white font-bold px-4 sm:px-6 py-2 rounded-full shadow-lg shadow-primary/20 transition-all hover:scale-105 active:scale-95 flex items-center gap-2 border-0"
-        >
-          <Plus className="w-4 sm:w-5 h-4 sm:h-5" />
-          <span className="hidden sm:inline">{t.add}</span>
-        </Button>
+        <div className="flex gap-2">
+          {activeHabits.length > 0 && (
+            <Button
+              variant="outline"
+              size="default"
+              onClick={resetAllHabits}
+              className="border-2 rounded-full px-4 sm:px-6 py-2 flex items-center gap-2 btn-press"
+            >
+              <RotateCcw className="w-4 sm:w-5 h-4 sm:h-5" />
+              <span className="hidden sm:inline">{t.restartAll}</span>
+            </Button>
+          )}
+          <Button 
+            size="default" 
+            onClick={openAddDialog}
+            className="bg-gradient-to-r from-primary to-primary/80 hover:to-primary text-white font-bold px-4 sm:px-6 py-2 rounded-full shadow-lg shadow-primary/20 transition-all hover:scale-105 active:scale-95 flex items-center gap-2 border-0"
+          >
+            <Plus className="w-4 sm:w-5 h-4 sm:h-5" />
+            <span className="hidden sm:inline">{t.add}</span>
+          </Button>
+        </div>
       </div>
 
       {/* Active Habits Timeline */}
@@ -484,7 +500,7 @@ export function Schedule() {
                   variant={!formData.isBreak ? "default" : "outline"}
                   size="sm"
                   onClick={() => setFormData({ ...formData, isBreak: false })}
-                  className={`flex-1 rounded-lg ${!formData.isBreak ? 'bg-primary' : 'border-2'}`}
+                  className={`flex-1 rounded-lg border-2 ${!formData.isBreak ? 'bg-primary border-primary text-white' : 'border-border bg-transparent text-muted-foreground'}`}
                 >
                   {t.focusType}
                 </Button>
@@ -492,7 +508,7 @@ export function Schedule() {
                   variant={formData.isBreak ? "default" : "outline"}
                   size="sm"
                   onClick={() => setFormData({ ...formData, isBreak: true })}
-                  className={`flex-1 rounded-lg ${formData.isBreak ? 'bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))]' : 'border-2'}`}
+                  className={`flex-1 rounded-lg border-2 ${formData.isBreak ? 'bg-primary border-primary text-white' : 'border-border bg-transparent text-muted-foreground'}`}
                 >
                   {t.breakType}
                 </Button>

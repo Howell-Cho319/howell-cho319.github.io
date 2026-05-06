@@ -39,11 +39,14 @@ type Item = {
 };
 type Explosion = { x: number; y: number; frames: number };
 
+// Logic Functions
+const rnd = (a: number, b: number) => Math.floor(Math.random() * (b - a)) + a;
+
 export function Snake() {
   const navigate = useNavigate();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const gameLoopRef = useRef<number | null>(null);
-
+  
   // Game State
   const [snake, setSnake] = useState<Point[]>([]);
   const [dir, setDir] = useState<Point>({ x: 1, y: 0 });
@@ -76,8 +79,6 @@ export function Snake() {
   useEffect(() => { explosionsRef.current = explosions; }, [explosions]);
 
   // Logic Functions
-  const rnd = (a: number, b: number) => Math.floor(Math.random() * (b - a)) + a;
-
   const occupied = useCallback((x: number, y: number) => {
     if (snakeRef.current.some(s => s.x === x && s.y === y)) return true;
     if (itemsRef.current.some(i => i.x === x && i.y === y)) return true;
@@ -93,16 +94,24 @@ export function Snake() {
     return p;
   }, [occupied]);
 
-  const spawnFood = useCallback(() => {
+  const createFood = useCallback((): Item => {
     const p = freeCell();
-    setItems(prev => [...prev, { type: 'food', x: p.x, y: p.y, age: 0 }]);
+    return { type: 'food', x: p.x, y: p.y, age: 0 };
   }, [freeCell]);
 
-  const spawnBomb = useCallback(() => {
+  const createBomb = useCallback((): Item => {
     const p = freeCell();
     const ttl = 8 + rnd(0, 6);
-    setItems(prev => [...prev, { type: 'bomb', x: p.x, y: p.y, ttl, maxTtl: ttl, age: 0 }]);
+    return { type: 'bomb', x: p.x, y: p.y, ttl, maxTtl: ttl, age: 0 };
   }, [freeCell]);
+
+  const spawnFood = useCallback(() => {
+    setItems(prev => [...prev, createFood()]);
+  }, [createFood]);
+
+  const spawnBomb = useCallback(() => {
+    setItems(prev => [...prev, createBomb()]);
+  }, [createBomb]);
 
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
@@ -255,18 +264,17 @@ export function Snake() {
     if (currentSnake.some(s => s.x === nx && s.y === ny)) { endGame(); return; }
 
     const head = { x: nx, y: ny };
-    const currentItems = [...itemsRef.current];
-    const hitBomb = currentItems.findIndex(i => i.type === 'bomb' && i.x === nx && i.y === ny);
+    let nextItems = [...itemsRef.current];
+    const hitBomb = nextItems.findIndex(i => i.type === 'bomb' && i.x === nx && i.y === ny);
     if (hitBomb !== -1) { endGame(); return; }
 
     currentSnake.unshift(head);
 
-    const hitFood = currentItems.findIndex(i => i.type === 'food' && i.x === nx && i.y === ny);
+    const hitFood = nextItems.findIndex(i => i.type === 'food' && i.x === nx && i.y === ny);
     if (hitFood !== -1) {
       setScore(prev => prev + 1);
-      currentItems.splice(hitFood, 1);
-      setItems(currentItems);
-      spawnFood();
+      nextItems.splice(hitFood, 1);
+      nextItems.push(createFood());
       const lvl = Math.floor((score + 1) / 5);
       setSpeed(Math.max(60, 200 - lvl * 14));
     } else {
@@ -274,7 +282,7 @@ export function Snake() {
     }
 
     if (modeRef.current === 2) {
-      const updatedItems = currentItems.map(item => {
+      nextItems = nextItems.map(item => {
         if (item.type === 'bomb') {
           const newTtl = item.ttl! - 1;
           if (newTtl <= 0) {
@@ -290,21 +298,20 @@ export function Snake() {
         return { ...item, age: item.age + 1 };
       }).filter(Boolean) as Item[];
 
-      setItems(updatedItems);
-
       if (frameCount % 12 === 0) {
-        if (updatedItems.filter(i => i.type === 'food').length < 2) spawnFood();
+        if (nextItems.filter(i => i.type === 'food').length < 2) nextItems.push(createFood());
       }
       if (frameCount % 20 === 0) {
-        if (updatedItems.filter(i => i.type === 'bomb').length < 3) spawnBomb();
+        if (nextItems.filter(i => i.type === 'bomb').length < 3) nextItems.push(createBomb());
       }
     } else {
-      setItems(currentItems.map(i => ({ ...i, age: i.age + 1 })));
+      nextItems = nextItems.map(i => ({ ...i, age: i.age + 1 }));
     }
 
+    setItems(nextItems);
     setSnake(currentSnake);
     setExplosions(prev => prev.map(e => ({ ...e, frames: e.frames - 1 })).filter(e => e.frames > 0));
-  }, [score, frameCount, spawnFood, spawnBomb, endGame]);
+  }, [score, frameCount, createFood, createBomb, endGame]);
 
   // Game Loop
   useEffect(() => {

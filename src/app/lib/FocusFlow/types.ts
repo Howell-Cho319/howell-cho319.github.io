@@ -116,4 +116,6 @@ export interface AppState {
   ambientSounds: string[];
   soundVolumes: Record<string, number>;
   soundEnabled: boolean;
+  habitRemainingTimes: Record<string, number>;
+  alarmVolume: number;
 }

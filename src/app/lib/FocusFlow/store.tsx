@@ -81,6 +81,8 @@ const initialState: AppState = {
   ambientSounds: [],
   soundVolumes: {},
   soundEnabled: true,
+  habitRemainingTimes: {},
+  alarmVolume: 0.5,
 };
 
 const STORAGE_KEY = 'focusflow_v3_data';
@@ -113,6 +115,41 @@ function useFocusFlowInternal() {
   const [state, setState] = useState<AppState>(initialState);
   const [isHydrated, setIsHydrated] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const alarmAudioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Initialize alarm audio
+  useEffect(() => {
+    alarmAudioRef.current = new Audio('/music/alarm.mp3');
+  }, []);
+
+  const playAlarm = useCallback(() => {
+    if (alarmAudioRef.current && state.soundEnabled) {
+      alarmAudioRef.current.currentTime = 0;
+      alarmAudioRef.current.volume = Math.min(1, state.alarmVolume);
+      alarmAudioRef.current.play().catch(err => console.error('Alarm failed:', err));
+    }
+  }, [state.soundEnabled, state.alarmVolume]);
+
+  const playCompletedNotify = useCallback(() => {
+     if (!state.soundEnabled) return;
+     
+     const playOnce = () => {
+       const audio = new Audio('/music/Completed Notify.mp3');
+       audio.volume = Math.min(1, state.alarmVolume);
+       return audio.play();
+     };
+ 
+     // Play 3 times as requested
+     playOnce().then(() => {
+       setTimeout(() => {
+         playOnce().then(() => {
+           setTimeout(() => {
+             playOnce().catch(err => console.error('Completed Notify third play failed:', err));
+           }, 1000);
+         }).catch(err => console.error('Completed Notify second play failed:', err));
+       }, 1000); // 1 second gap between plays
+     }).catch(err => console.error('Completed Notify first play failed:', err));
+   }, [state.soundEnabled, state.alarmVolume]);
 
   // Load from sessionStorage
   useEffect(() => {
@@ -130,6 +167,8 @@ function useFocusFlowInternal() {
           ambientSounds: parsed.ambientSounds || (parsed.ambientSound ? [parsed.ambientSound] : []),
           soundVolumes: parsed.soundVolumes || {},
           soundEnabled: parsed.soundEnabled !== undefined ? parsed.soundEnabled : true,
+          habitRemainingTimes: parsed.habitRemainingTimes || {},
+          alarmVolume: parsed.alarmVolume !== undefined ? parsed.alarmVolume : 0.5,
           stats: {
             ...initialState.stats,
             ...parsed.stats,
@@ -158,6 +197,9 @@ function useFocusFlowInternal() {
       intervalRef.current = setInterval(() => {
         setState(prev => {
           if (prev.activeSession.remainingTime <= 1) {
+            // Play alarm sound
+            playAlarm();
+
             // Auto-record session on completion
             const isWorkMode = prev.activeSession.mode === 'work';
             
@@ -168,31 +210,40 @@ function useFocusFlowInternal() {
             let shouldStop = false;
 
             // 2. Logic: Sequence to next habit if current one finishes
-            if (isWorkMode) {
-              const activeHabits = prev.habits.filter(h => h.isActive);
-              const currentIndex = activeHabits.findIndex(h => h.id === prev.activeSession.habitId);
-              
-              if (currentIndex !== -1 && currentIndex < activeHabits.length - 1) {
-                // Move to the next habit in the list
-                const nextHabit = activeHabits[currentIndex + 1];
-                nextHabitId = nextHabit.id;
-                nextMode = nextHabit.isBreak ? 'break' : 'work';
-                nextDuration = nextHabit.duration;
-              } else if (currentIndex === activeHabits.length - 1) {
-                // Last habit finished, stop the sequence or move to final break
+            const activeHabits = prev.habits.filter(h => h.isActive);
+            const currentIndex = activeHabits.findIndex(h => h.id === prev.activeSession.habitId);
+            
+            // Clear current habit's persistent time as it finished
+            const updatedRemainingTimes = { ...prev.habitRemainingTimes };
+            if (prev.activeSession.habitId) {
+              const currentHabit = prev.habits.find(h => h.id === prev.activeSession.habitId);
+              updatedRemainingTimes[prev.activeSession.habitId] = currentHabit?.duration || prev.activeSession.totalDuration;
+            }
+
+            if (currentIndex !== -1 && currentIndex < activeHabits.length - 1) {
+              // Move to the next habit in the list (Focus or Break)
+              const nextHabit = activeHabits[currentIndex + 1];
+              nextHabitId = nextHabit.id;
+              nextMode = nextHabit.isBreak ? 'break' : 'work';
+              // Load persistent time for next habit or use its default duration
+              nextDuration = updatedRemainingTimes[nextHabitId] ?? nextHabit.duration;
+              shouldStop = false;
+            } else if (currentIndex === activeHabits.length - 1) {
+              // Last habit finished
+              playCompletedNotify();
+              nextMode = 'break';
+              nextDuration = prev.customConfig.breakDuration;
+              shouldStop = !prev.customConfig.autoContinue;
+            } else {
+              // Not in a habit sequence (custom timer), follow normal work/break cycle
+              if (isWorkMode) {
                 nextMode = 'break';
                 nextDuration = prev.customConfig.breakDuration;
-                shouldStop = !prev.customConfig.autoContinue;
+              } else {
+                nextMode = 'work';
+                nextDuration = prev.customConfig.totalDuration;
               }
-            } else {
-              // If break finished, check if we should return to the same habit or move on
-              const activeHabits = prev.habits.filter(h => h.isActive);
-              const currentIndex = activeHabits.findIndex(h => h.id === prev.activeSession.habitId);
-              if (currentIndex !== -1) {
-                const currentHabit = activeHabits[currentIndex];
-                nextMode = currentHabit.isBreak ? 'break' : 'work';
-                nextDuration = currentHabit.duration;
-              }
+              shouldStop = !prev.customConfig.autoContinue;
             }
             
             const newSessionsCompleted = isWorkMode
@@ -201,11 +252,15 @@ function useFocusFlowInternal() {
 
             // 3. Record session data (Copied from recordSession but adapted for functional update)
             const elapsedSeconds = prev.activeSession.totalDuration; // It finished, so use total
+            // Ensure at least 1 minute if it's a completion, unless duration is extremely short
+            const calculatedMinutes = Math.round(elapsedSeconds / 60);
+            const sessionMinutes = calculatedMinutes === 0 && elapsedSeconds > 0 ? 1 : calculatedMinutes;
+
             const session: HabitSession = {
               habitId: prev.activeSession.habitId || 'custom',
               startTime: new Date(prev.activeSession.startTime || Date.now()).toISOString(),
               endTime: new Date().toISOString(),
-              actualDuration: Math.round(elapsedSeconds / 60),
+              actualDuration: sessionMinutes,
               completed: true,
             };
 
@@ -247,11 +302,11 @@ function useFocusFlowInternal() {
             const updatedPerformance = prev.stats.dailyPerformance.filter(p => p.date !== today);
             const newTodayPerf = {
               date: today,
-              totalMinutes: todayPerf.totalMinutes + (isWorkMode ? session.actualDuration : 0),
+              totalMinutes: todayPerf.totalMinutes + session.actualDuration,
               sessionsCompleted: sessionsCompletedToday,
               habits: {
                 ...todayPerf.habits,
-                [session.habitId]: (todayPerf.habits[session.habitId] || 0) + (isWorkMode ? session.actualDuration : 0),
+                [session.habitId]: (todayPerf.habits[session.habitId] || 0) + session.actualDuration,
               },
               challenges: updatedChallenges,
               planItems: todayPerf.planItems,
@@ -260,6 +315,7 @@ function useFocusFlowInternal() {
             return {
               ...prev,
               sessions: [...prev.sessions, session],
+              habitRemainingTimes: updatedRemainingTimes,
               stats: {
                 ...prev.stats,
                 totalSessions: prev.stats.totalSessions + (isWorkMode ? 1 : 0),
@@ -335,14 +391,24 @@ function useFocusFlowInternal() {
   const setSoundEnabled = useCallback((enabled: boolean) => {
     setState(prev => ({ ...prev, soundEnabled: enabled }));
   }, []);
+
+  const setAlarmVolume = useCallback((volume: number) => {
+    setState(prev => ({ ...prev, alarmVolume: volume }));
+  }, []);
   // Habit actions
   const toggleHabit = useCallback((habitId: string) => {
-    setState(prev => ({
-      ...prev,
-      habits: prev.habits.map(h =>
-        h.id === habitId ? { ...h, isActive: !h.isActive } : h
-      ),
-    }));
+    setState(prev => {
+      const habitToToggle = prev.habits.find(h => h.id === habitId);
+      if (!habitToToggle) return prev;
+      
+      const otherHabits = prev.habits.filter(h => h.id !== habitId);
+      const updatedHabit = { ...habitToToggle, isActive: !habitToToggle.isActive };
+      
+      return {
+        ...prev,
+        habits: [...otherHabits, updatedHabit],
+      };
+    });
   }, []);
 
   const addHabit = useCallback((habit: Omit<Habit, 'id'>) => {
@@ -359,10 +425,17 @@ function useFocusFlowInternal() {
         h.id === habitId ? { ...h, ...updates } : h
       );
       
+      const updatedRemainingTimes = { ...prev.habitRemainingTimes };
+      const updatedHabit = updatedHabits.find(h => h.id === habitId);
+      
+      // If duration was updated, sync the remaining time for this habit
+      if (updatedHabit && updates.duration !== undefined) {
+        updatedRemainingTimes[habitId] = updatedHabit.duration;
+      }
+
       // If the habit being updated is currently active, sync the timer
       let updatedActiveSession = prev.activeSession;
       if (prev.activeSession.habitId === habitId) {
-        const updatedHabit = updatedHabits.find(h => h.id === habitId);
         if (updatedHabit) {
           updatedActiveSession = {
             ...prev.activeSession,
@@ -378,6 +451,7 @@ function useFocusFlowInternal() {
       return {
         ...prev,
         habits: updatedHabits,
+        habitRemainingTimes: updatedRemainingTimes,
         activeSession: updatedActiveSession,
       };
     });
@@ -464,17 +538,20 @@ function useFocusFlowInternal() {
       // Don't record if almost no time spent
       if (elapsedSeconds < 1 && !completed) return prev; 
 
+      // Ensure at least 1 minute if it's a completion, unless duration is extremely short
+      const calculatedMinutes = Math.round(elapsedSeconds / 60);
+      const sessionMinutes = completed && calculatedMinutes === 0 && elapsedSeconds > 0 ? 1 : calculatedMinutes;
+
       const session: HabitSession = {
         habitId: prev.activeSession.habitId || 'custom',
         startTime: new Date(prev.activeSession.startTime || Date.now()).toISOString(),
         endTime: new Date().toISOString(),
-        actualDuration: Math.round(elapsedSeconds / 60),
+        actualDuration: sessionMinutes,
         completed,
       };
 
       // Only update stats if we actually spent at least a minute or it's a completion
-      const minutesToAdd = Math.round(elapsedSeconds / 60);
-      if (minutesToAdd === 0 && !completed) return prev;
+      if (sessionMinutes === 0 && !completed) return prev;
 
       const today = getToday();
       const todayPerf = getTodayPerformance(prev.stats.dailyPerformance, prev.stats.challenges);
@@ -546,53 +623,74 @@ function useFocusFlowInternal() {
   }, []); // Stable dependencies
 
   const selectHabit = useCallback((habitId: string) => {
-    // Record partial progress of previous session if it was running
-    recordSession(false);
-    
     setState(prev => {
       const habit = prev.habits.find(h => h.id === habitId);
       if (!habit) return prev;
 
-      // Forcefully override EVERY timer state to align with the habit's setup
+      const currentHabitId = prev.activeSession.habitId;
+      const currentRemainingTime = prev.activeSession.remainingTime;
+
+      // 1. Save current habit's remaining time if it exists
+      const updatedRemainingTimes = { ...prev.habitRemainingTimes };
+      if (currentHabitId) {
+        updatedRemainingTimes[currentHabitId] = currentRemainingTime;
+      }
+
+      // 2. Load next habit's remaining time or use default
+      const nextRemainingTime = updatedRemainingTimes[habitId] ?? habit.duration;
+
       return {
         ...prev,
+        habitRemainingTimes: updatedRemainingTimes,
         activeSession: {
           ...prev.activeSession,
           habitId: habit.id,
-          presetId: null, // Clear any preset (like the 45-min Deep Work)
+          presetId: null,
           mode: habit.isBreak ? 'break' : 'work',
           totalDuration: habit.duration,
-          remainingTime: habit.duration,
+          remainingTime: nextRemainingTime,
           isRunning: true,
           isPaused: false,
           startTime: Date.now(),
         },
       };
     });
-  }, [recordSession]);
+  }, []);
 
   const pauseTimer = useCallback(() => {
     recordSession(false); // Record partial minutes spent
-    setState(prev => ({
-      ...prev,
-      activeSession: {
-        ...prev.activeSession,
-        isRunning: false,
-        isPaused: true,
-        totalDuration: prev.activeSession.remainingTime, // Update total to remaining for next segment
-        startTime: Date.now(), // Reset start time for next segment
-      },
-    }));
+    setState(prev => {
+      const updatedRemainingTimes = { ...prev.habitRemainingTimes };
+      if (prev.activeSession.habitId) {
+        updatedRemainingTimes[prev.activeSession.habitId] = prev.activeSession.remainingTime;
+      }
+      
+      return {
+        ...prev,
+        habitRemainingTimes: updatedRemainingTimes,
+        activeSession: {
+          ...prev.activeSession,
+          isRunning: false,
+          isPaused: true,
+          startTime: Date.now(), // Reset start time for next segment
+        },
+      };
+    });
   }, [recordSession]);
 
   const resetTimer = useCallback(() => {
-    recordSession(false); // Record partial minutes spent before reset
     setState(prev => {
       const currentHabit = prev.habits.find(h => h.id === prev.activeSession.habitId);
       const duration = currentHabit?.duration || prev.activeSession.totalDuration;
       
+      const updatedRemainingTimes = { ...prev.habitRemainingTimes };
+      if (prev.activeSession.habitId) {
+        updatedRemainingTimes[prev.activeSession.habitId] = duration;
+      }
+
       return {
         ...prev,
+        habitRemainingTimes: updatedRemainingTimes,
         activeSession: {
           ...prev.activeSession,
           remainingTime: duration,
@@ -603,23 +701,57 @@ function useFocusFlowInternal() {
         },
       };
     });
-  }, [recordSession]);
+  }, []);
 
   const skipToBreak = useCallback(() => {
-    setState(prev => ({
-      ...prev,
-      activeSession: {
-        ...prev.activeSession,
-        mode: 'break',
-        totalDuration: prev.customConfig.breakDuration,
-        remainingTime: prev.customConfig.breakDuration,
-        isRunning: true,
-        isPaused: false,
-      },
-    }));
+    setState(prev => {
+      const activeHabits = prev.habits.filter(h => h.isActive);
+      const currentIndex = activeHabits.findIndex(h => h.id === prev.activeSession.habitId);
+      
+      const currentHabitId = prev.activeSession.habitId;
+      const currentRemainingTime = prev.activeSession.remainingTime;
+
+      // 1. Save current habit's remaining time
+      const updatedRemainingTimes = { ...prev.habitRemainingTimes };
+      if (currentHabitId) {
+        updatedRemainingTimes[currentHabitId] = currentRemainingTime;
+      }
+
+      // 2. Logic: Move to next habit if available
+      let nextHabitId = prev.activeSession.habitId;
+      let nextMode: 'work' | 'break' = 'break';
+      let nextDuration = prev.customConfig.breakDuration;
+
+      if (currentIndex !== -1 && currentIndex < activeHabits.length - 1) {
+        const nextHabit = activeHabits[currentIndex + 1];
+        nextHabitId = nextHabit.id;
+        nextMode = nextHabit.isBreak ? 'break' : 'work';
+        nextDuration = updatedRemainingTimes[nextHabitId] ?? nextHabit.duration;
+      } else {
+        // If at the end or no habits, go to generic break and reset habit selection
+        nextHabitId = null;
+        nextMode = 'break';
+        nextDuration = prev.customConfig.breakDuration;
+      }
+
+      return {
+        ...prev,
+        habitRemainingTimes: updatedRemainingTimes,
+        activeSession: {
+          ...prev.activeSession,
+          habitId: nextHabitId,
+          mode: nextMode,
+          totalDuration: nextDuration,
+          remainingTime: nextDuration,
+          isRunning: true,
+          isPaused: false,
+          startTime: Date.now(),
+        },
+      };
+    });
   }, [state.customConfig.breakDuration]);
 
-  const skipBreak = useCallback(() => {
+  const resetBreak = useCallback(() => {
     setState(prev => ({
       ...prev,
       activeSession: {
@@ -631,6 +763,28 @@ function useFocusFlowInternal() {
         isPaused: false,
       },
     }));
+  }, [state.customConfig.totalDuration]);
+
+  const resetAllHabits = useCallback(() => {
+    setState(prev => {
+      const activeHabits = prev.habits.filter(h => h.isActive);
+      const firstHabit = activeHabits[0];
+      
+      return {
+        ...prev,
+        habitRemainingTimes: {},
+        activeSession: {
+          ...prev.activeSession,
+          habitId: firstHabit ? firstHabit.id : null,
+          mode: firstHabit?.isBreak ? 'break' : 'work',
+          totalDuration: firstHabit ? firstHabit.duration : prev.customConfig.totalDuration,
+          remainingTime: firstHabit ? firstHabit.duration : prev.customConfig.totalDuration,
+          isRunning: false,
+          isPaused: false,
+          sessionsCompleted: 0,
+        },
+      };
+    });
   }, [state.customConfig.totalDuration]);
 
   // Plan item actions
@@ -773,6 +927,7 @@ function useFocusFlowInternal() {
     toggleAmbientSound,
     setAmbientVolume,
     setSoundEnabled,
+    setAlarmVolume,
     // Habits
     toggleHabit,
     addHabit,
@@ -786,8 +941,10 @@ function useFocusFlowInternal() {
     startTimer,
     pauseTimer,
     resetTimer,
+    playAlarm,
     skipToBreak,
-    skipBreak,
+    skipBreak: resetBreak,
+    resetAllHabits,
     recordSession,
     // Config
     updateCustomConfig,

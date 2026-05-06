@@ -1,8 +1,8 @@
 import { Link } from "react-router";
-import { ArrowRight, BookOpen, Briefcase, Award, Mail, FileText, X, ChevronLeft, ChevronRight, Clock, Volume2, ListChecks, CheckSquare, BarChart2, Info, Play, Smartphone, FlipHorizontal, Layers, Keyboard, Gamepad2, Heart } from "lucide-react";
+import { ArrowRight, BookOpen, Briefcase, Award, Mail, FileText, X, ChevronLeft, ChevronRight, Clock, Volume2, ListChecks, CheckSquare, BarChart2, Info, Play, Smartphone, FlipHorizontal, Layers, Keyboard, Gamepad2, Heart, Calculator, PieChart, RotateCcw, ChevronUp } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 function FocusFlowTutorialModal({ onClose }: { onClose: () => void }) {
   const [step, setStep] = useState(0);
@@ -178,11 +178,52 @@ export function Home() {
   const [currentPage, setCurrentPage] = useState(0);
   const [showFocusFlowTutorial, setShowFocusFlowTutorial] = useState(false);
   const [activeGameSlide, setActiveGameSlide] = useState(0);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  // Memoize stars to prevent re-randomization on every render (which happens every 8s due to slider)
+  const stars = useMemo(() => {
+    return {
+      slow: [...Array(40)].map((_, i) => ({
+        id: i,
+        top: `${Math.random() * 100}%`,
+        left: `${Math.random() * 100}%`,
+        delay: `${Math.random() * 2}s`,
+        duration: `${2 + Math.random() * 3}s`
+      })),
+      medium: [...Array(25)].map((_, i) => ({
+        id: i,
+        top: `${Math.random() * 100}%`,
+        left: `${Math.random() * 100}%`,
+        delay: `${Math.random() * 2}s`,
+        duration: `${3 + Math.random() * 4}s`
+      })),
+      fast: [...Array(12)].map((_, i) => ({
+        id: i,
+        top: `${Math.random() * 100}%`,
+        left: `${Math.random() * 100}%`,
+        delay: `${Math.random() * 2}s`,
+        duration: `${4 + Math.random() * 5}s`
+      }))
+    };
+  }, []);
+
+  // Scroll to top visibility
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 400);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   // Auto-slide for games
   useEffect(() => {
     const timer = setInterval(() => {
-      setActiveGameSlide((prev) => (prev + 1) % 2);
+      setActiveGameSlide((prev) => (prev + 1) % 3);
     }, 8000);
     return () => clearInterval(timer);
   }, []);
@@ -237,6 +278,37 @@ export function Home() {
 
   return (
     <div>
+      <style>{`
+        @keyframes star-move-slow {
+          from { transform: translateY(0); }
+          to { transform: translateY(-100px); }
+        }
+        @keyframes star-move-medium {
+          from { transform: translateY(0); }
+          to { transform: translateY(-200px); }
+        }
+        @keyframes star-move-fast {
+          from { transform: translateY(0); }
+          to { transform: translateY(-300px); }
+        }
+        @keyframes pulse {
+          0%, 100% { opacity: 0.3; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.2); }
+        }
+        @keyframes twinkle {
+          0%, 100% { opacity: 0.5; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.5); }
+        }
+        .animate-star-move-slow {
+          animation: star-move-slow 20s linear infinite alternate;
+        }
+        .animate-star-move-medium {
+          animation: star-move-medium 15s linear infinite alternate;
+        }
+        .animate-star-move-fast {
+          animation: star-move-fast 10s linear infinite alternate;
+        }
+      `}</style>
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-secondary/30 via-background to-accent/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
@@ -254,7 +326,7 @@ export function Home() {
                 A warm corner of the internet where I share my journey, work, and passion. 
                 Discover my stories, explore my projects, and let's create something beautiful together.
                 <br />
-                <span className="text-sm mt-4 block">crate by Cho Sin Hong the desgin crate by me</span>
+                <span className="text-sm mt-4 block">Website Design and Created By Cho Sin Hong</span>
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link
@@ -669,18 +741,138 @@ export function Home() {
         </div>
       </section>
 
+      {/* Bill Splitter Introduction Section */}
+      <section className="bg-[#F5F0E8] py-20 border-b border-[#E2D9C8]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Right Content - Visual Preview (Order reversed for layout variety) */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="lg:order-2"
+            >
+              <div className="relative bg-[#FDFAF4] rounded-3xl shadow-xl border border-[#E2D9C8] overflow-hidden p-8 flex flex-col gap-6">
+                {/* Result Card Mockup */}
+                <div className="bg-[#F5F0E8] border border-[#E2D9C8] rounded-2xl p-6 shadow-sm relative group cursor-pointer transition-all hover:shadow-md">
+                   <div className="flex justify-between items-center mb-6">
+                     <div className="w-10 h-10 bg-[#8A5F41] rounded-full flex items-center justify-center text-white font-bold">B</div>
+                     <div className="h-4 w-24 bg-[#8A5F41]/10 rounded"></div>
+                   </div>
+                   <div className="space-y-4">
+                     <div className="flex justify-between items-center">
+                       <div className="flex items-center gap-3">
+                         <div className="w-8 h-8 rounded-full bg-[#6B7A2F]/20"></div>
+                         <div className="h-3 w-20 bg-[#2A1F14]/10 rounded"></div>
+                       </div>
+                       <div className="h-4 w-16 bg-[#8A5F41]/20 rounded"></div>
+                     </div>
+                     <div className="flex justify-between items-center">
+                       <div className="flex items-center gap-3">
+                         <div className="w-8 h-8 rounded-full bg-[#3A6A8A]/20"></div>
+                         <div className="h-3 w-20 bg-[#2A1F14]/10 rounded"></div>
+                       </div>
+                       <div className="h-4 w-16 bg-[#8A5F41]/20 rounded"></div>
+                     </div>
+                   </div>
+                   <div className="mt-8 pt-6 border-t border-[#E2D9C8] flex justify-between items-center">
+                     <div className="h-3 w-32 bg-[#9C8470]/20 rounded"></div>
+                     <div className="h-6 w-24 bg-[#8A5F41] rounded-lg"></div>
+                   </div>
+                </div>
+                
+                {/* Mode Icons Mockup */}
+                <div className="flex justify-center gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-[#8A5F41]/10 flex items-center justify-center text-[#8A5F41] font-bold text-lg">≡</div>
+                  <div className="w-10 h-10 rounded-xl bg-[#8A5F41]/10 flex items-center justify-center text-[#8A5F41] font-bold text-lg">♂♀</div>
+                  <div className="w-10 h-10 rounded-xl bg-[#8A5F41]/10 flex items-center justify-center text-[#8A5F41] font-bold text-lg">⚖</div>
+                  <div className="w-10 h-10 rounded-xl bg-[#8A5F41]/10 flex items-center justify-center text-[#8A5F41] font-bold text-lg">★</div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Left Content - Text Info */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="lg:order-1"
+            >
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#8A5F41]/10 text-[#8A5F41] rounded-full text-sm font-medium mb-6 font-sans">
+                <Calculator className="w-4 h-4" />
+                Finance Tool
+              </div>
+              
+              <h2 className="text-4xl md:text-5xl font-bold mb-6 text-[#2A1F14] font-serif italic">
+                Bill Splitter
+              </h2>
+              
+              <p className="text-xl text-[#6B5640] mb-8 leading-relaxed font-serif">
+                A elegant and precise tool for settling restaurant bills with friends. 
+                Supporting multiple AA methods from simple equal splits to gender-based or weighted calculations.
+              </p>
+
+              <div className="space-y-6 mb-10">
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 w-12 h-12 bg-[#FDFAF4] rounded-2xl flex items-center justify-center border border-[#E2D9C8]">
+                    <PieChart className="w-6 h-6 text-[#8A5F41]" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-[#2A1F14] font-sans mb-1">Flexible Methods</h3>
+                    <p className="text-[#9C8470] text-sm">Equal split, gender ratio, weighted, host mode, and custom percentages.</p>
+                  </div>
+                </div>
+
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 w-12 h-12 bg-[#FDFAF4] rounded-2xl flex items-center justify-center border border-[#E2D9C8]">
+                    <RotateCcw className="w-6 h-6 text-[#8A5F41]" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-[#2A1F14] font-sans mb-1">Fate's Wheel</h3>
+                    <p className="text-[#9C8470] text-sm">Can't decide? Let the random wheel pick the lucky one to treat today.</p>
+                  </div>
+                </div>
+
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 w-12 h-12 bg-[#FDFAF4] rounded-2xl flex items-center justify-center border border-[#E2D9C8]">
+                    <Smartphone className="w-6 h-6 text-[#8A5F41]" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-[#2A1F14] font-sans mb-1">Mobile Ready</h3>
+                    <p className="text-[#9C8470] text-sm">Optimized for splitting bills on the go directly at the table.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap gap-4">
+                <Link
+                  to="/bill-splitter"
+                  className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#8A5F41] text-white rounded-full hover:bg-[#A77050] transition-colors shadow-lg shadow-[#8A5F41]/20 font-sans font-medium"
+                >
+                  <Play className="w-4 h-4" />
+                  Split Now
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
       {/* Games Sliding Section */}
       <section className="bg-[#f8f5f0] py-20 border-y border-amber-100/50 overflow-hidden relative min-h-[600px] flex items-center group/slider">
         {/* Navigation Buttons */}
         <button
-          onClick={() => setActiveGameSlide((prev) => (prev - 1 + 2) % 2)}
+          onClick={() => setActiveGameSlide((prev) => (prev - 1 + 3) % 3)}
           className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-40 p-3 rounded-full bg-white/40 hover:bg-white/60 text-amber-900/40 hover:text-amber-900 transition-all opacity-0 group-hover/slider:opacity-100 backdrop-blur-sm border border-amber-200/30 shadow-sm"
         >
           <ChevronLeft className="w-6 h-6" />
         </button>
 
         <button
-          onClick={() => setActiveGameSlide((prev) => (prev + 1) % 2)}
+          onClick={() => setActiveGameSlide((prev) => (prev + 1) % 3)}
           className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-40 p-3 rounded-full bg-white/40 hover:bg-white/60 text-amber-900/40 hover:text-amber-900 transition-all opacity-0 group-hover/slider:opacity-100 backdrop-blur-sm border border-amber-200/30 shadow-sm"
         >
           <ChevronRight className="w-6 h-6" />
@@ -764,7 +956,7 @@ export function Home() {
                   </div>
                 </div>
               </motion.div>
-            ) : (
+            ) : activeGameSlide === 1 ? (
               <motion.div
                 key="snake-slide"
                 initial={{ opacity: 0, x: 50 }}
@@ -840,12 +1032,87 @@ export function Home() {
                   </div>
                 </div>
               </motion.div>
+            ) : (
+              <motion.div
+                key="rapid-roll-slide"
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -50 }}
+                transition={{ duration: 0.6 }}
+                className="grid lg:grid-cols-2 gap-16 items-center"
+              >
+                {/* Left Content - Text Info */}
+                <div>
+                  <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-amber-100 text-amber-900 rounded-full text-sm font-medium mb-6 font-sans">
+                    <Smartphone className="w-4 h-4 text-amber-900" />
+                    Rapid Roll Edition
+                  </div>
+                  
+                  <h2 className="text-4xl md:text-5xl font-bold mb-6 text-amber-950 font-serif italic">
+                    Rapid Roll
+                  </h2>
+                  
+                  <p className="text-xl text-amber-900/80 mb-8 leading-relaxed font-serif">
+                    The addictive platform survival game from the Nokia era. Keep the ball on the platforms 
+                    as they move up, avoiding the spikes at the top and the bottomless pit.
+                  </p>
+
+                  <div className="grid sm:grid-cols-2 gap-6 mb-10">
+                    <div className="space-y-2">
+                      <h3 className="text-amber-900 font-bold uppercase tracking-wider text-xs font-sans">Objective</h3>
+                      <p className="text-sm text-amber-900/60 font-sans">Survive as long as possible on moving platforms.</p>
+                    </div>
+                    <div className="space-y-2">
+                      <h3 className="text-amber-900 font-bold uppercase tracking-wider text-xs font-sans">Controls</h3>
+                      <p className="text-sm text-amber-900/60 font-sans">Use Left and Right to guide the ball through the maze.</p>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap gap-4">
+                    <Link
+                      to="/rapidroll"
+                      className="inline-flex items-center gap-2 px-8 py-3.5 bg-amber-900 text-white rounded-full hover:bg-amber-950 transition-all shadow-lg shadow-amber-900/20 font-sans font-medium"
+                    >
+                      <Play className="w-4 h-4" />
+                      Start Playing
+                    </Link>
+                    <div className="inline-flex items-center gap-2 px-6 py-3.5 text-amber-900/40 font-sans text-xs uppercase tracking-widest">
+                       High Speed • Classic Fun
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right Content - Visual Preview */}
+                <div className="relative flex justify-center">
+                  <div className="w-[240px] bg-[#3a3a2e] rounded-[18px_18px_40px_40px] p-3 shadow-2xl border border-amber-900/10 relative transform rotate-3 hover:rotate-0 transition-transform duration-500">
+                     <div className="bg-[#1a1a14] rounded-lg p-1.5 mb-3 shadow-inner">
+                       <div className="bg-[#8bac0f] aspect-[10/12] rounded flex flex-col items-center justify-center gap-1 overflow-hidden relative">
+                          <div className="absolute top-2 left-2 text-[6px] text-[#1a2800] opacity-40 font-mono">SCR: 128</div>
+                          {/* Ball */}
+                          <div className="w-3 h-3 bg-[#0f1a00] rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+                          {/* Platforms */}
+                          <div className="w-12 h-1 bg-[#1a2800] absolute top-1/4 left-1/4"></div>
+                          <div className="w-16 h-1 bg-[#1a2800] absolute top-[60%] left-1/2"></div>
+                          <div className="w-10 h-1 bg-[#1a2800] absolute top-[80%] right-1/4"></div>
+                          <div className="text-[8px] font-bold text-[#1a2800] tracking-widest mt-auto mb-2 opacity-20 font-mono">RAPID ROLL</div>
+                       </div>
+                     </div>
+                     <div className="w-10 h-10 bg-[#2a2a20] rounded-full mx-auto mb-2 flex items-center justify-center">
+                       <div className="w-3 h-3 border-2 border-[#8a9a50] rounded-full"></div>
+                     </div>
+                     <div className="flex justify-between px-2 pb-2">
+                       <div className="w-6 h-2 bg-[#2a2a20] rounded-full"></div>
+                       <div className="w-6 h-2 bg-[#2a2a20] rounded-full"></div>
+                     </div>
+                  </div>
+                </div>
+              </motion.div>
             )}
           </AnimatePresence>
 
           {/* Slider Indicators */}
           <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex gap-3 z-30">
-            {[0, 1].map((i) => (
+            {[0, 1, 2].map((i) => (
               <button
                 key={i}
                 onClick={() => setActiveGameSlide(i)}
@@ -859,16 +1126,64 @@ export function Home() {
       </section>
 
       {/* RedWolf Character Showcase Section */}
-      <section className="bg-gradient-to-br from-gray-50 via-stone-50 to-amber-50/30 py-20 relative overflow-hidden border-y border-stone-200/50">
-        {/* Background decorative elements */}
-        <div className="absolute inset-0 opacity-15">
-          <div className="absolute top-20 left-10 w-32 h-32 rounded-full blur-3xl" style={{ backgroundColor: '#8A5F41' }}></div>
-          <div className="absolute bottom-20 right-10 w-40 h-40 rounded-full blur-3xl" style={{ backgroundColor: '#A77F60' }}></div>
-          <div className="absolute top-1/2 left-1/4 w-24 h-24 rounded-full blur-2xl" style={{ backgroundColor: '#CCD67F' }}></div>
-          <div className="absolute top-1/3 right-1/3 w-28 h-28 rounded-full blur-3xl bg-stone-300/40"></div>
+      <section className="py-16 relative overflow-hidden bg-[#020202]">
+        {/* Universal Animated Starfield Background (Galaxy Black) */}
+        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a] via-black to-[#0a0a0a]"></div>
+          
+          {/* Galaxy texture effect */}
+          <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 50% 50%, rgba(138, 95, 65, 0.1) 0%, transparent 70%)' }}></div>
+          <div className="absolute inset-0 opacity-30 animate-star-move-slow will-change-transform">
+            {stars.slow.map((s) => (
+              <div 
+                key={`star-s-${s.id}`}
+                className="absolute w-px h-px bg-white rounded-full"
+                style={{ 
+                  top: s.top, 
+                  left: s.left,
+                  animation: `pulse ${s.duration} infinite ${s.delay}`
+                }}
+              />
+            ))}
+          </div>
+
+          {/* Animated Stars Layer 2 (Medium) */}
+          <div className="absolute inset-0 opacity-50 animate-star-move-medium will-change-transform">
+            {stars.medium.map((s) => (
+              <div 
+                key={`star-m-${s.id}`}
+                className="absolute w-0.5 h-0.5 bg-blue-100 rounded-full"
+                style={{ 
+                  top: s.top, 
+                  left: s.left,
+                  animation: `pulse ${s.duration} infinite ${s.delay}`
+                }}
+              />
+            ))}
+          </div>
+
+          {/* Animated Stars Layer 3 (Large/Twinkling) */}
+          <div className="absolute inset-0 opacity-70 animate-star-move-fast will-change-transform">
+            {stars.fast.map((s) => (
+              <div 
+                key={`star-l-${s.id}`}
+                className="absolute w-1 h-1 bg-yellow-100 rounded-full"
+                style={{ 
+                  top: s.top, 
+                  left: s.left,
+                  animation: `twinkle ${s.duration} infinite ${s.delay}`
+                }}
+              />
+            ))}
+          </div>
+
+          {/* Nebula clouds */}
+          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-purple-900/10 via-transparent to-blue-900/10 mix-blend-screen"></div>
+          <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-purple-600/5 rounded-full blur-[80px] animate-pulse will-change-transform"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-[300px] h-[300px] bg-blue-600/5 rounded-full blur-[80px] animate-pulse will-change-transform" style={{ animationDelay: '2s' }}></div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -876,28 +1191,34 @@ export function Home() {
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium mb-6" style={{ backgroundColor: '#8A5F41', color: '#F3E4C9' }}>
+            <div className="inline-flex items-center gap-2 px-6 py-2 rounded-full text-sm font-bold mb-6 shadow-lg border border-white/10" style={{ backgroundColor: 'rgba(138, 95, 65, 0.9)', color: '#F3E4C9' }}>
               <Gamepad2 className="w-4 h-4" />
               3D Character Design
             </div>
-            <h2 className="text-4xl md:text-5xl font-bold mb-4" style={{ color: '#8A5F41' }}>
+            <h2 className="text-5xl md:text-6xl font-black mb-6 tracking-tight text-white drop-shadow-2xl">
               Meet RedWolf
             </h2>
-            <p className="text-lg max-w-2xl mx-auto" style={{ color: '#A77F60' }}>
-              A cybernetic warrior created as a fusion of human-like instinct and machine-level accuracy for a 3D character project.
+            <p className="text-xl max-w-2xl mx-auto font-medium" style={{ color: '#F3E4C9' }}>
+              A cybernetic warrior created as a fusion of human-like instinct and machine-level accuracy.
             </p>
           </motion.div>
 
-          <div className="grid lg:grid-cols-12 gap-8 items-center">
+          <div className="grid lg:grid-cols-12 gap-12 items-center">
             {/* Left Stats Panel */}
             <motion.div
-              initial={{ opacity: 0, x: -30 }}
+              initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
+              whileHover={{ scale: 1.05, y: -5 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="lg:col-span-3"
+              transition={{ 
+                duration: 0.4, 
+                delay: 0.2,
+                scale: { type: "spring", stiffness: 400, damping: 25 },
+                y: { type: "spring", stiffness: 400, damping: 25 }
+              }}
+              className="lg:col-span-3 cursor-pointer will-change-transform"
             >
-              <div className="rounded-2xl p-6 text-white shadow-2xl" style={{ background: `linear-gradient(135deg, #8A5F41 0%, #A77F60 100%)`, border: '1px solid #CCD67F' }}>
+              <div className="rounded-3xl p-8 text-white shadow-[0_20px_50px_rgba(0,0,0,0.5)] border-2 backdrop-blur-md" style={{ background: `linear-gradient(135deg, rgba(138, 95, 65, 0.9) 0%, rgba(167, 127, 96, 0.8) 100%)`, borderColor: 'rgba(204, 214, 127, 0.4)' }}>
                 {/* Level Display */}
                 <div className="mb-6">
                   <div className="text-sm font-bold uppercase tracking-wider mb-2" style={{ color: '#F3E4C9' }}>LEVEL</div>
@@ -985,133 +1306,107 @@ export function Home() {
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
+              whileHover={{ scale: 1.08, zIndex: 50 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="lg:col-span-6 flex justify-center"
+              transition={{ 
+                type: "spring", 
+                stiffness: 300, 
+                damping: 20,
+                scale: { duration: 0.4 }
+              }}
+              className="lg:col-span-6 flex justify-center cursor-pointer will-change-transform"
             >
-              <div className="relative">
-                {/* Video container with animated starfield background */}
-                <div className="w-80 h-96 lg:w-96 lg:h-[500px] rounded-3xl overflow-hidden shadow-2xl border-4 p-1" style={{ background: `linear-gradient(135deg, #8A5F41 0%, #A77F60 50%, #CCD67F 100%)` }}>
-                  <div className="w-full h-full rounded-2xl overflow-hidden relative bg-black">
-                    {/* Animated starfield background */}
-                    <div className="absolute inset-0 bg-gradient-to-b from-gray-900 via-black to-gray-900">
-                      {/* Large stars */}
-                      <div className="absolute top-[10%] left-[15%] w-1 h-1 bg-white rounded-full animate-pulse"></div>
-                      <div className="absolute top-[25%] right-[20%] w-1.5 h-1.5 bg-blue-200 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
-                      <div className="absolute top-[40%] left-[25%] w-1 h-1 bg-yellow-200 rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
-                      <div className="absolute top-[60%] right-[15%] w-1 h-1 bg-white rounded-full animate-pulse" style={{ animationDelay: '1.5s' }}></div>
-                      <div className="absolute top-[75%] left-[35%] w-1.5 h-1.5 bg-blue-100 rounded-full animate-pulse" style={{ animationDelay: '2s' }}></div>
-                      <div className="absolute top-[85%] right-[30%] w-1 h-1 bg-yellow-100 rounded-full animate-pulse" style={{ animationDelay: '0.3s' }}></div>
-                      
-                      {/* Medium stars */}
-                      <div className="absolute top-[20%] left-[45%] w-0.5 h-0.5 bg-white rounded-full animate-pulse" style={{ animationDelay: '0.8s' }}></div>
-                      <div className="absolute top-[35%] right-[40%] w-0.5 h-0.5 bg-blue-200 rounded-full animate-pulse" style={{ animationDelay: '1.3s' }}></div>
-                      <div className="absolute top-[50%] left-[10%] w-0.5 h-0.5 bg-yellow-200 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-                      <div className="absolute top-[70%] right-[45%] w-0.5 h-0.5 bg-white rounded-full animate-pulse" style={{ animationDelay: '1.8s' }}></div>
-                      
-                      {/* Small twinkling stars */}
-                      <div className="absolute top-[15%] left-[60%] w-px h-px bg-white rounded-full animate-ping" style={{ animationDelay: '0.4s' }}></div>
-                      <div className="absolute top-[30%] right-[25%] w-px h-px bg-blue-100 rounded-full animate-ping" style={{ animationDelay: '0.9s' }}></div>
-                      <div className="absolute top-[45%] left-[70%] w-px h-px bg-yellow-100 rounded-full animate-ping" style={{ animationDelay: '1.4s' }}></div>
-                      <div className="absolute top-[65%] right-[35%] w-px h-px bg-white rounded-full animate-ping" style={{ animationDelay: '0.7s' }}></div>
-                      <div className="absolute top-[80%] left-[55%] w-px h-px bg-blue-200 rounded-full animate-ping" style={{ animationDelay: '1.9s' }}></div>
-                      
-                      {/* Nebula effect */}
-                      <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-purple-900/10 via-transparent to-blue-900/10"></div>
-                      <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-purple-600/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2.5s' }}></div>
-                      <div className="absolute bottom-1/4 right-1/4 w-24 h-24 bg-blue-600/5 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '3s' }}></div>
-                    </div>
-                    
-                    {/* Character video */}
+              <div className="relative group">
+                {/* Video container with Galaxy Black background and hover frame effect */}
+                <div 
+                  className="w-80 h-96 lg:w-96 lg:h-[500px] rounded-3xl overflow-hidden border-4 p-1 transition-all duration-500 group-hover:shadow-[0_0_60px_rgba(204,214,127,0.3)] group-hover:border-[#CCD67F] select-none pointer-events-none will-change-[transform,shadow]" 
+                  style={{ borderColor: '#A77F60', background: 'radial-gradient(circle at center, #111111 0%, #000000 100%)' }}
+                  onContextMenu={(e) => e.preventDefault()}
+                >
+                  <div className="w-full h-full rounded-2xl overflow-hidden relative">
+                    {/* Character display */}
                     <video
                       autoPlay
                       loop
                       muted
                       playsInline
+                      disablePictureInPicture
+                      controlsList="nodownload nofullscreen noremoteplayback"
                       className="w-full h-full object-contain relative z-10"
+                      onContextMenu={(e) => e.preventDefault()}
                     >
                       <source src="/video/RedWolf.webm" type="video/webm" />
                       Your browser does not support the video tag.
                     </video>
                   </div>
                 </div>
-                
-                {/* Floating elements around video */}
-                <div className="absolute -top-4 -right-4 w-8 h-8 rounded-full animate-pulse shadow-lg" style={{ backgroundColor: '#8A5F41' }}></div>
-                <div className="absolute -bottom-4 -left-4 w-6 h-6 rounded-full animate-pulse shadow-lg" style={{ backgroundColor: '#CCD67F' }}></div>
-                <div className="absolute top-1/4 -left-6 w-4 h-4 rounded-full animate-bounce shadow-lg" style={{ backgroundColor: '#A77F60' }}></div>
-                <div className="absolute bottom-1/4 -right-6 w-5 h-5 rounded-full animate-bounce shadow-lg" style={{ backgroundColor: '#F3E4C9' }}></div>
               </div>
             </motion.div>
 
             {/* Right Lore Panel */}
             <motion.div
-              initial={{ opacity: 0, x: 30 }}
+              initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
+              whileHover={{ scale: 1.05, y: -5 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.6 }}
-              className="lg:col-span-3"
+              transition={{ 
+                duration: 0.4, 
+                delay: 0.4,
+                scale: { type: "spring", stiffness: 400, damping: 25 },
+                y: { type: "spring", stiffness: 400, damping: 25 }
+              }}
+              className="lg:col-span-3 cursor-pointer will-change-transform"
             >
-              <div className="rounded-2xl p-6 shadow-2xl" style={{ background: `linear-gradient(135deg, #F3E4C9 0%, #CCD67F 100%)`, border: '1px solid #A77F60' }}>
+              <div className="rounded-3xl p-8 shadow-[0_20px_50px_rgba(0,0,0,0.5)] border-2 backdrop-blur-md" style={{ background: `linear-gradient(135deg, rgba(243, 228, 201, 0.9) 0%, rgba(204, 214, 127, 0.8) 100%)`, borderColor: 'rgba(167, 127, 96, 0.4)' }}>
                 {/* Character Lore Header */}
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: `linear-gradient(135deg, #8A5F41 0%, #A77F60 100%)` }}>
-                    <FileText className="w-6 h-6" style={{ color: '#F3E4C9' }} />
+                <div className="flex items-center gap-4 mb-8">
+                  <div className="w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg" style={{ background: `linear-gradient(135deg, #8A5F41 0%, #A77F60 100%)` }}>
+                    <FileText className="w-7 h-7" style={{ color: '#F3E4C9' }} />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold" style={{ color: '#8A5F41' }}>Character Lore</h3>
-                    <p className="text-xs uppercase tracking-wider" style={{ color: '#A77F60' }}>ORIGIN STORY</p>
+                    <h3 className="text-xl font-black" style={{ color: '#8A5F41' }}>Character Lore</h3>
+                    <p className="text-xs font-bold uppercase tracking-widest" style={{ color: '#A77F60' }}>ORIGIN STORY</p>
                   </div>
                 </div>
 
                 {/* Lore Content */}
-                <div className="space-y-4" style={{ color: '#8A5F41' }}>
-                  <p className="text-sm leading-relaxed">
+                <div className="space-y-5" style={{ color: '#8A5F41' }}>
+                  <p className="text-sm font-medium leading-relaxed">
                     Born from childhood dreams and forged through years of artistic growth, RedWolf emerged from sketches in school notebooks to a fully realized 3D warrior.
                   </p>
-                  <p className="text-sm leading-relaxed">
+                  <p className="text-sm font-medium leading-relaxed">
                     What began as a simple wolf drawing evolved into a cybernetic legend - part organic instinct, part digital precision.
                   </p>
-                  <p className="text-sm leading-relaxed">
+                  <p className="text-sm font-medium leading-relaxed">
                     This character represents the journey from imagination to creation, embodying the fusion of childhood wonder with adult craftsmanship.
                   </p>
-                </div>
-
-                {/* Set Bonus */}
-                <div className="mt-4 pt-4" style={{ borderTop: '1px solid #A77F60' }}>
-                  <div className="text-xs uppercase tracking-wider mb-2" style={{ color: '#A77F60' }}>• EQUIPMENT SET BONUS</div>
-                  <div className="rounded-lg p-3" style={{ backgroundColor: '#F3E4C9', border: '1px solid #CCD67F' }}>
-                    <div className="text-sm font-bold mb-2" style={{ color: '#8A5F41' }}>Crimson Wolf's Howl (4/4)</div>
-                    <div className="space-y-1 text-xs" style={{ color: '#A77F60' }}>
-                      <div>• Attack Power +15%</div>
-                      <div>• Critical Rate +10%</div>
-                      <div>• Skill Damage +20%</div>
-                    </div>
-                  </div>
                 </div>
               </div>
             </motion.div>
           </div>
 
           {/* Bottom Description */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.8 }}
-            className="text-center mt-16"
-          >
-            <div className="max-w-3xl mx-auto">
-              <h3 className="text-2xl font-bold mb-4" style={{ color: '#8A5F41' }}>Crafted with Passion</h3>
-              <p className="leading-relaxed" style={{ color: '#A77F60' }}>
+          <div className="flex justify-center mt-12">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              whileHover={{ scale: 1.02, backgroundColor: 'rgba(255,255,255,0.08)', borderColor: 'rgba(255,255,255,0.2)' }}
+              viewport={{ once: true }}
+              transition={{ 
+                duration: 0.3,
+                scale: { type: "spring", stiffness: 400, damping: 25 }
+              }}
+              className="max-w-3xl px-8 py-8 rounded-[40px] backdrop-blur-md border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] cursor-pointer text-center transition-colors duration-300"
+              style={{ backgroundColor: 'rgba(255,255,255,0.05)' }}
+            >
+              <h3 className="text-3xl font-black mb-4" style={{ color: '#F3E4C9' }}>Crafted with Passion</h3>
+              <p className="text-lg leading-relaxed font-medium" style={{ color: '#CCD67F' }}>
                 RedWolf represents the culmination of my 3D modeling and animation skills. 
                 Every detail, from the cybernetic enhancements to the fluid movements, 
-                was meticulously crafted to bring this character to life. This project showcases 
-                my ability to blend organic forms with futuristic technology, creating a character 
-                that embodies both primal instinct and digital evolution.
+                was meticulously crafted to bring this character to life.
               </p>
-            </div>
-          </motion.div>
+            </motion.div>
+          </div>
         </div>
       </section>
 
@@ -1466,6 +1761,24 @@ export function Home() {
           </div>
         </div>
       )}
+
+      {/* Floating Scroll to Top Button */}
+      <AnimatePresence>
+        {showScrollTop && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.5, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.5, y: 20 }}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={scrollToTop}
+            className="fixed bottom-8 right-8 z-50 w-12 h-12 bg-primary text-primary-foreground rounded-full shadow-lg flex items-center justify-center hover:bg-primary/90 transition-colors"
+            aria-label="Scroll to top"
+          >
+            <ChevronUp className="w-6 h-6" />
+          </motion.button>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

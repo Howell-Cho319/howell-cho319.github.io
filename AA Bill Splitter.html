@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>食堂账本 · AA Bill Splitter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:        #F5F0E8;
+  --surface:   #FDFAF4;
+  --border:    #E2D9C8;
+  --border-md: #C8B99A;
+  --ink:       #2A1F14;
+  --ink-2:     #6B5640;
+  --ink-3:     #9C8470;
+  --amber:     #8A5F41;
+  --amber-2:   #A77050;
+  --amber-lt:  #EDD9BF;
+  --olive:     #6B7A2F;
+  --olive-lt:  #D4DC9A;
+  --blue:      #3A6A8A;
+  --blue-lt:   #C8DCEA;
+  --red:       #9A3A3A;
+  --red-lt:    #EAC8C8;
+  --shadow:    rgba(42,31,20,0.10);
+  --r:         14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'Noto Serif SC','DM Serif Display',serif;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* GRAIN TEXTURE */
+body::after{
+  content:'';position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:999;opacity:0.5;
+}
+
+/* LANG TOGGLE */
+.lang-bar{
+  position:fixed;top:16px;right:20px;z-index:100;
+  display:flex;gap:0;
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:8px;
+  overflow:hidden;
+  box-shadow:0 2px 8px var(--shadow);
+}
+.lang-btn{
+  padding:6px 14px;font-size:11px;font-family:'DM Mono',monospace;
+  cursor:pointer;border:none;background:transparent;
+  color:var(--ink-3);letter-spacing:0.5px;transition:all 0.15s;
+}
+.lang-btn.active{background:var(--amber);color:#fff;}
+.lang-btn:first-child{border-right:1px solid var(--border);}
+
+.wrapper{max-width:700px;margin:0 auto;padding:48px 20px 80px;}
+
+/* HEADER */
+.header{text-align:center;margin-bottom:44px;}
+.header-mark{
+  width:56px;height:56px;
+  background:var(--amber);
+  border-radius:50%;
+  margin:0 auto 16px;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 20px rgba(138,95,65,0.3);
+}
+.header-mark svg{width:28px;height:28px;fill:none;stroke:#fff;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+h1{
+  font-family:'DM Serif Display',serif;
+  font-size:38px;color:var(--ink);letter-spacing:1px;line-height:1.15;
+}
+h1 em{font-style:italic;color:var(--amber);}
+.header-sub{
+  font-family:'DM Mono',monospace;
+  font-size:11px;color:var(--ink-3);
+  margin-top:8px;letter-spacing:1.5px;text-transform:uppercase;
+}
+.divider{
+  display:flex;align-items:center;gap:12px;margin-top:18px;
+}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
+.divider-mark{width:6px;height:6px;border-radius:50%;background:var(--amber);opacity:0.5;}
+
+/* CARD */
+.card{
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:var(--r);
+  padding:24px;
+  margin-bottom:16px;
+  box-shadow:0 2px 16px var(--shadow);
+  position:relative;overflow:hidden;
+  animation:fadein 0.4s ease both;
+}
+@keyframes fadein{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.card:nth-child(2){animation-delay:.06s}
+.card:nth-child(3){animation-delay:.12s}
+.card:nth-child(4){animation-delay:.18s}
+.card-accent{
+  position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--olive-lt),var(--amber-lt),var(--olive-lt));
+}
+
+/* CARD HEADER */
+.card-head{
+  display:flex;align-items:center;gap:10px;margin-bottom:20px;
+}
+.card-ico{
+  width:32px;height:32px;border-radius:9px;
+  background:var(--amber);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.card-ico svg{width:16px;height:16px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.card-title{
+  font-family:'DM Serif Display',serif;
+  font-size:15px;color:var(--ink);letter-spacing:0.5px;
+}
+.card-step{
+  margin-left:auto;
+  font-family:'DM Mono',monospace;
+  font-size:10px;color:var(--ink-3);letter-spacing:1px;
+}
+
+/* INPUTS */
+.field-row{display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap;}
+.field-label{
+  font-family:'DM Mono',monospace;
+  font-size:11px;color:var(--ink-3);
+  min-width:72px;flex-shrink:0;letter-spacing:0.5px;
+}
+.field-group{display:flex;gap:8px;flex:1;flex-wrap:wrap;}
+
+input[type=text],input[type=number],select{
+  background:var(--bg);
+  border:1.5px solid var(--border);
+  border-radius:9px;
+  color:var(--ink);
+  font-family:'Noto Serif SC',serif;
+  font-size:13px;
+  padding:9px 12px;
+  outline:none;
+  transition:border-color 0.15s,box-shadow 0.15s;
+  width:100%;
+}
+input:focus,select:focus{
+  border-color:var(--amber);
+  box-shadow:0 0 0 3px rgba(138,95,65,0.12);
+}
+input::placeholder{color:var(--ink-3);opacity:0.6;}
+
+.field-unit{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink-3);white-space:nowrap;align-self:center;}
+
+/* TIP CHIPS */
+.chip-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
+.chip{
+  padding:4px 11px;border:1.5px solid var(--border);
+  border-radius:20px;font-size:11px;color:var(--ink-3);
+  cursor:pointer;transition:all 0.15s;
+  font-family:'DM Mono',monospace;background:transparent;letter-spacing:0.3px;
+}
+.chip:hover{border-color:var(--amber);color:var(--amber-2);}
+.chip.on{background:var(--olive-lt);border-color:var(--olive);color:var(--olive);font-weight:600;}
+
+/* PERSON TAGS */
+.tag-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+.ptag{
+  padding:4px 11px;border-radius:20px;font-size:11px;
+  border:1.5px solid;cursor:pointer;transition:all 0.15s;user-select:none;
+  font-family:'DM Mono',monospace;letter-spacing:0.3px;
+}
+.ptag.male{border-color:var(--blue);color:var(--blue);background:transparent;}
+.ptag.male.on{background:var(--blue);color:#fff;}
+.ptag.female{border-color:#9A5A7A;color:#7A3A5A;background:transparent;}
+.ptag.female.on{background:#9A5A7A;color:#fff;}
+.ptag.vip{border-color:var(--olive);color:var(--olive);background:transparent;}
+.ptag.vip.on{background:var(--olive-lt);color:var(--olive);}
+.ptag.vege{border-color:#5A8A4A;color:#3A6A2A;background:transparent;}
+.ptag.vege.on{background:#8AB87A;color:#fff;}
+.ptag.nodrink{border-color:var(--amber);color:var(--amber-2);background:transparent;}
+.ptag.nodrink.on{background:var(--amber-lt);color:var(--amber);}
+
+/* BUTTONS */
+.btn{
+  border:1.5px solid var(--border);
+  border-radius:9px;
+  background:transparent;
+  color:var(--ink-2);
+  font-family:'DM Mono',monospace;
+  font-size:11px;letter-spacing:0.5px;
+  padding:8px 16px;cursor:pointer;transition:all 0.15s;white-space:nowrap;
+  display:inline-flex;align-items:center;gap:6px;
+}
+.btn:hover{border-color:var(--amber);color:var(--amber);background:var(--amber-lt);}
+.btn svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+.btn.primary{
+  background:var(--amber);border-color:var(--amber);
+  color:#fff;font-size:13px;
+  padding:13px 28px;letter-spacing:1.5px;
+  box-shadow:0 3px 16px rgba(138,95,65,0.3);
+}
+.btn.primary:hover{background:var(--amber-2);box-shadow:0 5px 22px rgba(138,95,65,0.4);transform:translateY(-1px);}
+.btn.primary:active{transform:none;}
+.btn.sage{background:var(--olive-lt);border-color:var(--olive);color:var(--olive);}
+.btn.sage:hover{background:#BFC977;border-color:var(--olive);}
+.btn.danger{border-color:var(--red-lt);color:var(--red);}
+.btn.danger:hover{background:var(--red-lt);}
+
+/* PERSON LIST */
+.person-list{display:flex;flex-direction:column;gap:6px;margin-top:8px;}
+.person-item{
+  display:flex;align-items:center;gap:8px;
+  background:var(--bg);border:1px solid var(--border);
+  border-radius:10px;padding:9px 12px;flex-wrap:wrap;
+  animation:slidein 0.2s ease both;
+}
+@keyframes slidein{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:none}}
+.person-avatar{
+  width:32px;height:32px;border-radius:50%;
+  color:#fff;display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;flex-shrink:0;
+  font-family:'DM Mono',monospace;
+}
+.person-name-display{font-size:13px;color:var(--ink);font-weight:600;min-width:55px;}
+.person-tags-display{display:flex;gap:4px;flex-wrap:wrap;flex:1;}
+.ptag-display{font-size:10px;padding:1px 7px;border-radius:8px;border:1px solid;font-family:'DM Mono',monospace;}
+.person-extra{display:flex;gap:6px;align-items:center;margin-left:auto;}
+.extra-input{
+  width:58px;font-size:12px;padding:4px 7px;text-align:center;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:7px;color:var(--ink);font-family:'DM Mono',monospace;
+}
+.extra-label{font-size:10px;color:var(--ink-3);font-family:'DM Mono',monospace;}
+
+/* MODE GRID */
+.mode-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.mode-card{
+  border:1.5px solid var(--border);border-radius:11px;
+  padding:14px 10px;cursor:pointer;text-align:center;
+  transition:all 0.15s;background:var(--bg);
+}
+.mode-card:hover{border-color:var(--amber-2);background:var(--amber-lt);}
+.mode-card.active{
+  border-color:var(--amber);background:rgba(138,95,65,0.08);
+  box-shadow:0 0 0 3px rgba(138,95,65,0.1);
+}
+.mode-ico{margin-bottom:6px;line-height:1;}
+.mode-ico svg{width:22px;height:22px;fill:none;stroke:var(--amber);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.mode-name{font-family:'DM Serif Display',serif;font-size:13px;color:var(--ink);letter-spacing:0.3px;}
+.mode-desc{font-size:10px;color:var(--ink-3);margin-top:2px;font-family:'DM Mono',monospace;}
+.mode-option{
+  margin-top:12px;padding:12px;
+  background:rgba(107,122,47,0.06);
+  border:1px solid var(--olive-lt);border-radius:10px;
+  font-size:12px;color:var(--ink-2);font-family:'DM Mono',monospace;
+}
+.mode-option .mrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px;}
+.mode-option .mrow:last-child{margin-bottom:0;}
+
+/* EXECUTE */
+.execute-area{text-align:center;padding:8px 0;}
+
+/* LOG */
+.log-box{
+  background:rgba(42,31,20,0.04);border:1px dashed var(--border-md);
+  border-radius:9px;padding:10px 13px;margin-top:10px;
+  max-height:88px;overflow-y:auto;
+  font-size:11px;color:var(--ink-2);font-family:'DM Mono',monospace;
+  letter-spacing:0.2px;
+}
+.log-box div{padding:2px 0;border-bottom:1px solid rgba(42,31,20,0.05);}
+.log-box div:last-child{border:none;}
+.log-ok{color:var(--olive);}
+.log-warn{color:#B07A20;}
+.log-err{color:var(--red);}
+
+/* RESULTS */
+.result-section{display:none;}
+.result-header{text-align:center;margin-bottom:16px;}
+.result-header h2{font-family:'DM Serif Display',serif;font-size:22px;color:var(--ink);letter-spacing:1px;}
+.result-header p{font-size:11px;color:var(--ink-3);margin-top:4px;font-family:'DM Mono',monospace;}
+
+.result-list{display:flex;flex-direction:column;gap:8px;}
+.result-item{
+  display:flex;align-items:center;gap:10px;
+  padding:11px 14px;border:1px solid var(--border);
+  border-radius:12px;background:var(--surface);
+  position:relative;overflow:hidden;
+}
+.result-item::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;
+  width:3px;background:var(--olive-lt);border-radius:3px 0 0 3px;
+}
+.result-item.top::before{background:var(--amber);}
+.result-item.zero::before{background:var(--olive);}
+.result-avatar{
+  width:36px;height:36px;border-radius:50%;color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;flex-shrink:0;
+  font-family:'DM Mono',monospace;
+}
+.result-info{flex:1;}
+.result-name{font-size:14px;font-weight:600;color:var(--ink);}
+.result-tags-sm{display:flex;gap:3px;flex-wrap:wrap;margin-top:2px;}
+.result-tag-sm{font-size:9px;padding:0 5px;border-radius:5px;border:1px solid var(--border);color:var(--ink-3);font-family:'DM Mono',monospace;}
+.result-bar-wrap{height:3px;background:var(--border);border-radius:3px;margin-top:5px;overflow:hidden;}
+.result-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--olive-lt),var(--amber-lt));transition:width 0.7s cubic-bezier(0.34,1.56,0.64,1);}
+.result-amount{
+  font-family:'DM Serif Display',serif;font-size:21px;
+  color:var(--amber);white-space:nowrap;
+}
+.result-amount.zero-amt{color:var(--olive);font-size:15px;font-family:'DM Mono',monospace;}
+
+.result-total-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:13px 16px;margin-top:6px;
+  background:var(--amber);border-radius:11px;color:#fff;
+}
+.result-total-label{font-size:11px;opacity:0.8;font-family:'DM Mono',monospace;letter-spacing:0.5px;}
+.result-total-val{font-family:'DM Serif Display',serif;font-size:26px;}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px;}
+.stat-card{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:10px 8px;text-align:center;}
+.stat-label{font-size:9px;color:var(--ink-3);letter-spacing:1px;font-family:'DM Mono',monospace;margin-bottom:4px;}
+.stat-val{font-family:'DM Serif Display',serif;font-size:15px;color:var(--amber);}
+
+/* WC BAR */
+.wc-bar{display:flex;height:12px;border-radius:6px;overflow:hidden;margin-top:10px;border:1px solid var(--border);}
+.wc-seg{
+  display:flex;align-items:center;justify-content:center;
+  font-size:8px;color:#fff;overflow:hidden;white-space:nowrap;
+  transition:width 0.6s ease;
+  font-family:'DM Mono',monospace;font-weight:600;
+  text-shadow:0 1px 2px rgba(0,0,0,0.3);
+}
+
+/* ============================================================
+   SPIN WHEEL MODAL
+   ============================================================ */
+.wheel-overlay{
+  position:fixed;inset:0;background:rgba(42,31,20,0.6);
+  backdrop-filter:blur(4px);z-index:200;
+  display:none;align-items:center;justify-content:center;
+  padding:20px;
+}
+.wheel-overlay.show{display:flex;}
+.wheel-modal{
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:20px;padding:28px 24px 24px;
+  max-width:400px;width:100%;text-align:center;
+  box-shadow:0 20px 60px rgba(42,31,20,0.25);
+  position:relative;animation:modal-in 0.3s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+@keyframes modal-in{from{opacity:0;transform:scale(0.88) translateY(20px)}to{opacity:1;transform:none}}
+.wheel-close{
+  position:absolute;top:14px;right:14px;
+  width:28px;height:28px;border-radius:50%;
+  border:1px solid var(--border);background:var(--bg);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  color:var(--ink-3);font-size:14px;transition:all 0.15s;
+}
+.wheel-close:hover{background:var(--red-lt);border-color:var(--red);color:var(--red);}
+.wheel-title{
+  font-family:'DM Serif Display',serif;font-size:20px;color:var(--ink);
+  margin-bottom:4px;
+}
+.wheel-sub{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink-3);letter-spacing:1px;margin-bottom:20px;}
+
+/* CANVAS WHEEL */
+#wheelCanvas{
+  border-radius:50%;cursor:pointer;
+  box-shadow:0 8px 32px rgba(138,95,65,0.2);
+  transition:box-shadow 0.3s;display:block;margin:0 auto;
+}
+#wheelCanvas:hover{box-shadow:0 12px 40px rgba(138,95,65,0.3);}
+
+.wheel-pointer{
+  width:0;height:0;
+  border-left:10px solid transparent;border-right:10px solid transparent;
+  border-top:22px solid var(--amber);
+  margin:0 auto 6px;
+  filter:drop-shadow(0 2px 4px rgba(138,95,65,0.4));
+}
+.wheel-btn-row{display:flex;gap:8px;justify-content:center;margin-top:16px;}
+.wheel-result{
+  margin-top:16px;padding:14px;
+  background:var(--amber-lt);border:1.5px solid var(--amber);
+  border-radius:11px;display:none;
+  animation:fadein 0.3s ease;
+}
+.wheel-result.show{display:block;}
+.wheel-result-name{
+  font-family:'DM Serif Display',serif;font-size:26px;color:var(--amber);
+  margin-bottom:2px;
+}
+.wheel-result-sub{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink-3);}
+
+/* NO PERSONS PLACEHOLDER */
+.empty-placeholder{
+  text-align:center;color:var(--ink-3);font-size:12px;
+  padding:16px;font-family:'DM Mono',monospace;font-style:italic;
+}
+
+/* EDIT PERSON MODAL */
+.edit-overlay{
+  position:fixed;inset:0;background:rgba(42,31,20,0.55);
+  backdrop-filter:blur(4px);z-index:300;
+  display:none;align-items:center;justify-content:center;padding:20px;
+}
+.edit-overlay.show{display:flex;}
+.edit-modal{
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:20px;padding:28px 24px 24px;
+  max-width:380px;width:100%;
+  box-shadow:0 20px 60px rgba(42,31,20,0.25);
+  position:relative;animation:modal-in 0.3s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+.edit-modal-title{
+  font-family:'DM Serif Display',serif;font-size:18px;color:var(--ink);
+  margin-bottom:18px;
+}
+.edit-close{
+  position:absolute;top:14px;right:14px;
+  width:28px;height:28px;border-radius:50%;
+  border:1px solid var(--border);background:var(--bg);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  color:var(--ink-3);font-size:14px;transition:all 0.15s;
+}
+.edit-close:hover{background:var(--red-lt);border-color:var(--red);color:var(--red);}
+.edit-field-label{
+  font-family:'DM Mono',monospace;font-size:11px;color:var(--ink-3);
+  margin-bottom:5px;letter-spacing:0.5px;
+}
+.edit-tag-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
+.edit-save-row{display:flex;gap:8px;justify-content:flex-end;margin-top:8px;}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border-md);border-radius:4px;}
+
+/* RESPONSIVE */
+@media(max-width:480px){
+  .mode-grid{grid-template-columns:repeat(2,1fr);}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+  h1{font-size:30px;}
+}
+</style>
+</head>
+<body>
+
+<!-- LANG TOGGLE -->
+<div class="lang-bar">
+  <button class="lang-btn" onclick="setLang('zh')">中文</button>
+  <button class="lang-btn active" onclick="setLang('en')">EN</button>
+</div>
+
+<!-- SPIN WHEEL MODAL -->
+<div class="wheel-overlay" id="wheelOverlay" onclick="closeWheel(event)">
+  <div class="wheel-modal">
+    <div class="wheel-close" onclick="closeWheelModal()">✕</div>
+    <div class="wheel-title" data-zh="命运之轮" data-en="Fate's Wheel">命运之轮</div>
+    <div class="wheel-sub" data-zh="谁来买单？让老天爷决定" data-en="Who pays? Let fate decide">谁来买单？让老天爷决定</div>
+    <div class="wheel-pointer"></div>
+    <canvas id="wheelCanvas" width="280" height="280"></canvas>
+    <div class="wheel-btn-row">
+      <button class="btn primary" onclick="spinWheel()" id="spinBtn">
+        <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        <span data-zh="旋转！" data-en="Spin!">旋转！</span>
+      </button>
+      <button class="btn" onclick="closeWheelModal()">
+        <span data-zh="关闭" data-en="Close">关闭</span>
+      </button>
+    </div>
+    <div class="wheel-result" id="wheelResult">
+      <div class="wheel-result-name" id="wheelWinner"></div>
+      <div class="wheel-result-sub" id="wheelResultSub" data-zh="恭喜！今天你请客了 🎊" data-en="Congratulations! You're treating today 🎊">恭喜！今天你请客了 🎊</div>
+    </div>
+  </div>
+</div>
+
+<div class="wrapper">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-mark">
+      <!-- utensils icon -->
+      <svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/></svg>
+    </div>
+    <h1><span data-zh="食堂账本" data-en="Bill">食堂账本</span> <em><span data-zh="" data-en="Splitter"></span></em></h1>
+    <div class="header-sub" data-zh="AA 制分账 · 与朋友的每一餐，都值得好好计算" data-en="AA Bill Splitter · Every meal with friends, perfectly settled">AA 制分账 · 与朋友的每一餐，都值得好好计算</div>
+    <div class="divider"><div class="divider-mark"></div></div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="card">
+    <div class="card-accent"></div>
+    <div class="card-head">
+      <div class="card-ico">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      </div>
+      <span class="card-title" data-zh="账单信息" data-en="Bill Details">账单信息</span>
+      <span class="card-step">01</span>
+    </div>
+
+    <div class="field-row">
+      <span class="field-label" data-zh="餐厅名称" data-en="Venue">餐厅名称</span>
+      <input type="text" id="restName" data-ph-zh="今天去哪里吃呀…" data-ph-en="Where are you dining?" placeholder="今天去哪里吃呀…" style="flex:1">
+    </div>
+    <div class="field-row" style="align-items:flex-start">
+      <span class="field-label" style="margin-top:9px" data-zh="账单金额" data-en="Amount">账单金额</span>
+      <div class="field-group">
+        <div style="display:flex;gap:6px;align-items:center;flex:1">
+          <span class="field-unit" style="font-size:15px;font-weight:600;color:var(--amber)">RM</span>
+          <input type="number" id="totalBill" placeholder="0.00" min="0" step="0.01" style="flex:1;font-size:19px;font-weight:700;color:var(--amber)">
+        </div>
+      </div>
+    </div>
+    <div class="field-row" style="gap:10px">
+      <span class="field-label" data-zh="服务税" data-en="Tax">服务税</span>
+      <div style="display:flex;align-items:center;gap:4px;flex:1">
+        <input type="number" id="taxPct" value="6" min="0" max="50" step="0.5">
+        <span class="field-unit">%</span>
+      </div>
+      <span class="field-label" style="margin-left:4px" data-zh="折扣" data-en="Discount">折扣</span>
+      <div style="display:flex;align-items:center;gap:4px;flex:1">
+        <input type="number" id="discPct" value="0" min="0" max="100" step="1">
+        <span class="field-unit">%</span>
+      </div>
+    </div>
+    <div class="field-row">
+      <span class="field-label" data-zh="小费" data-en="Tip">小费</span>
+      <div style="display:flex;align-items:center;gap:4px;flex:1">
+        <input type="number" id="tipPct" value="0" min="0" max="50" step="1">
+        <span class="field-unit">%</span>
+      </div>
+    </div>
+    <div class="chip-row">
+      <span class="field-label" style="min-width:auto" data-zh="快选：" data-en="Quick:">快选：</span>
+      <div class="chip on" onclick="setTip(this,0)" data-zh="无小费" data-en="No tip">无小费</div>
+      <div class="chip" onclick="setTip(this,5)">5%</div>
+      <div class="chip" onclick="setTip(this,10)">10%</div>
+      <div class="chip" onclick="setTip(this,15)">15%</div>
+      <div class="chip" onclick="setTip(this,20)">20%</div>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="card">
+    <div class="card-accent"></div>
+    <div class="card-head">
+      <div class="card-ico">
+        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
+      <span class="card-title" data-zh="用餐人员" data-en="Participants">用餐人员</span>
+      <span class="card-step">02</span>
+    </div>
+
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+      <input type="text" id="pName" data-ph-zh="输入姓名…" data-ph-en="Enter name…" placeholder="输入姓名…" style="flex:1;min-width:120px" onkeydown="if(event.key==='Enter')addPerson()">
+      <button class="btn primary" style="font-size:12px;padding:8px 16px;letter-spacing:1px" onclick="addPerson()">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <span data-zh="添加" data-en="Add">添加</span>
+      </button>
+    </div>
+
+    <div class="tag-row" style="margin-bottom:10px">
+      <span class="field-label" style="min-width:auto" data-zh="标签：" data-en="Tags:">标签：</span>
+      <div class="ptag male" id="tagM" onclick="toggleTag('tagM','male')" data-zh="男" data-en="Male">男</div>
+      <div class="ptag female" id="tagF" onclick="toggleTag('tagF','female')" data-zh="女" data-en="Female">女</div>
+      <div class="ptag vip" id="tagV" onclick="toggleTag('tagV','vip')" data-zh="贵宾" data-en="VIP">贵宾</div>
+      <div class="ptag vege" id="tagVg" onclick="toggleTag('tagVg','vege')" data-zh="素食" data-en="Veg">素食</div>
+      <div class="ptag nodrink" id="tagND" onclick="toggleTag('tagND','nodrink')" data-zh="不饮酒" data-en="No drink">不饮酒</div>
+    </div>
+
+    <div class="person-list" id="personList"></div>
+
+    <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+      <button class="btn sage" onclick="addDemo()">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span data-zh="载入示例" data-en="Load demo">载入示例</span>
+      </button>
+      <button class="btn danger" onclick="clearAll()">
+        <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+        <span data-zh="清空" data-en="Clear all">清空</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="card">
+    <div class="card-accent"></div>
+    <div class="card-head">
+      <div class="card-ico">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      </div>
+      <span class="card-title" data-zh="分账方式" data-en="Split Method">分账方式</span>
+      <span class="card-step">03</span>
+    </div>
+
+    <div class="mode-grid">
+      <div class="mode-card active" onclick="setMode(this,'equal')">
+        <div class="mode-ico">
+          <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><line x1="5" y1="6" x2="19" y2="6"/><line x1="5" y1="18" x2="19" y2="18"/></svg>
+        </div>
+        <div class="mode-name" data-zh="完全AA" data-en="Equal Split">完全AA</div>
+        <div class="mode-desc" data-zh="人人平等" data-en="Everyone equal">人人平等</div>
+      </div>
+      <div class="mode-card" onclick="setMode(this,'gender')">
+        <div class="mode-ico">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
+        </div>
+        <div class="mode-name" data-zh="性别比例" data-en="By Gender">性别比例</div>
+        <div class="mode-desc" data-zh="男女不同份额" data-en="Different rates">男女不同份额</div>
+      </div>
+      <div class="mode-card" onclick="setMode(this,'weight')">
+        <div class="mode-ico">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="2" x2="12" y2="22"/><path d="M8 6H4a2 2 0 0 0 0 4h16a2 2 0 0 0 0-4h-4"/><path d="M6 12H2l4 8h12l4-8h-4"/></svg>
+        </div>
+        <div class="mode-name" data-zh="权重分账" data-en="Weighted">权重分账</div>
+        <div class="mode-desc" data-zh="自定义倍数" data-en="Custom multiplier">自定义倍数</div>
+      </div>
+      <div class="mode-card" onclick="setMode(this,'ordered')">
+        <div class="mode-ico">
+          <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        </div>
+        <div class="mode-name" data-zh="点单分账" data-en="By Order">点单分账</div>
+        <div class="mode-desc" data-zh="谁点谁付" data-en="Pay what you order">谁点谁付</div>
+      </div>
+      <div class="mode-card" onclick="setMode(this,'host')">
+        <div class="mode-ico">
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <div class="mode-name" data-zh="请客模式" data-en="Host Mode">请客模式</div>
+        <div class="mode-desc" data-zh="VIP全免单" data-en="VIP dines free">VIP全免单</div>
+      </div>
+      <div class="mode-card" onclick="setMode(this,'custom')">
+        <div class="mode-ico">
+          <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        </div>
+        <div class="mode-name" data-zh="自定义%" data-en="Custom %">自定义%</div>
+        <div class="mode-desc" data-zh="随意分配" data-en="Free allocation">随意分配</div>
+      </div>
+    </div>
+    <div class="mode-option" id="modeOption" style="display:none"></div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="card">
+    <div class="card-accent"></div>
+    <div class="card-head">
+      <div class="card-ico">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+      <span class="card-title" data-zh="执行计算" data-en="Calculate">执行计算</span>
+      <span class="card-step">04</span>
+    </div>
+    <div class="execute-area">
+      <button class="btn primary" onclick="calculate()" style="width:100%;font-family:'DM Serif Display',serif;letter-spacing:2px;font-size:15px">
+        <svg viewBox="0 0 24 24" style="width:16px;height:16px"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        <span data-zh="开始分账" data-en="Split Bill">开始分账</span>
+      </button>
+    </div>
+    <div class="log-box" id="logBox">
+      <div data-zh="账本就绪，等待记账…" data-en="Ready. Awaiting input…">账本就绪，等待记账…</div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="result-section" id="resultSection">
+    <div class="card">
+      <div class="card-accent"></div>
+      <div class="card-head">
+        <div class="card-ico">
+          <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        </div>
+        <span class="card-title" data-zh="分账结果" data-en="Split Result">分账结果</span>
+        <span class="card-step">Result</span>
+      </div>
+      <div class="result-header">
+        <h2 id="resTitle">今日食单</h2>
+        <p id="resSubtitle"></p>
+      </div>
+      <div class="result-list" id="resultList"></div>
+      <div class="result-total-row" style="margin-top:10px">
+        <span class="result-total-label" data-zh="账单总额（含税费小费）" data-en="Total (incl. tax & tip)">账单总额（含税费小费）</span>
+        <span class="result-total-val" id="totalVal">RM 0.00</span>
+      </div>
+      <div class="wc-bar" id="wcBar"></div>
+      <div class="stats-grid" id="statsGrid"></div>
+
+      <!-- SPIN THE WHEEL button only -->
+      <div style="display:flex;justify-content:center;margin-top:16px">
+        <button class="btn" onclick="openWheel()" style="padding:10px 24px;border-color:var(--amber);color:var(--amber);font-size:12px;letter-spacing:0.8px">
+          <svg viewBox="0 0 24 24" style="width:14px;height:14px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><circle cx="12" cy="16" r="0.5" fill="currentColor"/><path d="M12 2a10 10 0 0 1 7.07 17.07"/></svg>
+          <span data-zh="随机轮盘 · 谁来付钱？" data-en="Spin the Wheel · Who pays?">随机轮盘 · 谁来付钱？</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /wrapper -->
+
+<!-- EDIT PERSON MODAL -->
+<div class="edit-overlay" id="editOverlay" onclick="closeEditOutside(event)">
+  <div class="edit-modal" id="editModal">
+    <div class="edit-close" onclick="closeEditModal()">✕</div>
+    <div class="edit-modal-title" data-zh="编辑人员" data-en="Edit Participant">Edit Participant</div>
+    <input type="hidden" id="editIdx">
+    <div class="edit-field-label" data-zh="姓名" data-en="Name">Name</div>
+    <input type="text" id="editName" style="margin-bottom:16px" placeholder="Name" onkeydown="if(event.key==='Enter')saveEdit()">
+    <div class="edit-field-label" data-zh="标签" data-en="Tags">Tags</div>
+    <div class="edit-tag-row">
+      <div class="ptag male" id="eTagM" onclick="toggleEditTag('eTagM','male')" data-zh="男" data-en="Male">Male</div>
+      <div class="ptag female" id="eTagF" onclick="toggleEditTag('eTagF','female')" data-zh="女" data-en="Female">Female</div>
+      <div class="ptag vip" id="eTagV" onclick="toggleEditTag('eTagV','vip')" data-zh="贵宾" data-en="VIP">VIP</div>
+      <div class="ptag vege" id="eTagVg" onclick="toggleEditTag('eTagVg','vege')" data-zh="素食" data-en="Veg">Veg</div>
+      <div class="ptag nodrink" id="eTagND" onclick="toggleEditTag('eTagND','nodrink')" data-zh="不饮酒" data-en="No drink">No drink</div>
+    </div>
+    <div class="edit-save-row">
+      <button class="btn danger" onclick="closeEditModal()" style="font-size:12px">
+        <span data-zh="取消" data-en="Cancel">Cancel</span>
+      </button>
+      <button class="btn primary" onclick="saveEdit()" style="font-size:12px;padding:9px 20px">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        <span data-zh="保存" data-en="Save">Save</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+var persons=[], mode='equal', activeTags=[], currentShares={}, currentAfter=0, lang='en';
+var SEG_COLORS=['#8A5F41','#6B7A2F','#3A6A8A','#9A5A7A','#C4A07A','#8AB87A','#D4A070','#5A8A7A'];
+var avatarColors=['#8A5F41','#6B7A2F','#3A6A8A','#9A5A7A','#5A7A5A','#7A5A8A','#8A7A3A','#3A7A8A'];
+
+/* ======= LANGUAGE ======= */
+function setLang(l){
+  lang=l;
+  document.querySelectorAll('.lang-btn').forEach(b=>{
+    b.classList.toggle('active', (l==='zh'&&b.textContent.trim()==='中文')||(l==='en'&&b.textContent.trim()==='EN'));
+  });
+  document.querySelectorAll('[data-zh]').forEach(el=>{
+    var t=el.getAttribute('data-'+l);
+    if(t!==null&&el.tagName!=='INPUT'&&el.tagName!=='TEXTAREA'){
+      // only update text nodes that are direct children or full text
+      if(el.children.length===0) el.textContent=t;
+    }
+  });
+  // placeholders
+  document.querySelectorAll('[data-ph-'+l+']').forEach(el=>{
+    el.placeholder=el.getAttribute('data-ph-'+l);
+  });
+  // log box first item
+  var lb=document.getElementById('logBox');
+  if(lb.children.length===1&&lb.children[0]){
+    var d=lb.children[0];
+    if(d.getAttribute('data-'+l)) d.textContent=d.getAttribute('data-'+l);
+  }
+  renderPersons();
+  renderModeOption();
+  drawWheel();
+}
+
+function T(zh,en){return lang==='zh'?zh:en;}
+
+/* ======= HELPERS ======= */
+function log(msg,type){
+  var lb=document.getElementById('logBox');
+  var d=document.createElement('div');
+  d.className=type||'';d.textContent=msg;
+  lb.appendChild(d);lb.scrollTop=lb.scrollHeight;
+}
+function setTip(el,pct){
+  document.getElementById('tipPct').value=pct;
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+}
+function toggleTag(id,tag){
+  var el=document.getElementById(id);
+  if(activeTags.includes(tag)){
+    activeTags=activeTags.filter(t=>t!==tag);el.classList.remove('on');
+  } else {
+    if(tag==='male'&&activeTags.includes('female')){activeTags=activeTags.filter(t=>t!=='female');document.getElementById('tagF').classList.remove('on');}
+    else if(tag==='female'&&activeTags.includes('male')){activeTags=activeTags.filter(t=>t!=='male');document.getElementById('tagM').classList.remove('on');}
+    activeTags.push(tag);el.classList.add('on');
+  }
+}
+function getTagLabel(t){
+  var map={male:T('♂男','M'),female:T('♀女','F'),vip:T('贵宾','VIP'),vege:T('素食','Veg'),nodrink:T('无酒','No-drk')};
+  return map[t]||t;
+}
+function getTagStyle(t){
+  var s={male:'border-color:#3A6A8A;color:#3A6A8A',female:'border-color:#9A5A7A;color:#7A3A5A',vip:'border-color:#6B7A2F;color:#4A5A1A',vege:'border-color:#5A8A4A;color:#3A6A2A',nodrink:'border-color:#8A5F41;color:#5A3A1A'};
+  return s[t]||'';
+}
+function getInitial(name){return name.charAt(0).toUpperCase();}
+
+/* ======= PERSONS ======= */
+function addPerson(){
+  var n=document.getElementById('pName').value.trim();
+  if(!n){log(T('⚠ 请先输入姓名','⚠ Enter a name first'),'log-warn');return;}
+  persons.push({name:n,tags:[...activeTags],weight:1,amount:0,customPct:0});
+  document.getElementById('pName').value='';
+  activeTags=[];
+  ['tagM','tagF','tagV','tagVg','tagND'].forEach(id=>document.getElementById(id).classList.remove('on'));
+  renderPersons();
+  log(T('✓ 已添加：','✓ Added: ')+n,'log-ok');
+}
+function addDemo(){
+  persons=[
+    {name:T('小明','Ming'),tags:['male'],weight:1,amount:0,customPct:25},
+    {name:T('小红','Hong'),tags:['female'],weight:1,amount:0,customPct:20},
+    {name:T('阿花','Hua'),tags:['female','vip'],weight:1,amount:0,customPct:15},
+    {name:T('大伟','Wei'),tags:['male'],weight:1.5,amount:0,customPct:25},
+    {name:T('小芳','Fang'),tags:['female','vege'],weight:0.8,amount:0,customPct:15}
+  ];
+  renderPersons();log(T('✓ 示例人员已载入','✓ Demo participants loaded'),'log-ok');
+}
+function clearAll(){persons=[];renderPersons();log(T('⚠ 已清空人员列表','⚠ Cleared all participants'),'log-warn');}
+function removePerson(i){log(T('✕ 移除：','✕ Removed: ')+persons[i].name,'log-warn');persons.splice(i,1);renderPersons();}
+
+function renderPersons(){
+  var list=document.getElementById('personList');
+  list.innerHTML='';
+  if(persons.length===0){
+    list.innerHTML='<div class="empty-placeholder">'+T('还没有人，快来添加用餐伙伴吧','No participants yet — add someone above')+'</div>';
+    return;
+  }
+  persons.forEach(function(p,i){
+    var item=document.createElement('div');item.className='person-item';
+    var tagHtml=p.tags.map(t=>'<span class="ptag-display" style="'+getTagStyle(t)+'">'+getTagLabel(t)+'</span>').join('');
+    var extra='';
+    if(mode==='weight') extra='<span class="extra-label">×</span><input class="extra-input" type="number" value="'+p.weight+'" min="0.1" step="0.1" onchange="persons['+i+'].weight=parseFloat(this.value)||1">';
+    else if(mode==='ordered') extra='<span class="extra-label">RM</span><input class="extra-input" type="number" placeholder="0.00" value="'+(p.amount||'')+'" min="0" step="0.01" onchange="persons['+i+'].amount=parseFloat(this.value)||0">';
+    else if(mode==='custom') extra='<input class="extra-input" type="number" value="'+(p.customPct||Math.round(100/persons.length))+'" min="0" max="100" step="1" onchange="persons['+i+'].customPct=parseFloat(this.value)||0"><span class="extra-label">%</span>';
+    item.innerHTML=
+      '<div class="person-avatar" style="background:'+avatarColors[i%avatarColors.length]+'">'+getInitial(p.name)+'</div>'+
+      '<div style="flex:1;min-width:60px"><div class="person-name-display">'+p.name+'</div>'+
+      '<div class="person-tags-display">'+tagHtml+'</div></div>'+
+      '<div class="person-extra">'+extra+'</div>'+
+      '<button class="btn" style="padding:3px 8px;font-size:11px;border-color:var(--blue);color:var(--blue)" onclick="openEditModal('+i+')" title="Edit">✎</button>'+
+      '<button class="btn danger" style="padding:3px 8px;font-size:11px" onclick="removePerson('+i+')">✕</button>';
+    list.appendChild(item);
+  });
+  renderModeOption();
+}
+
+/* ======= MODE ======= */
+function setMode(el,m){
+  mode=m;
+  document.querySelectorAll('.mode-card').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');renderPersons();renderModeOption();
+}
+function renderModeOption(){
+  var box=document.getElementById('modeOption');
+  if(mode==='gender'){
+    box.style.display='block';
+    box.innerHTML='<div style="font-size:11px;color:var(--ink-2);margin-bottom:8px">'+T('设定男女各自总分担比例：','Set male/female share ratio:')+'</div>'+
+      '<div class="mrow"><span style="color:#3A6A8A;min-width:50px;font-size:12px">'+T('♂ 男生','♂ Male')+'</span>'+
+      '<input id="maleRatio" type="number" value="60" min="0" max="100" style="width:65px">'+
+      '<span style="color:var(--ink-3)">%</span>'+
+      '<span style="color:#9A5A7A;min-width:50px;margin-left:10px;font-size:12px">'+T('♀ 女生','♀ Female')+'</span>'+
+      '<input id="femRatio" type="number" value="40" min="0" max="100" style="width:65px">'+
+      '<span style="color:var(--ink-3)">%</span></div>'+
+      '<div style="font-size:10px;color:var(--ink-3)">'+T('系统按人数自动拆分','Auto-split per headcount within group')+'</div>';
+  } else if(mode==='equal'){
+    box.style.display='block';
+    box.innerHTML='<div style="font-size:12px;color:var(--ink-2)">'+T('所有人完全平均分摊账单，最公平的方式。','Bill divided equally among all participants.')+'</div>';
+  } else if(mode==='weight'){
+    box.style.display='block';
+    box.innerHTML='<div style="font-size:12px;color:var(--ink-2)">'+T('在人员列表中调整每人的分摊倍数（如 1.5× = 多付50%）','Adjust each person\'s multiplier above (e.g. 1.5× = pays 50% more)')+'</div>';
+  } else if(mode==='ordered'){
+    box.style.display='block';
+    box.innerHTML='<div style="font-size:12px;color:var(--ink-2)">'+T('输入每人点单金额，未填金额的人将平摊剩余部分。','Enter each order amount; unfilled entries split the remainder.')+'</div>';
+  } else if(mode==='host'){
+    box.style.display='block';
+    box.innerHTML='<div style="font-size:12px;color:var(--ink-2)">'+T('标记为「贵宾」的人将被完全免单，其余人平均承担全部账单。','Participants tagged VIP dine free; others split the full bill.')+'</div>';
+  } else if(mode==='custom'){
+    box.style.display='block';
+    box.innerHTML='<div style="font-size:12px;color:var(--ink-2)">'+T('在人员列表中自由填写每人付款比例（总和建议为100%）','Set each person\'s percentage above (sum should be 100%)')+'</div>';
+  } else {box.style.display='none';}
+}
+
+/* ======= CALCULATE ======= */
+function calculate(){
+  document.getElementById('logBox').innerHTML='';
+  log(T('开始记账…','Calculating…'));
+  var bill=parseFloat(document.getElementById('totalBill').value)||0;
+  var tax=parseFloat(document.getElementById('taxPct').value)||0;
+  var disc=parseFloat(document.getElementById('discPct').value)||0;
+  var tip=parseFloat(document.getElementById('tipPct').value)||0;
+  var rest=document.getElementById('restName').value||T('今日聚餐','Dining');
+  if(bill<=0){log(T('✕ 请输入账单金额','✕ Enter a bill amount'),'log-err');return;}
+  if(persons.length===0){log(T('✕ 请至少添加一位用餐人员','✕ Add at least one person'),'log-err');return;}
+  var after=bill*(1-disc/100)*(1+tax/100)*(1+tip/100);
+  log(T('原始：','Base: ')+'RM '+bill.toFixed(2));
+  if(disc>0) log(T('折扣 -','Discount -')+disc+'%');
+  if(tax>0) log(T('税 +','Tax +')+tax+'%');
+  if(tip>0) log(T('小费 +','Tip +')+tip+'%');
+  log(T('应付总额：','Total payable: ')+'RM '+after.toFixed(2),'log-ok');
+  var shares={};
+  persons.forEach(p=>shares[p.name]=0);
+  if(mode==='equal'){
+    var each=after/persons.length;
+    persons.forEach(p=>shares[p.name]=each);
+    log(T('平均分账：每人 RM ','Equal split: RM per person ')+each.toFixed(2),'log-ok');
+  } else if(mode==='gender'){
+    var mR=parseFloat(document.getElementById('maleRatio')?.value)||60;
+    var fR=parseFloat(document.getElementById('femRatio')?.value)||40;
+    var males=persons.filter(p=>p.tags.includes('male'));
+    var females=persons.filter(p=>p.tags.includes('female'));
+    var others=persons.filter(p=>!p.tags.includes('male')&&!p.tags.includes('female'));
+    var sum=mR+fR;
+    var mPool=after*(mR/sum),fPool=after*(fR/sum);
+    if(males.length>0) males.forEach(p=>shares[p.name]=mPool/males.length);
+    if(females.length>0) females.forEach(p=>shares[p.name]=fPool/females.length);
+    if(others.length>0){var avg=after/persons.length;others.forEach(p=>shares[p.name]=avg);}
+    log(T('男生合计：','Male total: ')+'RM '+mPool.toFixed(2)+' / '+males.length+T('人',''),'log-ok');
+    log(T('女生合计：','Female total: ')+'RM '+fPool.toFixed(2)+' / '+females.length+T('人',''),'log-ok');
+  } else if(mode==='weight'){
+    var tw=persons.reduce((a,p)=>a+(p.weight||1),0);
+    persons.forEach(p=>shares[p.name]=after*(p.weight||1)/tw);
+    log(T('权重总和：','Total weight: ')+tw.toFixed(2),'log-ok');
+  } else if(mode==='ordered'){
+    var filled=persons.filter(p=>p.amount>0);
+    var unfilled=persons.filter(p=>!(p.amount>0));
+    var usedAmt=filled.reduce((a,p)=>a+p.amount,0);
+    var remaining=Math.max(0,after-usedAmt);
+    filled.forEach(p=>shares[p.name]=p.amount);
+    if(unfilled.length>0){var se=remaining/unfilled.length;unfilled.forEach(p=>shares[p.name]=se);}
+    log(T('点单总：RM ','Orders total: RM ')+usedAmt.toFixed(2)+T('，共享剩余：RM ',', shared remainder: RM ')+remaining.toFixed(2),'log-ok');
+  } else if(mode==='host'){
+    var vips=persons.filter(p=>p.tags.includes('vip'));
+    var payers=persons.filter(p=>!p.tags.includes('vip'));
+    if(payers.length===0){log(T('✕ 所有人都是贵宾，无人付账','✕ All are VIPs — no one pays'),'log-err');return;}
+    var ep=after/payers.length;
+    payers.forEach(p=>shares[p.name]=ep);
+    vips.forEach(p=>shares[p.name]=0);
+    log(T('贵宾免单：','VIP free: ')+vips.map(v=>v.name).join('、'),'log-warn');
+    log(T('付款方每人 RM ','Payers each: RM ')+ep.toFixed(2),'log-ok');
+  } else if(mode==='custom'){
+    var tp=persons.reduce((a,p)=>a+(p.customPct||0),0);
+    if(Math.abs(tp-100)>1) log(T('⚠ 比例总和=','⚠ Sum=')+tp.toFixed(1)+'% ('+T('建议为100%','should be 100%')+')','log-warn');
+    persons.forEach(p=>shares[p.name]=after*(p.customPct||0)/100);
+  }
+  currentShares=shares;currentAfter=after;
+  renderResult(shares,after,rest);
+  log(T('✓ 分账完成！','✓ Split complete!'),'log-ok');
+}
+
+function renderResult(shares,after,rest){
+  var vals=Object.values(shares);
+  var maxV=Math.max(...vals);
+  var minV=Math.min(...vals,Infinity);
+  var avg=vals.reduce((a,b)=>a+b,0)/vals.length;
+  document.getElementById('resTitle').textContent=rest;
+  document.getElementById('resSubtitle').textContent=
+    new Date().toLocaleDateString(lang==='zh'?'zh-CN':'en-MY',{year:'numeric',month:'long',day:'numeric'})+
+    ' · '+persons.length+(lang==='zh'?' 人聚餐':' participants');
+  document.getElementById('totalVal').textContent='RM '+after.toFixed(2);
+  var list=document.getElementById('resultList');list.innerHTML='';
+  var sorted=Object.entries(shares).sort((a,b)=>b[1]-a[1]);
+  sorted.forEach(function(e,idx){
+    var p=persons.find(pp=>pp.name===e[0]);
+    var pct=maxV>0?e[1]/maxV*100:0;
+    var isTop=e[1]===maxV&&e[1]>0;
+    var isZero=e[1]===0;
+    var tagHtml=(p?p.tags:[]).map(t=>'<span class="result-tag-sm" style="'+getTagStyle(t)+'">'+getTagLabel(t)+'</span>').join('');
+    var item=document.createElement('div');
+    item.className='result-item'+(isTop?' top':isZero?' zero':'');
+    item.style.animationDelay=(idx*0.06)+'s';
+    item.style.animation='fadein 0.4s ease both';
+    item.innerHTML=
+      '<div class="result-avatar" style="background:'+avatarColors[(persons.findIndex(pp=>pp.name===e[0]))%avatarColors.length]+'">'+getInitial(e[0])+'</div>'+
+      '<div class="result-info">'+
+        '<div class="result-name">'+e[0]+(isTop?' ◆':'')+'</div>'+
+        '<div class="result-tags-sm">'+tagHtml+'</div>'+
+        '<div class="result-bar-wrap"><div class="result-bar-fill" style="width:0%" data-w="'+pct.toFixed(1)+'%"></div></div>'+
+      '</div>'+
+      '<div class="result-amount'+(isZero?' zero-amt':'')+'">'+
+        (isZero?T('◎ 免单','◎ Free'):'RM '+e[1].toFixed(2))+
+      '</div>';
+    list.appendChild(item);
+  });
+  setTimeout(function(){
+    document.querySelectorAll('.result-bar-fill').forEach(function(b){b.style.width=b.getAttribute('data-w');});
+  },100);
+  var bar=document.getElementById('wcBar');bar.innerHTML='';
+  sorted.forEach(function(e,i){
+    var pct=after>0?e[1]/after*100:0;if(pct<0.5)return;
+    var seg=document.createElement('div');seg.className='wc-seg';
+    seg.style.cssText='width:'+pct.toFixed(1)+'%;background:'+SEG_COLORS[i%SEG_COLORS.length];
+    seg.textContent=pct>=8?e[0]:'';bar.appendChild(seg);
+  });
+  document.getElementById('statsGrid').innerHTML=
+    '<div class="stat-card"><div class="stat-label">'+T('最多','Max')+'</div><div class="stat-val">RM '+maxV.toFixed(2)+'</div></div>'+
+    '<div class="stat-card"><div class="stat-label">'+T('最少','Min')+'</div><div class="stat-val" style="color:var(--olive)">RM '+minV.toFixed(2)+'</div></div>'+
+    '<div class="stat-card"><div class="stat-label">'+T('人均','Avg')+'</div><div class="stat-val" style="color:var(--ink-2)">RM '+avg.toFixed(2)+'</div></div>'+
+    '<div class="stat-card"><div class="stat-label">'+T('差额','Gap')+'</div><div class="stat-val" style="color:var(--ink-3)">RM '+(maxV-minV).toFixed(2)+'</div></div>';
+  var rs=document.getElementById('resultSection');
+  rs.style.display='block';
+  rs.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+/* ======================================================
+   SPIN THE WHEEL
+   ====================================================== */
+var wheelSpinning=false;
+var wheelAngle=0;
+
+function openWheel(){
+  if(persons.length<2){
+    log(T('⚠ 请至少添加 2 位人员再使用轮盘','⚠ Add at least 2 people to use the wheel'),'log-warn');
+    return;
+  }
+  document.getElementById('wheelOverlay').classList.add('show');
+  document.getElementById('wheelResult').classList.remove('show');
+  document.getElementById('spinBtn').disabled=false;
+  drawWheel();
+}
+function closeWheelModal(){
+  document.getElementById('wheelOverlay').classList.remove('show');
+}
+function closeWheel(e){
+  if(e.target===document.getElementById('wheelOverlay')) closeWheelModal();
+}
+
+function drawWheel(angle){
+  angle=angle||wheelAngle;
+  var canvas=document.getElementById('wheelCanvas');
+  var ctx=canvas.getContext('2d');
+  var W=canvas.width,H=canvas.height;
+  var cx=W/2,cy=H/2,r=W/2-6;
+  ctx.clearRect(0,0,W,H);
+  if(persons.length===0) return;
+  var n=persons.length;
+  var slice=(2*Math.PI)/n;
+  // shadow ring
+  ctx.save();
+  ctx.shadowBlur=16;ctx.shadowColor='rgba(138,95,65,0.25)';
+  ctx.beginPath();ctx.arc(cx,cy,r,0,2*Math.PI);ctx.fillStyle='#fff';ctx.fill();
+  ctx.restore();
+  // segments
+  persons.forEach(function(p,i){
+    var start=angle+i*slice-Math.PI/2;
+    var end=start+slice;
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,start,end);ctx.closePath();
+    ctx.fillStyle=SEG_COLORS[i%SEG_COLORS.length];ctx.fill();
+    ctx.strokeStyle='rgba(255,255,255,0.6)';ctx.lineWidth=1.5;ctx.stroke();
+    // text
+    var mid=start+slice/2;
+    var tx=cx+Math.cos(mid)*(r*0.65);
+    var ty=cy+Math.sin(mid)*(r*0.65);
+    ctx.save();ctx.translate(tx,ty);ctx.rotate(mid+Math.PI/2);
+    ctx.fillStyle='#fff';
+    ctx.font='bold '+(n>6?10:12)+'px DM Mono, monospace';
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.shadowBlur=3;ctx.shadowColor='rgba(0,0,0,0.3)';
+    ctx.fillText(getInitial(p.name),0,0);
+    ctx.restore();
+  });
+  // center cap
+  ctx.beginPath();ctx.arc(cx,cy,18,0,2*Math.PI);
+  ctx.fillStyle='var(--surface, #FDFAF4)';ctx.fill();
+  ctx.strokeStyle='rgba(138,95,65,0.5)';ctx.lineWidth=2;ctx.stroke();
+  // border ring
+  ctx.beginPath();ctx.arc(cx,cy,r,0,2*Math.PI);
+  ctx.strokeStyle='rgba(138,95,65,0.3)';ctx.lineWidth=2;ctx.stroke();
+}
+
+function spinWheel(){
+  if(wheelSpinning) return;
+  if(persons.length<2) return;
+  wheelSpinning=true;
+  document.getElementById('spinBtn').disabled=true;
+  document.getElementById('wheelResult').classList.remove('show');
+
+  var totalRotation=2*Math.PI*(5+Math.random()*5); // 5-10 full turns
+  var winnerIdx=Math.floor(Math.random()*persons.length);
+  var slice=(2*Math.PI)/persons.length;
+  // align winner under pointer (top = -PI/2)
+  var winnerAngle=-(winnerIdx*slice+slice/2)+Math.PI/2; // target offset
+  totalRotation=totalRotation-(totalRotation%(2*Math.PI))+winnerAngle+(2*Math.PI*Math.ceil(totalRotation/(2*Math.PI)));
+
+  var duration=3800; // ms
+  var startTime=null;
+  var startAngle=wheelAngle;
+
+  function easeOut(t){return 1-Math.pow(1-t,3);}
+
+  function animate(ts){
+    if(!startTime) startTime=ts;
+    var elapsed=ts-startTime;
+    var progress=Math.min(elapsed/duration,1);
+    wheelAngle=startAngle+totalRotation*easeOut(progress);
+    drawWheel(wheelAngle);
+    if(progress<1){
+      requestAnimationFrame(animate);
+    } else {
+      wheelAngle=wheelAngle%(2*Math.PI);
+      wheelSpinning=false;
+      document.getElementById('spinBtn').disabled=false;
+      showWheelWinner(winnerIdx);
+    }
+  }
+  requestAnimationFrame(animate);
+}
+
+function showWheelWinner(idx){
+  var winner=persons[idx];
+  document.getElementById('wheelWinner').textContent=winner.name;
+  var sub=document.getElementById('wheelResultSub');
+  sub.textContent=lang==='zh'?'恭喜！今天你请客了 🎊':'Congratulations! You\'re treating today 🎊';
+  document.getElementById('wheelResult').classList.add('show');
+  log(T('轮盘结果：','Wheel result: ')+winner.name+T(' 今天请客！',' pays today!'),'log-ok');
+}
+
+/* ======= EDIT PERSON MODAL ======= */
+var editTags=[];
+function openEditModal(i){
+  var p=persons[i];
+  document.getElementById('editIdx').value=i;
+  document.getElementById('editName').value=p.name;
+  editTags=[...p.tags];
+  ['eTagM','eTagF','eTagV','eTagVg','eTagND'].forEach(function(id){
+    document.getElementById(id).classList.remove('on');
+  });
+  var tagMap={eTagM:'male',eTagF:'female',eTagV:'vip',eTagVg:'vege',eTagND:'nodrink'};
+  Object.entries(tagMap).forEach(function(e){
+    if(editTags.includes(e[1])) document.getElementById(e[0]).classList.add('on');
+  });
+  // apply current lang labels to modal
+  var l=lang;
+  document.querySelectorAll('#editModal [data-zh]').forEach(function(el){
+    var t=el.getAttribute('data-'+l);
+    if(t!==null&&el.tagName!=='INPUT') el.textContent=t;
+  });
+  document.getElementById('editOverlay').classList.add('show');
+  document.getElementById('editName').focus();
+}
+function closeEditModal(){
+  document.getElementById('editOverlay').classList.remove('show');
+}
+function closeEditOutside(e){
+  if(e.target===document.getElementById('editOverlay')) closeEditModal();
+}
+function toggleEditTag(id,tag){
+  var el=document.getElementById(id);
+  if(editTags.includes(tag)){
+    editTags=editTags.filter(t=>t!==tag);el.classList.remove('on');
+  } else {
+    if(tag==='male') {editTags=editTags.filter(t=>t!=='female');document.getElementById('eTagF').classList.remove('on');}
+    else if(tag==='female') {editTags=editTags.filter(t=>t!=='male');document.getElementById('eTagM').classList.remove('on');}
+    editTags.push(tag);el.classList.add('on');
+  }
+}
+function saveEdit(){
+  var i=parseInt(document.getElementById('editIdx').value);
+  var newName=document.getElementById('editName').value.trim();
+  if(!newName){log(T('⚠ 姓名不能为空','⚠ Name cannot be empty'),'log-warn');return;}
+  var oldName=persons[i].name;
+  persons[i].name=newName;
+  persons[i].tags=[...editTags];
+  closeEditModal();
+  renderPersons();
+  log(T('✓ 已更新：','✓ Updated: ')+oldName+(oldName!==newName?' → '+newName:''),'log-ok');
+}
+
+// init
+setLang('en');
+renderPersons();
+renderModeOption();
+drawWheel();
+</script>
+</body>
+</html>

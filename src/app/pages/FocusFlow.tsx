@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useFocusFlow, FocusFlowProvider } from '../lib/FocusFlow/store';
+import { useMusicContext } from '../contexts/MusicContext';
 import { Timer } from '../components/FocusFlow/timer';
 import { Schedule } from '../components/FocusFlow/schedule';
 import { Plan } from '../components/FocusFlow/plan';
@@ -215,6 +216,7 @@ export function FocusFlow() {
 
 function FocusFlowInner() {
   const { state, setLanguage } = useFocusFlow();
+  const { pauseMusic } = useMusicContext();
   const { language } = state;
   const [activeTab, setActiveTab] = useState<TabType>('schedule');
   const [mounted, setMounted] = useState(false);
@@ -226,7 +228,8 @@ function FocusFlowInner() {
 
   useEffect(() => {
     setMounted(true);
-  }, []);
+    pauseMusic();
+  }, [pauseMusic]);
 
   if (!mounted) {
     return (

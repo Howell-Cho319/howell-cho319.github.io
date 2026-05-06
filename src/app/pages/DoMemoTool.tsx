@@ -190,13 +190,22 @@ export function DoMemoTool() {
   const navigate = useNavigate();
   
   // ==================== State ====================
-  const [papers, setPapers] = useState<Paper[]>([{
-    id: 1,
-    frontContent: '',
-    backContent: '',
-    isFlipped: false,
-    hidden: false,
-  }]);
+  const [papers, setPapers] = useState<Paper[]>([
+    {
+      id: 1,
+      frontContent: '',
+      backContent: '',
+      isFlipped: false,
+      hidden: false,
+    },
+    {
+      id: 2,
+      frontContent: '',
+      backContent: '',
+      isFlipped: false,
+      hidden: false,
+    }
+  ]);
   const [hasSecondPaper, setHasSecondPaper] = useState(false);
   const [secondPaperPosition, setSecondPaperPosition] = useState<'left' | 'right'>('right');
   const [blurBlocks, setBlurBlocks] = useState<BlurBlock[]>([]);
@@ -232,7 +241,20 @@ export function DoMemoTool() {
     if (saved) {
       try {
         const data = JSON.parse(saved);
-        setPapers(data.papers || []);
+        if (data.papers && data.papers.length > 0) {
+          const loadedPapers = [...data.papers];
+          // Ensure we always have exactly 2 papers
+          while (loadedPapers.length < 2) {
+            loadedPapers.push({
+              id: loadedPapers.length + 1,
+              frontContent: '',
+              backContent: '',
+              isFlipped: false,
+              hidden: false,
+            });
+          }
+          setPapers(loadedPapers.slice(0, 2));
+        }
         setHasSecondPaper(data.hasSecondPaper || false);
         setSecondPaperPosition(data.secondPaperPosition || 'right');
         setBlurBlocks(data.blurBlocks || []);
@@ -278,23 +300,7 @@ export function DoMemoTool() {
   }, [hasSecondPaper, secondPaperPosition]);
 
   const toggleSecondPaper = useCallback(() => {
-    setHasSecondPaper(prev => {
-      if (!prev) {
-        setPapers(current => {
-          if (current.length < 2) {
-            return [...current, {
-              id: 2,
-              frontContent: '',
-              backContent: '',
-              isFlipped: false,
-              hidden: false,
-            }];
-          }
-          return current;
-        });
-      }
-      return !prev;
-    });
+    setHasSecondPaper(prev => !prev);
   }, []);
 
   const togglePosition = useCallback(() => {
@@ -608,18 +614,20 @@ export function DoMemoTool() {
           <div className={`flex items-center gap-1 p-1 rounded-xl transition-colors ${isDarkMode ? 'bg-white/5' : 'bg-amber-900/5'}`}>
             <button 
               onClick={() => flipPaper(getLeftPaperIndex())}
-              className={`p-2 rounded-lg transition-all flex items-center gap-2 relative ${papers[getLeftPaperIndex()].isFlipped ? (isDarkMode ? 'bg-blue-600 text-white shadow-md' : 'bg-amber-800 text-white shadow-md') : (isDarkMode ? 'text-white/40 hover:bg-white/5 hover:text-white' : 'text-amber-900/60 hover:bg-white hover:text-amber-900')}`}
+              className={`p-2 rounded-lg transition-all flex items-center gap-2 relative ${papers[getLeftPaperIndex()]?.isFlipped ? (isDarkMode ? 'bg-blue-600 text-white shadow-md' : 'bg-amber-800 text-white shadow-md') : (isDarkMode ? 'text-white/40 hover:bg-white/5 hover:text-white' : 'text-amber-900/60 hover:bg-white hover:text-amber-900')}`}
               title="Flip Left Paper (Alt+F)"
             >
               <RotateCw className="w-5 h-5" />
-              <span className={`absolute -top-1 -right-1 w-4 h-4 text-[10px] font-bold rounded-full flex items-center justify-center ${isDarkMode ? 'bg-blue-400 text-white' : 'bg-amber-400 text-amber-900'}`}>1</span>
+              {papers[getLeftPaperIndex()]?.isFlipped && (
+                <div className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+              )}
             </button>
             <button 
               onClick={() => toggleHide(getLeftPaperIndex())}
-              className={`p-2 rounded-lg transition-all ${papers[getLeftPaperIndex()].hidden ? (isDarkMode ? 'bg-blue-600 text-white shadow-md' : 'bg-amber-800 text-white shadow-md') : (isDarkMode ? 'text-white/40 hover:bg-white/5 hover:text-white' : 'text-amber-900/60 hover:bg-white hover:text-amber-900')}`}
+              className={`p-2 rounded-lg transition-all ${papers[getLeftPaperIndex()]?.hidden ? (isDarkMode ? 'bg-blue-600 text-white shadow-md' : 'bg-amber-800 text-white shadow-md') : (isDarkMode ? 'text-white/40 hover:bg-white/5 hover:text-white' : 'text-amber-900/60 hover:bg-white hover:text-amber-900')}`}
               title="Hide/Show Left Paper (Alt+H)"
             >
-              {papers[getLeftPaperIndex()].hidden ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              {papers[getLeftPaperIndex()]?.hidden ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
             </button>
           </div>
 
@@ -631,18 +639,20 @@ export function DoMemoTool() {
               <div className={`flex items-center gap-1 p-1 rounded-xl transition-colors ${isDarkMode ? 'bg-white/5' : 'bg-amber-900/5'}`}>
                 <button 
                   onClick={() => flipPaper(getRightPaperIndex())}
-                  className={`p-2 rounded-lg transition-all relative ${papers[getRightPaperIndex()].isFlipped ? (isDarkMode ? 'bg-blue-600 text-white shadow-md' : 'bg-amber-800 text-white shadow-md') : (isDarkMode ? 'text-white/40 hover:bg-white/5 hover:text-white' : 'text-amber-900/60 hover:bg-white hover:text-amber-900')}`}
+                  className={`p-2 rounded-lg transition-all relative ${papers[getRightPaperIndex()]?.isFlipped ? (isDarkMode ? 'bg-blue-600 text-white shadow-md' : 'bg-amber-800 text-white shadow-md') : (isDarkMode ? 'text-white/40 hover:bg-white/5 hover:text-white' : 'text-amber-900/60 hover:bg-white hover:text-amber-900')}`}
                   title="Flip Right Paper (Alt+Shift+F)"
                 >
                   <RotateCw className="w-5 h-5" />
-                  <span className={`absolute -top-1 -right-1 w-4 h-4 text-[10px] font-bold rounded-full flex items-center justify-center ${isDarkMode ? 'bg-blue-400 text-white' : 'bg-amber-400 text-amber-900'}`}>2</span>
+                  {papers[getRightPaperIndex()]?.isFlipped && (
+                    <div className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                  )}
                 </button>
                 <button 
                   onClick={() => toggleHide(getRightPaperIndex())}
-                  className={`p-2 rounded-lg transition-all ${papers[getRightPaperIndex()].hidden ? (isDarkMode ? 'bg-blue-600 text-white shadow-md' : 'bg-amber-800 text-white shadow-md') : (isDarkMode ? 'text-white/40 hover:bg-white/5 hover:text-white' : 'text-amber-900/60 hover:bg-white hover:text-amber-900')}`}
+                  className={`p-2 rounded-lg transition-all ${papers[getRightPaperIndex()]?.hidden ? (isDarkMode ? 'bg-blue-600 text-white shadow-md' : 'bg-amber-800 text-white shadow-md') : (isDarkMode ? 'text-white/40 hover:bg-white/5 hover:text-white' : 'text-amber-900/60 hover:bg-white hover:text-amber-900')}`}
                   title="Hide/Show Right Paper (Alt+Shift+H)"
                 >
-                  {papers[getRightPaperIndex()].hidden ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  {papers[getRightPaperIndex()]?.hidden ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
               <button 
