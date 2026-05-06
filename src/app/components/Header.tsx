@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router";
-import { Menu, X, Coffee } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { MusicControls } from "./MusicControls";
 
@@ -31,8 +31,12 @@ export function Header() {
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-              <Coffee className="w-5 h-5 text-primary-foreground" />
+            <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center group-hover:scale-110 transition-transform ring-2 ring-primary/20">
+              <img 
+                src="/images/Howell Avatar.png" 
+                alt="Cho Sin Hong" 
+                className="w-full h-full object-cover"
+              />
             </div>
             <span className="text-xl font-semibold text-foreground hidden sm:inline">
               Cho Sin Hong
