@@ -4,6 +4,14 @@ import { motion, AnimatePresence } from "motion/react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { useState, useEffect, useMemo } from "react";
 
+// ============================================
+// RESUME LOCK CONFIGURATION -----> flagged by CHO SIN HONG 
+// ============================================
+// To LOCK resume: set to true
+// To UNLOCK resume: set to false
+const RESUME_LOCKED = true;
+// ============================================
+
 // Written Pages Interactive Card Component
 function WrittenPagesCard() {
   const [isFlipped, setIsFlipped] = useState(false);
@@ -548,10 +556,20 @@ export function Home() {
   const [showWrittenPagesStory, setShowWrittenPagesStory] = useState(false);
   const [activeGameSlide, setActiveGameSlide] = useState(0);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [showResumeLocked, setShowResumeLocked] = useState(false);
+
+  // Handle resume button click
+  const handleResumeClick = () => {
+    if (RESUME_LOCKED) {
+      setShowResumeLocked(true);
+    } else {
+      setShowResume(true);
+    }
+  };
 
   // Prevent background scroll when modals are open
   useEffect(() => {
-    if (showWrittenPagesStory || showFocusFlowTutorial || showResume) {
+    if (showWrittenPagesStory || showFocusFlowTutorial || showResume || showResumeLocked) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
@@ -560,7 +578,7 @@ export function Home() {
     return () => {
       document.body.style.overflow = 'unset';
     };
-  }, [showWrittenPagesStory, showFocusFlowTutorial, showResume]);
+  }, [showWrittenPagesStory, showFocusFlowTutorial, showResume, showResumeLocked]);
 
   // Memoize stars to prevent re-randomization on every render (which happens every 8s due to slider)
   const stars = useMemo(() => {
@@ -719,7 +737,7 @@ export function Home() {
                   <ArrowRight className="w-4 h-4" />
                 </Link>
                 <button
-                  onClick={() => setShowResume(true)}
+                  onClick={handleResumeClick}
                   className="inline-flex items-center gap-2 px-6 py-3 bg-accent text-accent-foreground rounded-full hover:bg-accent/80 transition-colors"
                 >
                   <FileText className="w-4 h-4" />
@@ -1686,14 +1704,16 @@ export function Home() {
 
       {/* RedWolf Character Showcase Section */}
       <section className="py-16 relative overflow-hidden bg-[#020202]">
-        {/* Universal Animated Starfield Background (Galaxy Black) */}
+        {/* Optimized Animated Starfield Background (Galaxy Black) */}
         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
           <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a] via-black to-[#0a0a0a]"></div>
           
           {/* Galaxy texture effect */}
           <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 50% 50%, rgba(138, 95, 65, 0.1) 0%, transparent 70%)' }}></div>
-          <div className="absolute inset-0 opacity-30 animate-star-move-slow will-change-transform">
-            {stars.slow.map((s) => (
+          
+          {/* Optimized Animated Stars Layer 1 (Slow) - Reduced count */}
+          <div className="absolute inset-0 opacity-30 animate-star-move-slow">
+            {stars.slow.slice(0, 20).map((s) => (
               <div 
                 key={`star-s-${s.id}`}
                 className="absolute w-px h-px bg-white rounded-full"
@@ -1706,9 +1726,9 @@ export function Home() {
             ))}
           </div>
 
-          {/* Animated Stars Layer 2 (Medium) */}
-          <div className="absolute inset-0 opacity-50 animate-star-move-medium will-change-transform">
-            {stars.medium.map((s) => (
+          {/* Optimized Animated Stars Layer 2 (Medium) - Reduced count */}
+          <div className="absolute inset-0 opacity-50 animate-star-move-medium">
+            {stars.medium.slice(0, 12).map((s) => (
               <div 
                 key={`star-m-${s.id}`}
                 className="absolute w-0.5 h-0.5 bg-blue-100 rounded-full"
@@ -1721,9 +1741,9 @@ export function Home() {
             ))}
           </div>
 
-          {/* Animated Stars Layer 3 (Large/Twinkling) */}
-          <div className="absolute inset-0 opacity-70 animate-star-move-fast will-change-transform">
-            {stars.fast.map((s) => (
+          {/* Optimized Animated Stars Layer 3 (Large/Twinkling) - Reduced count */}
+          <div className="absolute inset-0 opacity-70 animate-star-move-fast">
+            {stars.fast.slice(0, 6).map((s) => (
               <div 
                 key={`star-l-${s.id}`}
                 className="absolute w-1 h-1 bg-yellow-100 rounded-full"
@@ -1736,10 +1756,10 @@ export function Home() {
             ))}
           </div>
 
-          {/* Nebula clouds */}
+          {/* Nebula clouds - Optimized blur */}
           <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-purple-900/10 via-transparent to-blue-900/10 mix-blend-screen"></div>
-          <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-purple-600/5 rounded-full blur-[80px] animate-pulse will-change-transform"></div>
-          <div className="absolute bottom-1/4 right-1/4 w-[300px] h-[300px] bg-blue-600/5 rounded-full blur-[80px] animate-pulse will-change-transform" style={{ animationDelay: '2s' }}></div>
+          <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-purple-600/5 rounded-full blur-[60px] animate-pulse"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-[300px] h-[300px] bg-blue-600/5 rounded-full blur-[60px] animate-pulse" style={{ animationDelay: '2s' }}></div>
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -1747,7 +1767,7 @@ export function Home() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.3 }}
             className="text-center mb-12"
           >
             <div className="inline-flex items-center gap-2 px-6 py-2 rounded-full text-sm font-bold mb-6 shadow-lg border border-white/10" style={{ backgroundColor: 'rgba(138, 95, 65, 0.9)', color: '#F3E4C9' }}>
@@ -1763,19 +1783,19 @@ export function Home() {
           </motion.div>
 
           <div className="grid lg:grid-cols-12 gap-12 items-center">
-            {/* Left Stats Panel */}
+            {/* Left Stats Panel - Optimized animations */}
             <motion.div
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
-              whileHover={{ scale: 1.05, y: -5 }}
+              whileHover={{ scale: 1.03, y: -3 }}
               viewport={{ once: true }}
               transition={{ 
-                duration: 0.4, 
-                delay: 0.2,
-                scale: { type: "spring", stiffness: 400, damping: 25 },
-                y: { type: "spring", stiffness: 400, damping: 25 }
+                duration: 0.3, 
+                delay: 0.1,
+                scale: { duration: 0.2 },
+                y: { duration: 0.2 }
               }}
-              className="lg:col-span-3 cursor-pointer will-change-transform"
+              className="lg:col-span-3 cursor-pointer"
             >
               <div className="rounded-3xl p-8 text-white shadow-[0_20px_50px_rgba(0,0,0,0.5)] border-2 backdrop-blur-md" style={{ background: `linear-gradient(135deg, rgba(138, 95, 65, 0.9) 0%, rgba(167, 127, 96, 0.8) 100%)`, borderColor: 'rgba(204, 214, 127, 0.4)' }}>
                 {/* Level Display */}
@@ -1861,24 +1881,22 @@ export function Home() {
               </div>
             </motion.div>
 
-            {/* Center Video */}
+            {/* Center Video - Optimized animations */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
-              whileHover={{ scale: 1.08, zIndex: 50 }}
+              whileHover={{ scale: 1.05, zIndex: 50 }}
               viewport={{ once: true }}
               transition={{ 
-                type: "spring", 
-                stiffness: 300, 
-                damping: 20,
-                scale: { duration: 0.4 }
+                duration: 0.3,
+                scale: { duration: 0.2 }
               }}
-              className="lg:col-span-6 flex justify-center cursor-pointer will-change-transform"
+              className="lg:col-span-6 flex justify-center cursor-pointer"
             >
               <div className="relative group">
                 {/* Video container with Galaxy Black background and hover frame effect */}
                 <div 
-                  className="w-80 h-96 lg:w-96 lg:h-[500px] rounded-3xl overflow-hidden border-4 p-1 transition-all duration-500 group-hover:shadow-[0_0_60px_rgba(204,214,127,0.3)] group-hover:border-[#CCD67F] select-none pointer-events-none will-change-[transform,shadow]" 
+                  className="w-80 h-96 lg:w-96 lg:h-[500px] rounded-3xl overflow-hidden border-4 p-1 transition-all duration-300 group-hover:shadow-[0_0_60px_rgba(204,214,127,0.3)] group-hover:border-[#CCD67F] select-none pointer-events-none" 
                   style={{ borderColor: '#A77F60', background: 'radial-gradient(circle at center, #111111 0%, #000000 100%)' }}
                   onContextMenu={(e) => e.preventDefault()}
                 >
@@ -1902,19 +1920,19 @@ export function Home() {
               </div>
             </motion.div>
 
-            {/* Right Lore Panel */}
+            {/* Right Lore Panel - Optimized animations */}
             <motion.div
               initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
-              whileHover={{ scale: 1.05, y: -5 }}
+              whileHover={{ scale: 1.03, y: -3 }}
               viewport={{ once: true }}
               transition={{ 
-                duration: 0.4, 
-                delay: 0.4,
-                scale: { type: "spring", stiffness: 400, damping: 25 },
-                y: { type: "spring", stiffness: 400, damping: 25 }
+                duration: 0.3, 
+                delay: 0.15,
+                scale: { duration: 0.2 },
+                y: { duration: 0.2 }
               }}
-              className="lg:col-span-3 cursor-pointer will-change-transform"
+              className="lg:col-span-3 cursor-pointer"
             >
               <div className="rounded-3xl p-8 shadow-[0_20px_50px_rgba(0,0,0,0.5)] border-2 backdrop-blur-md" style={{ background: `linear-gradient(135deg, rgba(243, 228, 201, 0.9) 0%, rgba(204, 214, 127, 0.8) 100%)`, borderColor: 'rgba(167, 127, 96, 0.4)' }}>
                 {/* Character Lore Header */}
@@ -1944,18 +1962,18 @@ export function Home() {
             </motion.div>
           </div>
 
-          {/* Bottom Description */}
+          {/* Bottom Description - Optimized */}
           <div className="flex justify-center mt-12">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              whileHover={{ scale: 1.02, backgroundColor: 'rgba(255,255,255,0.08)', borderColor: 'rgba(255,255,255,0.2)' }}
+              whileHover={{ scale: 1.01, backgroundColor: 'rgba(255,255,255,0.08)', borderColor: 'rgba(255,255,255,0.2)' }}
               viewport={{ once: true }}
               transition={{ 
                 duration: 0.3,
-                scale: { type: "spring", stiffness: 400, damping: 25 }
+                scale: { duration: 0.2 }
               }}
-              className="max-w-3xl px-8 py-8 rounded-[40px] backdrop-blur-md border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] cursor-pointer text-center transition-colors duration-300"
+              className="max-w-3xl px-8 py-8 rounded-[40px] backdrop-blur-md border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] cursor-pointer text-center transition-colors duration-200"
               style={{ backgroundColor: 'rgba(255,255,255,0.05)' }}
             >
               <h3 className="text-3xl font-black mb-4" style={{ color: '#F3E4C9' }}>Crafted with Passion</h3>
@@ -2462,6 +2480,47 @@ export function Home() {
               </Link>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Resume Locked Message Modal */}
+      {showResumeLocked && (
+        <div 
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={() => setShowResumeLocked(false)}
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            onClick={(e) => e.stopPropagation()}
+            className="bg-card border border-border rounded-3xl p-8 md:p-10 max-w-md w-full shadow-2xl"
+          >
+            <div className="text-center">
+              {/* Lock Icon */}
+              <div className="w-16 h-16 mx-auto mb-6 bg-accent/20 rounded-full flex items-center justify-center">
+                <svg className="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </div>
+
+              {/* Title */}
+              <h3 className="text-2xl font-bold mb-4">Resume Locked</h3>
+
+              {/* Message */}
+              <p className="text-muted-foreground mb-6 leading-relaxed">
+                Resume currently unavailable. Already employed for now — will unlock again when needed. 😊
+              </p>
+
+              {/* Close Button */}
+              <button
+                onClick={() => setShowResumeLocked(false)}
+                className="w-full px-6 py-3 bg-primary text-primary-foreground rounded-full hover:opacity-90 transition-opacity font-medium"
+              >
+                Got it
+              </button>
+            </div>
+          </motion.div>
         </div>
       )}
 

@@ -430,9 +430,12 @@ export function Certifications() {
       field: "Computer Software Engineering",
       institution: "Asia Pacific University of Technology and Innovation (APU / APIIT)",
       year: "July 2025 - July 2027",
-      honors: "Second Upper",
-      gpa: "CGPA: Second Upper",
-      activities: "Co-Organizer – Workplace Professional Skills Event 2026 · Team Lead – Hackathon (2025–2026) · Game Designer – Sotong Game Event 2025",
+      activities: [
+        "Co-Organizer – Workplace Professional Skills Event 2026",
+        "Team Lead – Hackathon (2025–2026)",
+        "Team Lead - Assignment Leader",
+        "Game Designer – Sotong Game Event 2025"
+      ],
       skills: ["Project Management", "Software Engineering"],
     },
     {
@@ -440,9 +443,9 @@ export function Certifications() {
       field: "Computer Software Engineering",
       institution: "De Montfort University (UK)",
       year: "July 2025 - July 2027",
-      honors: "Second Upper",
-      gpa: "CGPA: Second Upper",
-      activities: null,
+      activities: [
+        "Team Lead"
+      ],
       skills: ["Project Management", "Software Engineering"],
     },
     {
@@ -450,9 +453,11 @@ export function Certifications() {
       field: "Information Technology",
       institution: "Tunku Abdul Rahman University of Management and Technology",
       year: "June 2023 - June 2025",
-      honors: "Second Upper",
-      gpa: "CGPA: Second Upper",
-      activities: "Buddhist Society – Member · Basketball Club – Member",
+      activities: [
+        "Team Lead - 2 year assignment leader for diploma session",
+        "Buddhist Society – Member",
+        "Basketball Club – Member"
+      ],
       skills: ["Project Management", "Information Technology"],
     },
   ];
@@ -465,7 +470,7 @@ export function Certifications() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.15 }}
             className="text-center max-w-3xl mx-auto"
           >
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
@@ -485,7 +490,7 @@ export function Certifications() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.15 }}
           className="mb-12"
         >
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -503,26 +508,33 @@ export function Certifications() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="bg-card border border-border rounded-2xl p-6 md:p-8"
+              transition={{ duration: 0.15 }}
+              className="bg-card border border-border rounded-2xl p-6"
             >
-              <div className="w-16 h-16 bg-gradient-to-br from-primary to-accent rounded-2xl flex items-center justify-center mb-6">
-                <GraduationCap className="w-8 h-8 text-white" />
+              <div className="w-12 h-12 bg-gradient-to-br from-primary to-accent rounded-2xl flex items-center justify-center mb-4">
+                <GraduationCap className="w-6 h-6 text-white" />
               </div>
-              <h3 className="text-2xl font-semibold mb-2">{edu.degree}</h3>
-              <p className="text-primary font-medium mb-3">{edu.field}</p>
-              <p className="text-muted-foreground font-medium mb-2">{edu.institution}</p>
-              <p className="text-sm text-muted-foreground mb-4">{edu.year}</p>
+              <h3 className="text-xl font-semibold mb-2">{edu.degree}</h3>
+              <p className="text-primary font-medium mb-2">{edu.field}</p>
+              <p className="text-muted-foreground font-medium mb-1">{edu.institution}</p>
+              <p className="text-sm text-muted-foreground mb-3">{edu.year}</p>
               
               {edu.activities && (
-                <div className="mb-4">
-                  <p className="text-xs text-muted-foreground mb-2">Activities and Societies</p>
-                  <p className="text-sm text-muted-foreground">{edu.activities}</p>
+                <div className="mb-3">
+                  <p className="text-xs text-muted-foreground mb-2 font-semibold">Activities and Societies</p>
+                  <ul className="space-y-1.5 pl-1">
+                    {edu.activities.map((activity, activityIndex) => (
+                      <li key={activityIndex} className="text-sm text-muted-foreground flex items-start gap-2.5">
+                        <span className="text-primary font-bold text-base leading-none mt-0.5">•</span>
+                        <span className="flex-1 leading-relaxed">{activity}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               )}
 
               {edu.skills && (
-                <div className="mb-4">
+                <div className="pt-4 border-t border-border">
                   <p className="text-xs text-muted-foreground mb-2">Skills</p>
                   <div className="flex flex-wrap gap-1">
                     {edu.skills.map((skill, skillIndex) => (
@@ -536,15 +548,6 @@ export function Certifications() {
                   </div>
                 </div>
               )}
-
-              <div className="flex flex-wrap gap-3 pt-4 border-t border-border">
-                <span className="px-3 py-1 bg-accent/20 text-accent-foreground rounded-full text-sm">
-                  {edu.honors}
-                </span>
-                <span className="px-3 py-1 bg-secondary text-secondary-foreground rounded-full text-sm">
-                  {edu.gpa}
-                </span>
-              </div>
             </motion.div>
           ))}
         </div>
@@ -557,7 +560,7 @@ export function Certifications() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.15 }}
             className="mb-12"
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -577,7 +580,7 @@ export function Certifications() {
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  transition={{ duration: 0.15 }}
                   className="group"
                 >
                   <div className="bg-card border border-border rounded-2xl p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full flex flex-col">
@@ -637,7 +640,7 @@ export function Certifications() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.15 }}
           className="mb-12"
         >
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -657,7 +660,7 @@ export function Certifications() {
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
+                transition={{ duration: 0.15 }}
                 className="bg-card border border-border rounded-2xl p-6 md:p-8 hover:shadow-lg transition-shadow"
               >
                 <div className="flex gap-6 items-start">
