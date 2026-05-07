@@ -4,6 +4,374 @@ import { motion, AnimatePresence } from "motion/react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { useState, useEffect, useMemo } from "react";
 
+// Written Pages Interactive Card Component
+function WrittenPagesCard() {
+  const [isFlipped, setIsFlipped] = useState(false);
+  const [flipCount, setFlipCount] = useState(0);
+  const [animatedText, setAnimatedText] = useState("");
+  const [footerText, setFooterText] = useState("");
+  const [userInteracted, setUserInteracted] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const fullText = "writtenx pages";
+  const fullFooterText = "writtenx.pages.dev";
+  
+  // Animate header text on mount
+  useEffect(() => {
+    let currentIndex = 0;
+    const interval = setInterval(() => {
+      if (currentIndex <= fullText.length) {
+        setAnimatedText(fullText.slice(0, currentIndex));
+        currentIndex++;
+      } else {
+        clearInterval(interval);
+      }
+    }, 150);
+    
+    return () => clearInterval(interval);
+  }, []);
+
+  // Animate footer text after header completes
+  useEffect(() => {
+    const headerDelay = fullText.length * 150 + 500; // Wait for header + 500ms
+    
+    const timeout = setTimeout(() => {
+      let currentIndex = 0;
+      const interval = setInterval(() => {
+        if (currentIndex <= fullFooterText.length) {
+          setFooterText(fullFooterText.slice(0, currentIndex));
+          currentIndex++;
+        } else {
+          clearInterval(interval);
+        }
+      }, 100);
+      
+      return () => clearInterval(interval);
+    }, headerDelay);
+    
+    return () => clearTimeout(timeout);
+  }, []);
+
+  // Auto-flip if user hasn't interacted
+  useEffect(() => {
+    if (!userInteracted) {
+      const autoFlipInterval = setInterval(() => {
+        setIsFlipped(prev => !prev);
+        setFlipCount(prev => prev + 1);
+      }, 4000); // Flip every 4 seconds
+      
+      return () => clearInterval(autoFlipInterval);
+    }
+  }, [userInteracted]);
+
+  const handleFlip = () => {
+    setUserInteracted(true); // Stop auto-flip when user clicks
+    setIsFlipped(!isFlipped);
+    setFlipCount(prev => prev + 1);
+  };
+
+  const toggleDarkMode = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card flip when clicking dark mode button
+    setIsDarkMode(!isDarkMode);
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.6 }}
+      className="relative w-full max-w-2xl mx-auto"
+    >
+      {/* Main Card Container */}
+      <div className={`rounded-3xl shadow-2xl overflow-hidden transition-colors duration-300 ${
+        isDarkMode ? 'bg-[#1e1e1e]' : 'bg-[#6B5446]'
+      }`}>
+        {/* Header */}
+        <div className={`px-6 py-4 flex items-center justify-between transition-colors duration-300 ${
+          isDarkMode ? 'bg-[#1e1e1e]' : 'bg-[#6B5446]'
+        }`}>
+          <div className="flex items-center gap-2">
+            <span className={`font-mono text-sm md:text-base tracking-wider transition-colors duration-300 ${
+              isDarkMode ? 'text-[#e5e7eb]' : 'text-[#E8DCC8]'
+            }`}>
+              {animatedText}
+              <span className="animate-pulse">|</span>
+            </span>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className={`hidden md:flex items-center gap-4 text-xs md:text-sm font-mono transition-colors duration-300 ${
+              isDarkMode ? 'text-[#e5e7eb]/60' : 'text-[#E8DCC8]/60'
+            }`}>
+              <span>flip</span>
+              <span>·</span>
+              <span>recall</span>
+              <span>·</span>
+              <span>remember</span>
+            </div>
+            {/* Dark Mode Toggle Button */}
+            <button
+              onClick={toggleDarkMode}
+              className={`p-2 rounded-lg transition-all duration-300 hover:scale-110 ${
+                isDarkMode 
+                  ? 'bg-[#2563eb] hover:bg-[#1d4ed8]' 
+                  : 'bg-[#E8DCC8]/20 hover:bg-[#E8DCC8]/30'
+              }`}
+              title="Toggle Dark Mode"
+            >
+              {isDarkMode ? (
+                <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="4"></circle>
+                  <path d="m12 2l0 2"></path>
+                  <path d="m12 20l0 2"></path>
+                  <path d="m4.93 4.93l1.41 1.41"></path>
+                  <path d="m17.66 17.66l1.41 1.41"></path>
+                  <path d="m2 12l2 0"></path>
+                  <path d="m20 12l2 0"></path>
+                  <path d="m6.34 17.66l-1.41 1.41"></path>
+                  <path d="m19.07 4.93l-1.41 1.41"></path>
+                </svg>
+              ) : (
+                <svg className="w-4 h-4 text-[#E8DCC8]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+                </svg>
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Paper Area */}
+        <div className={`p-4 md:p-6 min-h-[350px] md:min-h-[420px] relative transition-colors duration-300 ${
+          isDarkMode ? 'bg-[#121212]' : 'bg-[#E8DCC8]'
+        }`}>
+          {/* Decorative Dots */}
+          <div className="absolute top-4 right-4 flex flex-col gap-2">
+            <div className={`w-3 h-3 rounded-full opacity-40 transition-colors duration-300 ${
+              isDarkMode ? 'bg-[#60a5fa]' : 'bg-[#C4B5A0]'
+            }`}></div>
+            <div className={`w-3 h-3 rounded-full opacity-40 transition-colors duration-300 ${
+              isDarkMode ? 'bg-[#60a5fa]' : 'bg-[#C4B5A0]'
+            }`}></div>
+            <div className={`w-3 h-3 rounded-full opacity-40 transition-colors duration-300 ${
+              isDarkMode ? 'bg-[#60a5fa]' : 'bg-[#C4B5A0]'
+            }`}></div>
+          </div>
+
+          {/* Tap Instruction */}
+          <div className="text-center mb-4">
+            <p className={`text-xs md:text-sm tracking-[0.3em] uppercase font-mono transition-colors duration-300 ${
+              isDarkMode ? 'text-[#9ca3af]' : 'text-[#A89580]'
+            }`}>
+              Tap the paper to flip
+            </p>
+          </div>
+
+          {/* Flippable Card */}
+          <div 
+            className="relative mx-auto cursor-pointer group"
+            style={{ perspective: "1000px", maxWidth: "500px" }}
+            onClick={handleFlip}
+          >
+            {/* Left Arrow Indicator */}
+            <div className={`absolute left-0 top-1/2 -translate-y-1/2 -translate-x-12 md:-translate-x-16 z-10 transition-all duration-300 ${
+              isDarkMode ? 'text-[#60a5fa]' : 'text-[#A89580]'
+            }`}>
+              <div className="flex flex-col items-center gap-2 animate-pulse">
+                <svg className="w-6 h-6 md:w-8 md:h-8 animate-bounce-horizontal" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M15 18l-6-6 6-6"/>
+                </svg>
+                <span className="text-xs font-mono hidden md:block">Click</span>
+              </div>
+            </div>
+
+            {/* Right Arrow Indicator */}
+            <div className={`absolute right-0 top-1/2 -translate-y-1/2 translate-x-12 md:translate-x-16 z-10 transition-all duration-300 ${
+              isDarkMode ? 'text-[#60a5fa]' : 'text-[#A89580]'
+            }`}>
+              <div className="flex flex-col items-center gap-2 animate-pulse">
+                <svg className="w-6 h-6 md:w-8 md:h-8 animate-bounce-horizontal-reverse" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M9 18l6-6-6-6"/>
+                </svg>
+                <span className="text-xs font-mono hidden md:block">Click</span>
+              </div>
+            </div>
+
+            <motion.div
+              className="relative w-full"
+              style={{ transformStyle: "preserve-3d" }}
+              animate={{ rotateY: isFlipped ? 180 : 0 }}
+              transition={{ duration: 0.6, ease: "easeInOut" }}
+            >
+              {/* Front Side */}
+              <div
+                className={`rounded-2xl p-4 md:p-6 shadow-lg min-h-[220px] md:min-h-[260px] flex flex-col justify-center border-2 transition-colors duration-300 ${
+                  isDarkMode 
+                    ? 'bg-[#1e1e1e] border-[#60a5fa]' 
+                    : 'bg-[#F5F0E8] border-[#C4B5A0]'
+                }`}
+                style={{
+                  backfaceVisibility: "hidden",
+                  WebkitBackfaceVisibility: "hidden"
+                }}
+              >
+                <div className="text-center mb-4">
+                  <span className={`inline-block px-4 py-1.5 text-xs font-mono rounded-full mb-4 transition-colors duration-300 ${
+                    isDarkMode 
+                      ? 'bg-[#2563eb] text-white' 
+                      : 'bg-[#E8DCC8] text-[#6B5446]'
+                  }`}>
+                    QUESTION
+                  </span>
+                </div>
+                
+                <h3 className={`text-xl md:text-2xl font-serif italic text-center mb-2 transition-colors duration-300 ${
+                  isDarkMode ? 'text-[#9ca3af]' : 'text-[#A89580]'
+                }`}>
+                  What is
+                </h3>
+                <p className={`text-xs text-center mb-3 tracking-wide uppercase font-mono transition-colors duration-300 ${
+                  isDarkMode ? 'text-[#e5e7eb]' : 'text-[#6B5446]'
+                }`}>
+                  Answer hidden...
+                </p>
+                <h3 className={`text-2xl md:text-3xl font-serif italic text-center mb-4 transition-colors duration-300 ${
+                  isDarkMode ? 'text-[#e5e7eb]' : 'text-[#6B5446]'
+                }`}>
+                  Active Recall?
+                </h3>
+                
+                <p className={`text-xs md:text-sm italic text-center font-serif mt-auto transition-colors duration-300 ${
+                  isDarkMode ? 'text-[#9ca3af]' : 'text-[#A89580]'
+                }`}>
+                  flip to reveal the answer
+                </p>
+              </div>
+
+              {/* Back Side */}
+              <div
+                className={`absolute inset-0 rounded-2xl p-4 md:p-6 shadow-lg min-h-[220px] md:min-h-[260px] flex flex-col justify-center border-2 transition-colors duration-300 ${
+                  isDarkMode 
+                    ? 'bg-[#1a1a1a] border-[#60a5fa]' 
+                    : 'bg-[#F5F0E8] border-[#C4B5A0]'
+                }`}
+                style={{
+                  backfaceVisibility: "hidden",
+                  WebkitBackfaceVisibility: "hidden",
+                  transform: "rotateY(180deg)"
+                }}
+              >
+                <div className="text-center mb-4">
+                  <span className={`inline-block px-4 py-1.5 text-xs font-mono rounded-full mb-4 transition-colors duration-300 ${
+                    isDarkMode 
+                      ? 'bg-[#2563eb] text-white' 
+                      : 'bg-[#E8DCC8] text-[#6B5446]'
+                  }`}>
+                    ANSWER
+                  </span>
+                </div>
+                
+                <p className={`text-sm md:text-base text-center leading-relaxed font-serif transition-colors duration-300 ${
+                  isDarkMode ? 'text-[#e5e7eb]' : 'text-[#6B5446]'
+                }`}>
+                  A learning technique where you actively retrieve information from memory rather than passively reviewing notes. 
+                  It strengthens neural pathways and improves long-term retention.
+                </p>
+                
+                <p className={`text-xs md:text-sm italic text-center font-serif mt-4 transition-colors duration-300 ${
+                  isDarkMode ? 'text-[#9ca3af]' : 'text-[#A89580]'
+                }`}>
+                  flip again to practice more
+                </p>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Description */}
+          <div className="text-center mt-6 space-y-2">
+            <p className={`text-xs md:text-sm tracking-wide uppercase font-mono transition-colors duration-300 ${
+              isDarkMode ? 'text-[#9ca3af]' : 'text-[#A89580]'
+            }`}>
+              Question side — Answer is hidden
+            </p>
+            <p className={`text-xs md:text-sm font-mono transition-colors duration-300 ${
+              isDarkMode ? 'text-[#e5e7eb]' : 'text-[#6B5446]'
+            }`}>
+              —— This is how WrittenX Pages works ——
+            </p>
+            <p className={`text-xs md:text-sm font-serif italic leading-relaxed mt-3 transition-colors duration-300 ${
+              isDarkMode ? 'text-[#9ca3af]' : 'text-[#A89580]'
+            }`}>
+              Add draggable blur boxes to cover specific answers • Perfect for side-by-side revision
+            </p>
+          </div>
+
+          {/* Feature Tags */}
+          <div className="flex flex-wrap justify-center gap-2 md:gap-3 mt-4">
+            <span className={`px-3 md:px-4 py-1.5 md:py-2 border text-xs md:text-sm rounded-full font-mono transition-colors duration-300 ${
+              isDarkMode 
+                ? 'bg-[#1e1e1e] border-[#60a5fa] text-[#e5e7eb]' 
+                : 'bg-[#F5F0E8] border-[#C4B5A0] text-[#6B5446]'
+            }`}>
+              Flip paper
+            </span>
+            <span className={`px-3 md:px-4 py-1.5 md:py-2 border text-xs md:text-sm rounded-full font-mono transition-colors duration-300 ${
+              isDarkMode 
+                ? 'bg-[#1e1e1e] border-[#60a5fa] text-[#e5e7eb]' 
+                : 'bg-[#F5F0E8] border-[#C4B5A0] text-[#6B5446]'
+            }`}>
+              Blur recall
+            </span>
+            <span className={`px-3 md:px-4 py-1.5 md:py-2 border text-xs md:text-sm rounded-full font-mono transition-colors duration-300 ${
+              isDarkMode 
+                ? 'bg-[#1e1e1e] border-[#60a5fa] text-[#e5e7eb]' 
+                : 'bg-[#F5F0E8] border-[#C4B5A0] text-[#6B5446]'
+            }`}>
+              Hide & reveal
+            </span>
+            <span className={`px-3 md:px-4 py-1.5 md:py-2 border text-xs md:text-sm rounded-full font-mono transition-colors duration-300 ${
+              isDarkMode 
+                ? 'bg-[#1e1e1e] border-[#60a5fa] text-[#e5e7eb]' 
+                : 'bg-[#F5F0E8] border-[#C4B5A0] text-[#6B5446]'
+            }`}>
+              No signup
+            </span>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className={`px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-3 transition-colors duration-300 ${
+          isDarkMode ? 'bg-[#0a0a0a]' : 'bg-[#2A1F14]'
+        }`}>
+          <span className={`font-mono text-sm md:text-base transition-colors duration-300 ${
+            isDarkMode ? 'text-[#e5e7eb]' : 'text-[#E8DCC8]'
+          }`}>
+            {footerText}
+            {footerText.length < fullFooterText.length && <span className="animate-pulse">|</span>}
+          </span>
+          <div className={`text-xs md:text-sm font-mono text-center md:text-right transition-colors duration-300 ${
+            isDarkMode ? 'text-[#9ca3af]' : 'text-[#A89580]'
+          }`}>
+            <span>FREE · BROWSER-BASED</span>
+            <br className="md:hidden" />
+            <span className="hidden md:inline"> · </span>
+            <span>NO SIGNUP</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Flip Counter */}
+      <div className="text-center mt-4">
+        <p className="text-[#A89580] text-sm font-mono">
+          Flipped <span className="font-bold text-amber-900">{flipCount}</span> times — go on, flip it again
+        </p>
+      </div>
+
+      {/* Decorative background blur */}
+      <div className="absolute -top-10 -left-10 w-40 h-40 bg-amber-200/30 rounded-full blur-3xl -z-10"></div>
+      <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-orange-200/30 rounded-full blur-3xl -z-10"></div>
+    </motion.div>
+  );
+}
+
 function FocusFlowTutorialModal({ onClose }: { onClose: () => void }) {
   const [step, setStep] = useState(0);
   
@@ -53,7 +421,7 @@ function FocusFlowTutorialModal({ onClose }: { onClose: () => void }) {
         'Add tasks for today with a title, time, duration and color.',
         'Tap the circle ○ on a task to mark it done.',
         'Progress bar at the top shows how many tasks are completed.',
-        'Plans reset each day — start fresh every morning.',
+        'Plans reset each day, start fresh every morning.',
       ],
     },
     {
@@ -177,8 +545,22 @@ export function Home() {
   const [showResume, setShowResume] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [showFocusFlowTutorial, setShowFocusFlowTutorial] = useState(false);
+  const [showWrittenPagesStory, setShowWrittenPagesStory] = useState(false);
   const [activeGameSlide, setActiveGameSlide] = useState(0);
   const [showScrollTop, setShowScrollTop] = useState(false);
+
+  // Prevent background scroll when modals are open
+  useEffect(() => {
+    if (showWrittenPagesStory || showFocusFlowTutorial || showResume) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [showWrittenPagesStory, showFocusFlowTutorial, showResume]);
 
   // Memoize stars to prevent re-randomization on every render (which happens every 8s due to slider)
   const stars = useMemo(() => {
@@ -373,6 +755,51 @@ export function Home() {
         </div>
       </section>
 
+      {/* WrittenX Pages Advertisement Banner */}
+      <section className="bg-gradient-to-r from-[#1a1a1a] via-[#2a2a2a] to-[#1a1a1a] border-y border-amber-900/20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            {/* Left Side - Logo and Title */}
+            <div className="flex items-center gap-4">
+              {/* Avatar Logo */}
+              <div className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-[#3a3a3a] p-2 flex-shrink-0 border border-amber-900/30">
+                <img 
+                  src="/images/HowellAvatar.png" 
+                  alt="WrittenX Pages" 
+                  className="w-full h-full object-cover rounded-xl"
+                />
+              </div>
+              
+              {/* Title and Tagline */}
+              <div className="flex flex-col">
+                <h3 className="text-xl md:text-2xl font-bold text-white">
+                  Written<span className="title-x-styled">X</span> Pages
+                </h3>
+                <p className="text-xs md:text-sm text-gray-400 tracking-wide uppercase">
+                  Write · Play · Study — All in one place
+                </p>
+              </div>
+            </div>
+
+            {/* Right Side - URL and CTA */}
+            <div className="flex items-center gap-4">
+              <span className="hidden md:block text-sm text-gray-500 font-mono">
+                writtenx.pages.dev
+              </span>
+              <a
+                href="https://writtenx.pages.dev/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-[#d4e157] to-[#c0ca33] text-[#1a1a1a] rounded-lg hover:from-[#e6ee9c] hover:to-[#d4e157] transition-all duration-300 font-semibold text-sm shadow-lg hover:shadow-xl hover:scale-105"
+              >
+                OPEN FREE
+                <ArrowRight className="w-4 h-4" />
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Features Grid */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <motion.div
@@ -422,6 +849,138 @@ export function Home() {
               </motion.div>
             );
           })}
+        </div>
+      </section>
+
+      {/* Written Pages Introduction Section */}
+      <section className="bg-gradient-to-br from-amber-100/40 via-orange-50/60 to-yellow-50/50 py-20 border-y border-amber-200/50">
+        <style>{`
+          @keyframes pulse-glow-x {
+            0%, 100% {
+              filter: brightness(1);
+              transform: scale(1) rotate(-5deg);
+            }
+            50% {
+              filter: brightness(1.2);
+              transform: scale(1.05) rotate(-5deg);
+            }
+          }
+          @keyframes bounce-horizontal {
+            0%, 100% {
+              transform: translateX(0);
+            }
+            50% {
+              transform: translateX(-8px);
+            }
+          }
+          @keyframes bounce-horizontal-reverse {
+            0%, 100% {
+              transform: translateX(0);
+            }
+            50% {
+              transform: translateX(8px);
+            }
+          }
+          .title-x-styled {
+            font-weight: 700;
+            font-size: 1.2em;
+            font-family: 'Brush Script MT', 'Lucida Handwriting', cursive;
+            font-style: italic;
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: inline-block;
+            margin: 0 2px;
+            transform: rotate(-5deg);
+            animation: pulse-glow-x 2s ease-in-out infinite;
+          }
+          .animate-bounce-horizontal {
+            animation: bounce-horizontal 1.5s ease-in-out infinite;
+          }
+          .animate-bounce-horizontal-reverse {
+            animation: bounce-horizontal-reverse 1.5s ease-in-out infinite;
+          }
+        `}</style>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Left Content - Text Info */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-amber-100 text-amber-900 rounded-full text-sm font-medium mb-6 font-sans">
+                <FileText className="w-4 h-4" />
+                Study Platform
+              </div>
+              
+              <h2 className="text-4xl md:text-5xl font-bold mb-6 text-amber-950 font-serif italic">
+                Written<span className="title-x-styled">X</span> Pages
+              </h2>
+              
+              <p className="text-xl text-amber-900/80 mb-8 leading-relaxed font-serif">
+                A comprehensive study platform featuring interactive note-taking tools, classic Nokia games, 
+                and productivity utilities. Everything you need for focused learning and mindful breaks.
+              </p>
+
+              <div className="space-y-6 mb-10">
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center border border-amber-100">
+                    <FlipHorizontal className="w-6 h-6 text-amber-900" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-amber-950 font-sans mb-1">Written Pages Tool</h3>
+                    <p className="text-amber-900/70 text-sm">Dual-paper system with flip, hide, and blur features for active recall.</p>
+                  </div>
+                </div>
+
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center border border-amber-100">
+                    <Gamepad2 className="w-6 h-6 text-amber-900" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-amber-950 font-sans mb-1">Classic Games</h3>
+                    <p className="text-amber-900/70 text-sm">Nokia Snake, Tetris, and Rapid Roll for mindful study breaks.</p>
+                  </div>
+                </div>
+
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center border border-amber-100">
+                    <Calculator className="w-6 h-6 text-amber-900" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-amber-950 font-sans mb-1">Productivity Tools</h3>
+                    <p className="text-amber-900/70 text-sm">Bill Splitter, Scientific Calculator, and StudyFlow utilities.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap gap-4">
+                <a
+                  href="https://writtenx.pages.dev/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-8 py-3.5 bg-amber-900 text-white rounded-full hover:bg-amber-950 transition-colors shadow-lg shadow-amber-900/20 font-sans font-medium"
+                >
+                  <Play className="w-4 h-4" />
+                  Explore Platform
+                  <ArrowRight className="w-4 h-4" />
+                </a>
+                <button
+                  onClick={() => setShowWrittenPagesStory(true)}
+                  className="inline-flex items-center gap-2 px-8 py-3.5 bg-amber-100 text-amber-900 rounded-full hover:bg-amber-200 transition-colors font-sans font-medium"
+                >
+                  <Info className="w-4 h-4" />
+                  Read More
+                </button>
+              </div>
+            </motion.div>
+
+            {/* Right Content - Interactive Card Preview */}
+            <WrittenPagesCard />
+          </div>
         </div>
       </section>
 
@@ -1674,6 +2233,150 @@ export function Home() {
       {showFocusFlowTutorial && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" onClick={() => setShowFocusFlowTutorial(false)}>
           <FocusFlowTutorialModal onClose={() => setShowFocusFlowTutorial(false)} />
+        </div>
+      )}
+
+      {/* Written Pages Story Modal */}
+      {showWrittenPagesStory && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" onClick={() => setShowWrittenPagesStory(false)}>
+          <div
+            className="bg-white rounded-3xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden relative"
+            style={{ backgroundColor: '#fdfcfb' }}
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <button 
+              onClick={() => setShowWrittenPagesStory(false)}
+              className="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-white/80 hover:bg-white flex items-center justify-center transition-colors"
+            >
+              <X className="w-4 h-4 text-gray-600" />
+            </button>
+
+            {/* Header */}
+            <div className="p-8 border-b border-amber-100">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="w-16 h-16 rounded-2xl bg-amber-100 flex items-center justify-center">
+                  <FileText className="w-8 h-8 text-amber-900" />
+                </div>
+                <div>
+                  <h2 className="text-3xl font-bold text-amber-950 font-serif italic">
+                    The Story Behind Written<span className="title-x-styled">X</span> Pages
+                  </h2>
+                  <p className="text-sm text-amber-700 mt-1">Created by Cho Sin Hong • 7 May 2026</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="p-8 overflow-y-auto" style={{ maxHeight: 'calc(90vh - 280px)' }}>
+              <div className="prose prose-amber max-w-none">
+                <div className="space-y-6 text-amber-900/90 leading-relaxed">
+                  <p className="text-lg font-serif">
+                    When I was preparing for my university assignments and final exams, I realized that the way I studied was very different from most people around me. I had a habit of repeatedly typing and rewriting my notes inside simple websites like note-taking apps or text pads. I would shorten paragraphs again and again, compressing large amounts of information into smaller and easier-to-remember forms. For me, typing repeatedly was not just writing notes, it was a way of memorizing. The more I rewrote and simplified the content, the easier it became to remember formulas, concepts, definitions, and exam topics.
+                  </p>
+
+                  <p className="font-serif">
+                    But over time, I started noticing a problem.
+                  </p>
+
+                  <p className="font-serif">
+                    Most online note websites were not actually designed for revision or memory practice. They focused heavily on productivity, collaboration, or aesthetics, but very few were truly built around how students revise for exams. Some websites looked beautiful but lost all the notes after refreshing the page. Others required registration, subscriptions, or cloud accounts just to save simple text. Some interrupted the workflow with complicated menus, paywalls, or unnecessary features. Even my friends experienced the same frustrations while preparing for their own exams and coursework.
+                  </p>
+
+                  <p className="font-serif font-semibold text-amber-950">
+                    We wanted something simpler.
+                  </p>
+
+                  <ul className="space-y-2 font-serif list-none pl-0">
+                    <li className="flex items-start gap-3">
+                      <span className="text-amber-600 font-bold">•</span>
+                      <span>A place where we could just open the website and immediately start revising.</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="text-amber-600 font-bold">•</span>
+                      <span>A place focused on memory, repetition, active recall, and studying.</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="text-amber-600 font-bold">•</span>
+                      <span>A place that felt fast, lightweight, and distraction-free.</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="text-amber-600 font-bold">•</span>
+                      <span>A place that would never suddenly erase your notes after refreshing.</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="text-amber-600 font-bold">•</span>
+                      <span>A place that worked without accounts, installations, or payments.</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="text-amber-600 font-bold">•</span>
+                      <span>A place that is safe to use.</span>
+                    </li>
+                  </ul>
+
+                  <p className="font-serif font-semibold text-amber-950 text-xl">
+                    That idea slowly became WrittenX Pages.
+                  </p>
+
+                  <p className="font-serif">
+                    On 7 May 2026, I completed the project after designing it around the exact studying habits I personally used during revision periods. Instead of building another traditional note-taking website, I wanted to create a browser-based digital notebook that recreated the feeling of studying with real physical paper while combining modern memory-training tools into one seamless environment.
+                  </p>
+
+                  <p className="font-serif">
+                    The core of WrittenX Pages became the <strong>flip-paper notebook system</strong>. Each digital sheet has a front and back side, just like real paper. Users can write notes, questions, or summaries on the front, then flip the paper over with a smooth 3D animation to rewrite answers from memory or test themselves through active recall. This was inspired directly by how I used to repeatedly compress and rewrite my own revision notes before exams.
+                  </p>
+
+                  <p className="font-serif">
+                    To make revision even more effective, I added features specifically designed for memory practice. Users can instantly hide an entire page to test themselves before revealing the answers again. They can also place draggable blur blocks over individual lines or sections to slowly uncover information piece by piece, similar to covering textbook lines with your hand while memorizing.
+                  </p>
+
+                  <p className="font-serif">
+                    I also wanted the website to feel reliable. One of the biggest frustrations with other note websites was losing work unexpectedly. Because of that, WrittenX Pages automatically saves every keystroke locally inside the browser using localStorage. No sign-up is required, no cloud dependency exists, and refreshing the page does not erase your work. Everything persists automatically, notes, blur blocks, dark mode preferences, layouts, and settings.
+                  </p>
+
+                  <p className="font-serif">
+                    As the project grew, I expanded it beyond just writing. I added built-in productivity tools like a scientific calculator, a bill splitter, and a Study Flow planner so students could keep everything inside one workspace without constantly switching tabs. I even included retro Nokia-style mini games like Snake, Tetris, and Rapid Roll as lightweight study-break activities because long revision sessions can become mentally exhausting.
+                  </p>
+
+                  <p className="font-serif">
+                    The entire platform was designed to stay simple, fast, and distraction-free. No installation. No account. No subscription. Just open the browser and start writing.
+                  </p>
+
+                  <div className="bg-amber-50 border-l-4 border-amber-600 p-6 rounded-r-xl my-8">
+                    <p className="font-serif text-amber-950 font-semibold mb-2">
+                      Today, WrittenX Pages is more than just a notebook website to me.
+                    </p>
+                    <p className="font-serif text-amber-900/90">
+                      It represents the study habits, frustrations, and experiences I went through as a university student preparing for exams. It was built not only for myself, but also for students and users who wanted a dedicated memory-based learning environment focused on revision, active recall, note compression, and focused studying without unnecessary complexity.
+                    </p>
+                  </div>
+
+                  <div className="text-center pt-6 border-t border-amber-100">
+                    <p className="font-serif text-amber-900/70 mb-2">
+                      <strong className="text-amber-950">WrittenX Pages</strong> was created by <strong className="text-amber-950">Cho Sin Hong</strong>
+                    </p>
+                    <p className="font-serif text-sm text-amber-900/70">
+                      Double Degree Software Engineering student at Asia Pacific University of Technology & Innovation and De Montfort University
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="p-6 border-t border-amber-100 bg-amber-50/50 flex justify-center flex-shrink-0">
+              <a
+                href="https://writtenx.pages.dev/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-8 py-3 bg-amber-900 text-white rounded-full hover:bg-amber-950 transition-colors shadow-lg shadow-amber-900/20 font-sans font-medium"
+              >
+                <Play className="w-4 h-4" />
+                Visit WrittenX Pages
+                <ArrowRight className="w-4 h-4" />
+              </a>
+            </div>
+          </div>
         </div>
       )}
 

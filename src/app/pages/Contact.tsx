@@ -92,94 +92,222 @@ export function Contact() {
       {/* Contact Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div id="contact-form" className="grid lg:grid-cols-5 gap-12">
-          {/* Contact Form */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="lg:col-span-3"
-          >
-            <div className="bg-card border border-border rounded-3xl p-8 md:p-10">
-              <h2 className="text-2xl md:text-3xl font-bold mb-6">
-                Send Me a Message
-              </h2>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid sm:grid-cols-2 gap-6">
+          {/* Left Column - Contact Form + Advertisement */}
+          <div className="lg:col-span-3 space-y-8">
+            {/* Contact Form */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
+              <div className="bg-card border border-border rounded-3xl p-8 md:p-10">
+                <h2 className="text-2xl md:text-3xl font-bold mb-6">
+                  Send Me a Message
+                </h2>
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="grid sm:grid-cols-2 gap-6">
+                    <div>
+                      <label htmlFor="name" className="block text-sm mb-2">
+                        Your Name
+                      </label>
+                      <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        required
+                        className="w-full px-4 py-3 bg-input-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+                        placeholder="John Doe"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="email" className="block text-sm mb-2">
+                        Email Address
+                      </label>
+                      <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        required
+                        className="w-full px-4 py-3 bg-input-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+                        placeholder="john@example.com"
+                      />
+                    </div>
+                  </div>
+
                   <div>
-                    <label htmlFor="name" className="block text-sm mb-2">
-                      Your Name
+                    <label htmlFor="subject" className="block text-sm mb-2">
+                      Subject
                     </label>
                     <input
                       type="text"
-                      id="name"
-                      name="name"
-                      value={formData.name}
+                      id="subject"
+                      name="subject"
+                      value={formData.subject}
                       onChange={handleChange}
                       required
                       className="w-full px-4 py-3 bg-input-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary transition-all"
-                      placeholder="John Doe"
+                      placeholder="Project Collaboration"
                     />
                   </div>
+
                   <div>
-                    <label htmlFor="email" className="block text-sm mb-2">
-                      Email Address
+                    <label htmlFor="message" className="block text-sm mb-2">
+                      Message
                     </label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
+                    <textarea
+                      id="message"
+                      name="message"
+                      value={formData.message}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 bg-input-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary transition-all"
-                      placeholder="john@example.com"
+                      rows={6}
+                      className="w-full px-4 py-3 bg-input-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary transition-all resize-none"
+                      placeholder="Tell me about your project..."
                     />
                   </div>
+
+                  <button
+                    type="submit"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-primary text-primary-foreground rounded-full hover:opacity-90 transition-opacity"
+                  >
+                    <Send className="w-5 h-5" />
+                    Send Message
+                  </button>
+                </form>
+              </div>
+            </motion.div>
+
+            {/* WrittenX Pages Advertisement */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              <style>{`
+                .title-x-ad {
+                  font-weight: 700;
+                  font-size: 1.2em;
+                  font-family: 'Brush Script MT', 'Lucida Handwriting', cursive;
+                  font-style: italic;
+                  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
+                  -webkit-background-clip: text;
+                  -webkit-text-fill-color: transparent;
+                  background-clip: text;
+                  display: inline-block;
+                  margin: 0 2px;
+                  transform: rotate(-5deg);
+                }
+              `}</style>
+              
+              <div className="bg-gradient-to-br from-[#E8DCC8] to-[#F5F0E8] rounded-3xl overflow-hidden shadow-2xl border border-amber-200">
+                {/* Top Section */}
+                <div className="p-6 md:p-8 relative">
+                  {/* Header with Logo and Badge */}
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 md:w-12 md:h-12 rounded-2xl bg-[#8B6F47] p-2 flex-shrink-0">
+                        <img 
+                          src="/images/HowellAvatar.png" 
+                          alt="WrittenX Pages" 
+                          className="w-full h-full object-cover rounded-xl"
+                        />
+                      </div>
+                      <span className="text-sm md:text-base font-semibold text-[#6B5446]">
+                        Written<span className="title-x-ad">X</span> Pages
+                      </span>
+                    </div>
+                    <span className="px-3 py-1 bg-[#d4e157] text-[#2a2a2a] text-xs font-bold rounded-lg">
+                      FREE
+                    </span>
+                  </div>
+
+                  {/* Main Headline */}
+                  <div className="mb-6">
+                    <h2 className="text-3xl md:text-4xl font-bold text-[#2a2a2a] mb-2 leading-tight">
+                      Your ideas<br />deserve
+                    </h2>
+                    <h2 className="text-3xl md:text-4xl font-bold italic text-[#8B6F47] leading-tight">
+                      good paper.
+                    </h2>
+                  </div>
+
+                  {/* Description */}
+                  <p className="text-sm md:text-base text-[#8B6F47] mb-6">
+                    A beautiful digital space to write, study, and unwind — no sign-up needed.
+                  </p>
                 </div>
 
-                <div>
-                  <label htmlFor="subject" className="block text-sm mb-2">
-                    Subject
-                  </label>
-                  <input
-                    type="text"
-                    id="subject"
-                    name="subject"
-                    value={formData.subject}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-3 bg-input-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary transition-all"
-                    placeholder="Project Collaboration"
-                  />
-                </div>
+                {/* Bottom Section - Dark */}
+                <div className="bg-[#2a2a2a] p-6 md:p-8">
+                  {/* Creator Info */}
+                  <div className="flex items-center gap-3 mb-6 pb-6 border-b border-gray-700">
+                    <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-xl font-bold text-[#2a2a2a]">
+                      C
+                    </div>
+                    <div>
+                      <h3 className="text-white font-semibold text-base">Cho Sin Hong</h3>
+                      <p className="text-gray-400 text-sm">APU · Software Engineering</p>
+                    </div>
+                  </div>
 
-                <div>
-                  <label htmlFor="message" className="block text-sm mb-2">
-                    Message
-                  </label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    value={formData.message}
-                    onChange={handleChange}
-                    required
-                    rows={6}
-                    className="w-full px-4 py-3 bg-input-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary transition-all resize-none"
-                    placeholder="Tell me about your project..."
-                  />
-                </div>
+                  {/* Features List */}
+                  <div className="space-y-3 mb-6">
+                    <div className="flex items-start gap-3">
+                      <div className="w-7 h-7 rounded-full bg-[#3a3a3a] flex items-center justify-center flex-shrink-0 border border-gray-600">
+                        <span className="text-gray-400 text-xs font-mono">01</span>
+                      </div>
+                      <div>
+                        <h4 className="text-white font-semibold text-sm mb-0.5">Write freely</h4>
+                        <p className="text-gray-400 text-xs">— flip-paper notebook experience</p>
+                      </div>
+                    </div>
 
-                <button
-                  type="submit"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-primary text-primary-foreground rounded-full hover:opacity-90 transition-opacity"
-                >
-                  <Send className="w-5 h-5" />
-                  Send Message
-                </button>
-              </form>
-            </div>
-          </motion.div>
+                    <div className="flex items-start gap-3">
+                      <div className="w-7 h-7 rounded-full bg-[#3a3a3a] flex items-center justify-center flex-shrink-0 border border-gray-600">
+                        <span className="text-gray-400 text-xs font-mono">02</span>
+                      </div>
+                      <div>
+                        <h4 className="text-white font-semibold text-sm mb-0.5">Play games</h4>
+                        <p className="text-gray-400 text-xs">— Snake, Tetris & Rapid Roll</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3">
+                      <div className="w-7 h-7 rounded-full bg-[#3a3a3a] flex items-center justify-center flex-shrink-0 border border-gray-600">
+                        <span className="text-gray-400 text-xs font-mono">03</span>
+                      </div>
+                      <div>
+                        <h4 className="text-white font-semibold text-sm mb-0.5">Smart tools</h4>
+                        <p className="text-gray-400 text-xs">— calculator, bill splitter & study flow</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* CTA Section */}
+                  <div className="bg-[#E8DCC8] rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+                    <span className="text-[#2a2a2a] font-mono text-xs md:text-sm font-semibold">
+                      writtenx.pages.dev
+                    </span>
+                    <a
+                      href="https://writtenx.pages.dev/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#8B6F47] text-white rounded-lg hover:bg-[#6B5446] transition-all duration-300 font-semibold text-sm shadow-lg hover:shadow-xl hover:scale-105"
+                    >
+                      OPEN NOW
+                      <Send className="w-4 h-4" />
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
 
           {/* Contact Info */}
           <motion.div
