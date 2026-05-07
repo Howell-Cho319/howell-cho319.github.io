@@ -711,7 +711,7 @@ export function Home() {
       `}</style>
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-secondary/30 via-background to-accent/20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-12 md:pt-12 md:pb-20">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -756,7 +756,7 @@ export function Home() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="relative"
+              className="relative max-w-md mx-auto"
             >
               <div className="aspect-square rounded-3xl overflow-hidden shadow-2xl">
                 <ImageWithFallback
