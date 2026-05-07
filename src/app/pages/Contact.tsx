@@ -40,7 +40,7 @@ export function Contact() {
     {
       icon: MapPin,
       label: "Location",
-      value: "Klang, Selangor, Malaysia",
+      value: "Kuala Lumpur, Malaysia",
       link: null,
     },
   ];
