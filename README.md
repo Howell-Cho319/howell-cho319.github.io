@@ -7,13 +7,21 @@ A modern, responsive portfolio website built with React, TypeScript, and Tailwin
 > **Unauthorized copying, distribution, or use of this code, design, or assets is strictly prohibited.**  
 > For licensing inquiries, please contact: howell.cho319@gmail.com
 
-## 🚀 Tech Stack
+---
 
-- React 18 with TypeScript
-- Tailwind CSS 4
-- Vite 6
-- Framer Motion
-- React Router
+## � About This Portfolio
+
+Welcome to my personal portfolio website! This is where I showcase my journey as a Double Degree Software Engineering student at Asia Pacific University (APU) and De Montfort University (UK).
+
+### What You'll Find Here:
+
+- **📖 Personal Diary** - My thoughts, experiences, and reflections on software development and life
+- **💼 Portfolio** - A collection of my projects in AI development, full-stack web development, and system design
+- **🏆 Achievements** - My certifications, education, awards, and professional milestones
+- **👤 About Me** - My background, skills, experience, and what drives my passion for technology
+- **📞 Contact** - Ways to connect with me for collaboration opportunities
+
+This portfolio represents my dedication to creating innovative solutions and my continuous journey of learning and growth in the tech industry.
 
 ---
 
