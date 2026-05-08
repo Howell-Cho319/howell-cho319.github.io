@@ -91,7 +91,14 @@ export function Footer() {
         </div>
 
         <div className="mt-8 pt-8 border-t border-border text-center text-sm text-muted-foreground">
-          <p>© {currentYear} Cho Sin Hong. All rights reserved.</p>
+          <p className="font-semibold">© {currentYear} Cho Sin Hong. All Rights Reserved.</p>
+          <p className="mt-2 text-xs">
+            This website and all its contents are protected by copyright law. 
+            Unauthorized copying, distribution, or use is strictly prohibited.
+          </p>
+          <p className="mt-1 text-xs">
+            Design, code, and content created by Cho Sin Hong.
+          </p>
         </div>
       </div>
     </footer>
