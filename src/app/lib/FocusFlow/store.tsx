@@ -116,6 +116,8 @@ function useFocusFlowInternal() {
   const [isHydrated, setIsHydrated] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const alarmAudioRef = useRef<HTMLAudioElement | null>(null);
+  const targetEndTimeRef = useRef<number | null>(null);
+  const titleBlinkIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Initialize alarm audio
   useEffect(() => {
@@ -123,10 +125,83 @@ function useFocusFlowInternal() {
   }, []);
 
   const playAlarm = useCallback(() => {
-    if (alarmAudioRef.current && state.soundEnabled) {
+    if (!state.soundEnabled) return;
+    
+    // Blink document title to alert user (especially useful when in other tabs)
+    const originalTitle = document.title;
+    let isAlertTitle = false;
+    
+    // Clear any existing title blink
+    if (titleBlinkIntervalRef.current) {
+      clearInterval(titleBlinkIntervalRef.current);
+    }
+    
+    // Blink title for 10 seconds
+    titleBlinkIntervalRef.current = setInterval(() => {
+      document.title = isAlertTitle ? originalTitle : '🔔 Timer Complete! - FocusFlow';
+      isAlertTitle = !isAlertTitle;
+    }, 1000);
+    
+    setTimeout(() => {
+      if (titleBlinkIntervalRef.current) {
+        clearInterval(titleBlinkIntervalRef.current);
+        titleBlinkIntervalRef.current = null;
+      }
+      document.title = originalTitle;
+    }, 10000);
+    
+    if (alarmAudioRef.current) {
       alarmAudioRef.current.currentTime = 0;
       alarmAudioRef.current.volume = Math.min(1, state.alarmVolume);
-      alarmAudioRef.current.play().catch(err => console.error('Alarm failed:', err));
+      
+      // Try to play with multiple fallbacks
+      const playPromise = alarmAudioRef.current.play();
+      
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          console.log('Alarm playing successfully');
+        }).catch(err => {
+          console.warn('Alarm autoplay blocked, trying fallback:', err);
+          
+          // Fallback 1: Try with Web Audio API
+          try {
+            const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+            const audio = new Audio('/music/alarm.mp3');
+            const source = audioCtx.createMediaElementSource(audio);
+            const gainNode = audioCtx.createGain();
+            
+            gainNode.gain.value = state.alarmVolume;
+            source.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            audio.play().then(() => {
+              console.log('Alarm playing via Web Audio API');
+            }).catch(() => {
+              console.warn('Web Audio API also blocked, showing notification');
+              // Fallback 2: Show browser notification if available
+              if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification('FocusFlow Timer Complete! 🎉', {
+                  body: 'Your focus session has ended. Time for a break!',
+                  icon: '/images/HowellAvatar.png',
+                  tag: 'focusflow-timer',
+                  requireInteraction: true,
+                });
+              }
+            });
+          } catch (e) {
+            console.error('All alarm playback methods failed:', e);
+            // Last resort: Show notification
+            if ('Notification' in window && Notification.permission === 'granted') {
+              new Notification('FocusFlow Timer Complete! 🎉', {
+                body: 'Your focus session has ended. Time for a break!',
+                icon: '/images/HowellAvatar.png',
+                tag: 'focusflow-timer',
+                requireInteraction: true,
+              });
+            }
+          }
+        });
+      }
     }
   }, [state.soundEnabled, state.alarmVolume]);
 
@@ -150,6 +225,33 @@ function useFocusFlowInternal() {
        }, 1000); // 1 second gap between plays
      }).catch(err => console.error('Completed Notify first play failed:', err));
    }, [state.soundEnabled, state.alarmVolume]);
+
+  // Handle page visibility changes to sync timer when tab becomes active
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden && state.activeSession.isRunning && targetEndTimeRef.current) {
+        // Tab became visible - sync remaining time immediately
+        const now = Date.now();
+        const actualRemainingSeconds = Math.max(0, Math.ceil((targetEndTimeRef.current - now) / 1000));
+        
+        setState(prev => ({
+          ...prev,
+          activeSession: {
+            ...prev.activeSession,
+            remainingTime: actualRemainingSeconds,
+          },
+        }));
+
+        // If timer completed while tab was hidden, trigger completion
+        if (actualRemainingSeconds === 0 && state.activeSession.remainingTime > 0) {
+          playAlarm();
+        }
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [state.activeSession.isRunning, state.activeSession.remainingTime, playAlarm]);
 
   // Load from sessionStorage
   useEffect(() => {
@@ -182,6 +284,16 @@ function useFocusFlowInternal() {
       }
     }
     setIsHydrated(true);
+
+    // Request notification permission for background timer alerts (non-blocking)
+    if ('Notification' in window && Notification.permission === 'default') {
+      // Only request after user interaction to avoid annoying prompt on load
+      const requestOnInteraction = () => {
+        Notification.requestPermission();
+        document.removeEventListener('click', requestOnInteraction);
+      };
+      document.addEventListener('click', requestOnInteraction, { once: true });
+    }
   }, []);
 
   // Save to sessionStorage
@@ -191,12 +303,25 @@ function useFocusFlowInternal() {
     }
   }, [state, isHydrated]);
 
-  // Timer tick
+  // Timer tick - timestamp-based for background tab reliability
   useEffect(() => {
     if (state.activeSession.isRunning) {
+      // Only set target end time if not already set (prevents recalculation on every state update)
+      if (!targetEndTimeRef.current) {
+        const targetEndTime = Date.now() + (state.activeSession.remainingTime * 1000);
+        targetEndTimeRef.current = targetEndTime;
+      }
+      
       intervalRef.current = setInterval(() => {
+        const targetEndTime = targetEndTimeRef.current;
+        if (!targetEndTime) return;
+        
         setState(prev => {
-          if (prev.activeSession.remainingTime <= 1) {
+          // Calculate actual remaining time from timestamp
+          const now = Date.now();
+          const actualRemainingSeconds = Math.max(0, Math.ceil((targetEndTime - now) / 1000));
+          
+          if (actualRemainingSeconds <= 0) {
             // Play alarm sound
             playAlarm();
 
@@ -312,6 +437,9 @@ function useFocusFlowInternal() {
               planItems: todayPerf.planItems,
             };
 
+            // Reset target end time for next session
+            targetEndTimeRef.current = null;
+
             return {
               ...prev,
               sessions: [...prev.sessions, session],
@@ -344,7 +472,7 @@ function useFocusFlowInternal() {
             ...prev,
             activeSession: {
               ...prev.activeSession,
-              remainingTime: prev.activeSession.remainingTime - 1,
+              remainingTime: actualRemainingSeconds,
             },
           };
         });
@@ -356,7 +484,14 @@ function useFocusFlowInternal() {
         clearInterval(intervalRef.current);
       }
     };
-  }, [state.activeSession.isRunning, state.activeSession.habitId, state.activeSession.mode, state.customConfig, state.habits]);
+  }, [state.activeSession.isRunning, state.activeSession.habitId, state.activeSession.mode, state.customConfig, state.habits, playAlarm, playCompletedNotify]);
+
+  // Clear target end time when timer stops
+  useEffect(() => {
+    if (!state.activeSession.isRunning) {
+      targetEndTimeRef.current = null;
+    }
+  }, [state.activeSession.isRunning]);
 
   // Language actions
   const setLanguage = useCallback((lang: Language) => {
@@ -476,6 +611,9 @@ function useFocusFlowInternal() {
     const preset = state.presets.find(p => p.id === presetId);
     if (!preset) return;
 
+    // Reset target end time for new preset
+    targetEndTimeRef.current = null;
+
     setState(prev => ({
       ...prev,
       activeSession: {
@@ -492,6 +630,9 @@ function useFocusFlowInternal() {
   }, [state.presets]);
 
   const setCustomDuration = useCallback((minutes: number) => {
+    // Reset target end time for custom duration
+    targetEndTimeRef.current = null;
+    
     setState(prev => ({
       ...prev,
       activeSession: {
@@ -518,6 +659,9 @@ function useFocusFlowInternal() {
   }, []);
 
   const startTimer = useCallback(() => {
+    // Reset target end time so it recalculates on next effect run
+    targetEndTimeRef.current = null;
+    
     setState(prev => ({
       ...prev,
       activeSession: {
@@ -623,6 +767,9 @@ function useFocusFlowInternal() {
   }, []); // Stable dependencies
 
   const selectHabit = useCallback((habitId: string) => {
+    // Reset target end time for new habit
+    targetEndTimeRef.current = null;
+    
     setState(prev => {
       const habit = prev.habits.find(h => h.id === habitId);
       if (!habit) return prev;
@@ -679,6 +826,9 @@ function useFocusFlowInternal() {
   }, [recordSession]);
 
   const resetTimer = useCallback(() => {
+    // Reset target end time
+    targetEndTimeRef.current = null;
+    
     setState(prev => {
       const currentHabit = prev.habits.find(h => h.id === prev.activeSession.habitId);
       const duration = currentHabit?.duration || prev.activeSession.totalDuration;
@@ -704,6 +854,9 @@ function useFocusFlowInternal() {
   }, []);
 
   const skipToBreak = useCallback(() => {
+    // Reset target end time for skip
+    targetEndTimeRef.current = null;
+    
     setState(prev => {
       const activeHabits = prev.habits.filter(h => h.isActive);
       const currentIndex = activeHabits.findIndex(h => h.id === prev.activeSession.habitId);
