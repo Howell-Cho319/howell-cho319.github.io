@@ -15,23 +15,6 @@ A modern, responsive portfolio website built with React, TypeScript, and Tailwin
 - Framer Motion
 - React Router
 
-## 🔧 Development
-
-### Prerequisites
-- Node.js 18+
-- npm or yarn
-
-### Setup
-```bash
-npm install
-npm run dev
-```
-
-### Build
-```bash
-npm run build
-```
-
 ---
 
 ## 📜 License & Usage Terms
