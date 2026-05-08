@@ -1,0 +1,18 @@
+/* TEAM */
+Developer: Cho Sin Hong (Howell Cho)
+Site: https://howell-cho319.github.io
+Email: howell.cho319@gmail.com
+LinkedIn: https://linkedin.com/in/cho-sin-hong-9139a3378
+GitHub: https://github.com/Howell-Cho319
+Location: Malaysia
+
+/* THANKS */
+Asia Pacific University (APU)
+De Montfort University (UK)
+Open Source Community
+
+/* SITE */
+Last update: 2026/05/08
+Standards: HTML5, CSS3, JavaScript ES6+
+Components: React 18, TypeScript, Tailwind CSS
+Software: Visual Studio Code, Git, Vite
