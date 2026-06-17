@@ -1002,6 +1002,487 @@ export function Home() {
         </div>
       </section>
 
+      {/* TabStackX Promo Section */}
+      <section className="py-20 border-y border-[#e0d9cc]" style={{ backgroundColor: '#f5f0e6' }}>
+        <style>{`
+          @keyframes tabstack-float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+          }
+          @keyframes tabstack-slide-in {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+          }
+          .tabstack-mockup {
+            animation: tabstack-float 4s ease-in-out infinite;
+          }
+          .tabstack-tag-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 999px;
+            border: 1.5px solid #c8c4a8;
+            background: rgba(200, 196, 168, 0.18);
+            font-size: 0.78rem;
+            font-family: monospace;
+            color: #5a5440;
+            letter-spacing: 0.01em;
+          }
+          .tabstack-tag-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #8a9a3a;
+            display: inline-block;
+            flex-shrink: 0;
+          }
+          .tabstack-cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            border-radius: 10px;
+            background: #c8d44a;
+            color: #1a1a10;
+            font-size: 1rem;
+            font-weight: 700;
+            font-family: sans-serif;
+            text-decoration: none;
+            transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 12px rgba(160,180,40,0.18);
+          }
+          .tabstack-cta-btn:hover {
+            background: #d6e060;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(160,180,40,0.28);
+          }
+          .tabstack-feature-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: #5a5440;
+            font-family: sans-serif;
+          }
+          .tabstack-feature-icon {
+            opacity: 0.65;
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+          }
+          .tabstack-kbd {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3px 9px;
+            border-radius: 6px;
+            border: 1.5px solid #c0b89a;
+            background: #ede8d8;
+            font-family: monospace;
+            font-size: 0.82rem;
+            color: #3a3420;
+            font-weight: 600;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+          }
+        `}</style>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+
+            {/* Left – Text content */}
+            <motion.div
+              initial={{ opacity: 0, x: -24 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.65 }}
+            >
+              {/* Badge */}
+              <div className="mb-6">
+                <span className="tabstack-tag-pill">
+                  <span className="tabstack-tag-dot" />
+                  local-first · private by default · cross-device
+                </span>
+              </div>
+
+              {/* Headline */}
+              <h2 className="font-serif font-bold text-[#1a1a10] leading-[1.15] mb-6" style={{ fontSize: 'clamp(2rem, 4vw, 2.8rem)' }}>
+                Your tabs, organized
+                and{' '}
+                <em style={{ color: '#b07a3a', fontStyle: 'italic' }}>one click</em>
+                {' '}away<br />
+                from coming back
+              </h2>
+
+              {/* Body */}
+              <p className="text-[#5a5440] leading-relaxed mb-8 text-base md:text-lg" style={{ maxWidth: '460px' }}>
+                TabStack<span className="title-x-styled">X</span> turns scattered browser tabs into workspaces, sections, and categories you actually control. Save a whole research session, close everything, and restore every link exactly where you left it.
+              </p>
+
+              {/* CTA Button */}
+              <div className="flex flex-col sm:flex-row gap-4 items-start mb-8">
+                <a
+                  href="https://tabstackx.pages.dev/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="tabstack-cta-btn"
+                >
+                  Open TabStack<span className="title-x-styled">X</span>
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3 13L13 3M13 3H6M13 3v7" />
+                  </svg>
+                </a>
+              </div>
+
+              {/* Keyboard shortcut hint */}
+              <div className="flex items-center gap-2 mb-8">
+                <span className="tabstack-kbd">Ctrl</span>
+                <span className="text-[#8a8470] text-sm">+</span>
+                <span className="tabstack-kbd">K</span>
+                <span className="text-[#8a8470] text-sm ml-1">to search instantly</span>
+              </div>
+
+              {/* Feature list */}
+              <div className="flex flex-wrap gap-x-6 gap-y-3">
+                <span className="tabstack-feature-item">
+                  <svg className="tabstack-feature-icon" viewBox="0 0 24 24" fill="none" stroke="#5a5440" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                  </svg>
+                  private by default
+                </span>
+                <span className="tabstack-feature-item">
+                  <svg className="tabstack-feature-icon" viewBox="0 0 24 24" fill="none" stroke="#5a5440" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="3" width="20" height="14" rx="2" /><path d="M8 21h8M12 17v4" />
+                  </svg>
+                  fast restore
+                </span>
+                <span className="tabstack-feature-item">
+                  <svg className="tabstack-feature-icon" viewBox="0 0 24 24" fill="none" stroke="#5a5440" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="5" y="2" width="14" height="20" rx="2" /><path d="M12 18h.01" />
+                  </svg>
+                  mobile friendly
+                </span>
+              </div>
+            </motion.div>
+
+            {/* Right – App mockup */}
+            <motion.div
+              initial={{ opacity: 0, x: 24 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.65, delay: 0.15 }}
+              className="flex justify-center lg:justify-end"
+            >
+              <div className="relative" style={{ padding: '40px 60px 20px 20px' }}>
+                {/* Floating cards behind – peek out top-right */}
+                <div className="absolute top-0 right-2 w-32 h-18 rounded-2xl shadow-md"
+                  style={{ background: '#e4dfd0', transform: 'rotate(8deg)', zIndex: 0, height: '72px' }}>
+                  <div className="p-3">
+                    <div className="h-2 w-20 rounded bg-[#ccc8b4] mb-2" />
+                    <div className="h-2 w-14 rounded bg-[#ccc8b4]" />
+                  </div>
+                </div>
+                <div className="absolute top-4 right-0 w-28 h-16 rounded-2xl shadow-sm"
+                  style={{ background: '#ddd8c6', transform: 'rotate(4deg)', zIndex: 0, opacity: 0.75 }}>
+                  <div className="p-3">
+                    <div className="h-2 w-16 rounded bg-[#c8c4b0] mb-2" />
+                    <div className="h-2 w-10 rounded bg-[#c8c4b0]" />
+                  </div>
+                </div>
+
+                {/* Main dark card */}
+                <div
+                  className="tabstack-mockup relative rounded-2xl shadow-2xl"
+                  style={{ width: 'clamp(280px, 42vw, 380px)', background: '#1e1c14', border: '1px solid #3a3828', zIndex: 10, position: 'relative' }}
+                >
+                  {/* Card header */}
+                  <div className="flex items-center justify-between px-5 pt-5 pb-3">
+                    <div className="flex items-center gap-2">
+                      <span className="w-3 h-3 rounded-full bg-[#8a9a3a] inline-block" />
+                      <span className="text-[#e8e2c8] font-semibold text-sm font-sans tracking-wide">TabStack<span className="title-x-styled">X</span></span>
+                    </div>
+                    <span className="text-[#8a8060] text-xs font-mono bg-[#2e2c1e] px-2.5 py-1 rounded-full border border-[#3a3828]">3 workspaces</span>
+                  </div>
+
+                  {/* Workspace item */}
+                  <div className="px-5 pb-2">
+                    <div className="flex items-center gap-2 mb-2">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8a8060" strokeWidth="2" strokeLinecap="round">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                      </svg>
+                      <span className="text-[#c8c4a0] text-sm font-sans">Research</span>
+                    </div>
+
+                    {/* Section */}
+                    <div className="ml-3 mb-3">
+                      <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#2e2c1e] border border-[#4a4830] mb-2">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#c8c090" strokeWidth="2">
+                          <line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" /><line x1="3" y1="6" x2="3.01" y2="6" /><line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" />
+                        </svg>
+                        <span className="text-[#e8e2c8] text-sm font-sans font-medium">ML papers</span>
+                      </div>
+                      {['attention-transformer', 'llm-finetuning', 'rag-pipeline-v2'].map((tab) => (
+                        <div key={tab} className="flex items-center gap-2 px-3 py-1.5 mb-1 ml-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#c8c090] opacity-70 flex-shrink-0" />
+                          <span className="text-[#a8a488] text-xs font-mono truncate">{tab}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Restore button */}
+                  <div className="px-5 pb-5">
+                    <button className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl font-semibold text-sm text-[#1a1a10] transition-all"
+                      style={{ background: '#c8d44a' }}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M1 4v6h6" /><path d="M3.51 15a9 9 0 1 0 .49-4" />
+                      </svg>
+                      Restore all tabs
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* NexaLibraryX Promo Section */}
+      <section className="py-20 border-b border-[#e0d9cc]" style={{ backgroundColor: '#faf7f0' }}>
+        <style>{`
+          @keyframes nexa-float {
+            0%, 100% { transform: translateY(0px) rotate(-1deg); }
+            50% { transform: translateY(-10px) rotate(-1deg); }
+          }
+          .nexa-mockup-wrap {
+            animation: nexa-float 4.5s ease-in-out infinite;
+          }
+          .nexa-tag-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 999px;
+            border: 1.5px solid #c8c4a8;
+            background: rgba(200, 196, 168, 0.18);
+            font-size: 0.78rem;
+            font-family: monospace;
+            color: #5a5440;
+          }
+          .nexa-cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            border-radius: 10px;
+            background: #c8d44a;
+            color: #1a1a10;
+            font-size: 1rem;
+            font-weight: 700;
+            font-family: sans-serif;
+            text-decoration: none;
+            transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 12px rgba(160,180,40,0.18);
+          }
+          .nexa-cta-btn:hover {
+            background: #d6e060;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(160,180,40,0.28);
+          }
+          .nexa-secondary-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.92rem;
+            color: #7a6a40;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            transition: color 0.15s;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: sans-serif;
+          }
+          .nexa-secondary-link:hover { color: #3a2a10; }
+          .nexa-feature-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: #5a5440;
+            font-family: sans-serif;
+          }
+          .nexa-feature-icon {
+            opacity: 0.65;
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+          }
+          @keyframes nexa-card-fly-in {
+            from { opacity: 0; transform: translateX(20px) rotate(4deg); }
+            to   { opacity: 1; transform: translateX(0) rotate(4deg); }
+          }
+          .nexa-bg-card {
+            animation: nexa-card-fly-in 0.8s ease-out 0.3s both;
+          }
+        `}</style>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+
+            {/* Left – Text content */}
+            <motion.div
+              initial={{ opacity: 0, x: -24 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.65 }}
+            >
+              {/* Badge */}
+              <div className="mb-6">
+                <span className="nexa-tag-pill">
+                  <span className="tabstack-tag-dot" style={{ background: '#8a9a3a' }} />
+                  local-first · zero accounts · your browser only
+                </span>
+              </div>
+
+              {/* Headline */}
+              <h2 className="font-serif font-bold text-[#1a1a10] leading-[1.15] mb-6" style={{ fontSize: 'clamp(2rem, 4vw, 2.8rem)' }}>
+                Stop hunting for that{' '}
+                <em style={{ color: '#b07a3a', fontStyle: 'italic' }}>one prompt</em>
+                {' '}you
+                swear you saved
+                somewhere
+              </h2>
+
+              {/* Body */}
+              <p className="text-[#5a5440] leading-relaxed mb-8 text-base md:text-lg" style={{ maxWidth: '460px' }}>
+                NexaLibrary<span className="title-x-styled">X</span> is a private vault for every prompt you've ever written, organized into folders, tagged, searchable in an instant, and copy-ready for any AI you use. No sign-up, no cloud, nothing leaves your browser.
+              </p>
+
+              {/* CTA Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4 items-start mb-8">
+                <a
+                  href="https://nexalibraryx.pages.dev/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="nexa-cta-btn"
+                >
+                  Open NexaLibrary<span className="title-x-styled">X</span>
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3 13L13 3M13 3H6M13 3v7" />
+                  </svg>
+                </a>
+                <a
+                  href="https://nexalibraryx.pages.dev/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="nexa-secondary-link"
+                  style={{ alignSelf: 'center' }}
+                >
+                  See how it's organized →
+                </a>
+              </div>
+
+              {/* Feature list */}
+              <div className="flex flex-wrap gap-x-6 gap-y-3">
+                <span className="nexa-feature-item">
+                  <svg className="nexa-feature-icon" viewBox="0 0 24 24" fill="none" stroke="#5a5440" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                  </svg>
+                  100% local storage
+                </span>
+                <span className="nexa-feature-item">
+                  <svg className="nexa-feature-icon" viewBox="0 0 24 24" fill="none" stroke="#5a5440" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                  </svg>
+                  works with any AI
+                </span>
+                <span className="nexa-feature-item">
+                  <svg className="nexa-feature-icon" viewBox="0 0 24 24" fill="none" stroke="#5a5440" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M1 4v6h6" /><path d="M3.51 15a9 9 0 1 0 .49-4" />
+                  </svg>
+                  free, no install
+                </span>
+              </div>
+            </motion.div>
+
+            {/* Right – App mockup */}
+            <motion.div
+              initial={{ opacity: 0, x: 24 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.65, delay: 0.15 }}
+              className="flex justify-center lg:justify-end"
+            >
+              <div className="relative" style={{ padding: '56px 64px 36px 24px' }}>
+                {/* Background scattered note cards – all peek outside main card */}
+                <div className="nexa-bg-card absolute top-0 right-8 w-40 h-22 rounded-2xl shadow-md"
+                  style={{ background: '#e8e4d4', transform: 'rotate(7deg)', zIndex: 0, height: '88px' }}>
+                  <div className="p-3">
+                    <div className="text-[11px] font-mono text-[#a09880] mb-2">untitled-note.txt</div>
+                    <div className="h-1.5 w-20 rounded bg-[#d0cbb8] mb-1.5" />
+                    <div className="h-1.5 w-12 rounded bg-[#d0cbb8]" />
+                  </div>
+                </div>
+                <div className="absolute top-8 right-0 w-32 h-18 rounded-2xl shadow-sm"
+                  style={{ background: '#ddd8c8', transform: 'rotate(-5deg)', zIndex: 0, opacity: 0.75, height: '72px' }}>
+                  <div className="p-3">
+                    <div className="text-[10px] font-mono text-[#b0a890] mb-1">chat history</div>
+                    <div className="text-[10px] font-mono text-[#b0a890]">code reviewer</div>
+                  </div>
+                </div>
+                <div className="absolute -bottom-4 left-2 w-36 h-16 rounded-2xl shadow-sm"
+                  style={{ background: '#e0dbc8', transform: 'rotate(4deg)', zIndex: 0, opacity: 0.65 }}>
+                  <div className="p-3">
+                    <div className="text-[10px] font-mono text-[#a09878]">#bookmark</div>
+                    <div className="text-[10px] font-mono text-[#a09878]">blog outline...</div>
+                  </div>
+                </div>
+                <div className="absolute bottom-2 right-0 w-28 h-14 rounded-2xl shadow-sm"
+                  style={{ background: '#e8e4d4', transform: 'rotate(-7deg)', zIndex: 0, opacity: 0.6 }}>
+                  <div className="p-3">
+                    <div className="text-[10px] font-mono text-[#a09878]">email draft</div>
+                  </div>
+                </div>
+
+                {/* Main dark card */}
+                <div
+                  className="nexa-mockup-wrap relative rounded-2xl shadow-2xl"
+                  style={{ width: 'clamp(280px, 42vw, 360px)', background: '#1e1c14', border: '1px solid #3a3828', zIndex: 10 }}
+                >
+                  {/* Card header */}
+                  <div className="flex items-center justify-between px-5 pt-5 pb-3">
+                    <div className="flex items-center gap-2">
+                      <span className="w-3 h-3 rounded-full bg-[#8a9a3a] inline-block" />
+                      <span className="text-[#e8e2c8] font-semibold text-sm font-sans tracking-wide">NexaLibrary<span className="title-x-styled">X</span></span>
+                    </div>
+                    <span className="text-[#c8c090] text-xs font-sans font-semibold bg-[#2e2c1e] px-2.5 py-1 rounded-full border border-[#3a3828]">
+                      12 saved
+                    </span>
+                  </div>
+
+                  {/* Prompt list items */}
+                  <div className="px-4 pb-5 space-y-2">
+                    {[
+                      { icon: '✍️', title: 'Blog intro rewriter', tag: 'Writing', tagColor: '#6aaa6a' },
+                      { icon: '🔍', title: 'Code review assistant', tag: 'Development', tagColor: '#5a9adc' },
+                      { icon: '📊', title: 'Weekly report summary', tag: 'Productivity', tagColor: '#c8905a' },
+                    ].map((item, i) => (
+                      <div key={i} className="flex items-center gap-3 px-3 py-2.5 rounded-xl"
+                        style={{ background: '#2a2820', border: '1px solid #3a3828' }}>
+                        <span className="text-base flex-shrink-0">{item.icon}</span>
+                        <span className="text-[#e0dcc0] text-sm font-sans flex-1 truncate">{item.title}</span>
+                        <span className="text-xs font-sans flex-shrink-0" style={{ color: item.tagColor }}>{item.tag}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+          </div>
+        </div>
+      </section>
+
       {/* FocusFlow Introduction Section */}
       <section className="bg-gradient-to-br from-primary/5 via-background to-blue-500/5 py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
