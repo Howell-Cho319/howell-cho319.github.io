@@ -1002,6 +1002,208 @@ export function Home() {
         </div>
       </section>
 
+      {/* TaskForgeX Promo Section */}
+      <section className="relative overflow-hidden py-20 md:py-28" style={{ background: 'linear-gradient(135deg, #0f1628 0%, #141d35 50%, #0d1525 100%)' }}>
+        <style>{`
+          @keyframes tfx-float {
+            0%, 100% { transform: translateY(0px) rotate(2deg); }
+            50%       { transform: translateY(-10px) rotate(2deg); }
+          }
+          @keyframes tfx-glow-pulse {
+            0%, 100% { opacity: 0.4; }
+            50%       { opacity: 0.7; }
+          }
+          .tfx-board-float { animation: tfx-float 5s ease-in-out infinite; }
+          .tfx-glow        { animation: tfx-glow-pulse 3s ease-in-out infinite; }
+          .tfx-badge {
+            display: inline-flex; align-items: center; gap: 7px;
+            padding: 5px 14px; border-radius: 999px;
+            border: 1px solid rgba(99,132,255,0.45);
+            background: rgba(99,132,255,0.12);
+            font-size: 0.72rem; font-family: monospace; letter-spacing: 0.08em;
+            color: #a0b4ff; text-transform: uppercase;
+          }
+          .tfx-badge-dot {
+            width: 7px; height: 7px; border-radius: 50%;
+            background: #4ade80; box-shadow: 0 0 6px #4ade80;
+            display: inline-block; flex-shrink: 0;
+          }
+          .tfx-cta {
+            display: inline-flex; align-items: center; gap-9px;
+            padding: 13px 28px; border-radius: 10px;
+            background: #3b5bdb; color: #fff;
+            font-size: 0.97rem; font-weight: 700; font-family: sans-serif;
+            text-decoration: none; gap: 9px;
+            transition: background 0.2s, transform 0.18s, box-shadow 0.2s;
+            box-shadow: 0 4px 20px rgba(59,91,219,0.45);
+          }
+          .tfx-cta:hover { background: #4c6ef5; transform: translateY(-2px); box-shadow: 0 8px 28px rgba(59,91,219,0.55); }
+          .tfx-url {
+            display: inline-flex; align-items: center; gap: 7px;
+            font-size: 0.88rem; color: rgba(180,190,220,0.7);
+            font-family: monospace; text-decoration: none;
+          }
+          .tfx-feature {
+            display: flex; align-items: center; gap: 7px;
+            font-size: 0.83rem; color: rgba(180,195,230,0.75); font-family: sans-serif;
+          }
+          .tfx-col-label {
+            font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase;
+            color: rgba(180,195,230,0.5); font-family: sans-serif; font-weight: 600;
+            margin-bottom: 8px;
+          }
+          .tfx-card {
+            background: #fff; border-radius: 8px; padding: 8px 10px;
+            margin-bottom: 6px; box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+          }
+          .tfx-card-title { font-size: 0.75rem; color: #1e2a45; font-family: sans-serif; font-weight: 500; margin-bottom: 4px; }
+          .tfx-tag {
+            display: inline-block; padding: 1px 6px; border-radius: 4px;
+            font-size: 0.6rem; font-weight: 700; letter-spacing: 0.05em; font-family: sans-serif;
+          }
+        `}</style>
+
+        {/* Background glow blobs */}
+        <div className="tfx-glow absolute top-0 left-1/4 w-96 h-96 rounded-full pointer-events-none"
+          style={{ background: 'radial-gradient(circle, rgba(59,91,219,0.18) 0%, transparent 70%)', transform: 'translate(-50%,-40%)' }} />
+        <div className="tfx-glow absolute bottom-0 right-1/4 w-80 h-80 rounded-full pointer-events-none"
+          style={{ background: 'radial-gradient(circle, rgba(99,102,241,0.14) 0%, transparent 70%)', transform: 'translate(40%,40%)' }} />
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+
+            {/* LEFT – Text */}
+            <motion.div
+              initial={{ opacity: 0, x: -28 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.65 }}
+            >
+              {/* Badge */}
+              <div className="mb-7">
+                <span className="tfx-badge">
+                  <span className="tfx-badge-dot" />
+                  live in your browser, right now
+                </span>
+              </div>
+
+              {/* Headline */}
+              <h2 className="font-bold text-white mb-6 leading-[1.1]"
+                style={{ fontSize: 'clamp(2.1rem, 4.5vw, 3rem)', fontFamily: 'sans-serif' }}>
+                Plan your projects<br />
+                without giving up an<br />
+                <em style={{ color: '#f59e0b', fontStyle: 'italic', fontFamily: 'Georgia, serif' }}>inch</em>
+                {' '}of your data.
+              </h2>
+
+              {/* Body */}
+              <p className="mb-8 leading-relaxed" style={{ color: 'rgba(180,195,230,0.8)', fontSize: '1rem', maxWidth: '440px', fontFamily: 'sans-serif' }}>
+                TaskForge<span className="title-x-styled">X</span> is a Kanban board, daily planner, and team tracker that runs entirely on your device. No sign-up screen, no server, no subscription, just a board that opens instantly and stays exactly where you left it.
+              </p>
+
+              {/* CTA row */}
+              <div className="flex flex-wrap items-center gap-5 mb-8">
+                <a href="https://taskforgex.pages.dev/" target="_blank" rel="noopener noreferrer" className="tfx-cta">
+                  Start planning free
+                </a>
+                <a href="https://taskforgex.pages.dev/" target="_blank" rel="noopener noreferrer" className="tfx-url">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                  </svg>
+                  taskforgex.pages.dev
+                </a>
+              </div>
+
+              {/* Feature list */}
+              <div className="flex flex-wrap gap-x-7 gap-y-3">
+                <span className="tfx-feature">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'rgba(180,195,230,0.5)' }}>
+                    <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                  </svg>
+                  No account required
+                </span>
+                <span className="tfx-feature">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'rgba(180,195,230,0.5)' }}>
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  </svg>
+                  Nothing leaves your device
+                </span>
+                <span className="tfx-feature">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'rgba(180,195,230,0.5)' }}>
+                    <path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 .49-4"/>
+                  </svg>
+                  Works fully offline
+                </span>
+              </div>
+            </motion.div>
+
+            {/* RIGHT – Kanban board mockup */}
+            <motion.div
+              initial={{ opacity: 0, x: 28 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.65, delay: 0.15 }}
+              className="flex justify-center lg:justify-end"
+            >
+              <div className="tfx-board-float" style={{ width: 'clamp(300px, 48vw, 520px)' }}>
+                {/* Browser chrome */}
+                <div className="rounded-2xl overflow-hidden shadow-2xl" style={{ background: '#1a2340', border: '1px solid rgba(99,132,255,0.2)', boxShadow: '0 24px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(99,132,255,0.15)' }}>
+                  {/* Title bar */}
+                  <div className="flex items-center gap-2 px-4 py-3" style={{ background: '#111827', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                    <span className="w-3 h-3 rounded-full bg-[#ff5f57]" />
+                    <span className="w-3 h-3 rounded-full bg-[#febc2e]" />
+                    <span className="w-3 h-3 rounded-full bg-[#28c840]" />
+                  </div>
+
+                  {/* Kanban board */}
+                  <div className="p-4 overflow-x-auto">
+                    <div className="flex gap-3 min-w-max">
+                      {/* TO DO */}
+                      <div style={{ width: '130px' }}>
+                        <div className="tfx-col-label">To Do</div>
+                        <div className="tfx-card">
+                          <div className="tfx-card-title">Venue booking</div>
+                          <span className="tfx-tag" style={{ background: '#fff3e0', color: '#e65100' }}>EVENT</span>
+                        </div>
+                        <div className="tfx-card">
+                          <div className="tfx-card-title">Wireframe export</div>
+                          <span className="tfx-tag" style={{ background: '#e8f5e9', color: '#2e7d32' }}>DESIGN</span>
+                        </div>
+                      </div>
+                      {/* IN PROGRESS */}
+                      <div style={{ width: '130px' }}>
+                        <div className="tfx-col-label">In Progress</div>
+                        <div className="tfx-card">
+                          <div className="tfx-card-title">API integration</div>
+                          <span className="tfx-tag" style={{ background: '#e3f2fd', color: '#1565c0' }}>DEV</span>
+                        </div>
+                      </div>
+                      {/* REVIEW */}
+                      <div style={{ width: '130px' }}>
+                        <div className="tfx-col-label">Review</div>
+                        <div className="tfx-card">
+                          <div className="tfx-card-title">Signature PDF</div>
+                          <span className="tfx-tag" style={{ background: '#f3e5f5', color: '#6a1b9a' }}>QA</span>
+                        </div>
+                      </div>
+                      {/* DONE */}
+                      <div style={{ width: '130px' }}>
+                        <div className="tfx-col-label">Done</div>
+                        <div className="tfx-card">
+                          <div className="tfx-card-title">Backup export</div>
+                          <span className="tfx-tag" style={{ background: '#e8f5e9', color: '#1b5e20' }}>SHIPPED</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+          </div>
+        </div>
+      </section>
+
       {/* TabStackX Promo Section */}
       <section className="py-20 border-y border-[#e0d9cc]" style={{ backgroundColor: '#f5f0e6' }}>
         <style>{`
