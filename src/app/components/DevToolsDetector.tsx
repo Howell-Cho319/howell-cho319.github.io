@@ -84,8 +84,9 @@ export function DevToolsDetector() {
       return false;
     };
 
-    // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+    // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U, Ctrl+S, Ctrl+P, Ctrl+A, Ctrl+D
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Dev tools shortcuts — block & show warning
       if (
         e.key === 'F12' ||
         (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
@@ -93,6 +94,24 @@ export function DevToolsDetector() {
       ) {
         e.preventDefault();
         setIsDevToolsOpen(true);
+        return false;
+      }
+
+      // Save / print / select-all / bookmark — block silently
+      if (
+        (e.ctrlKey || e.metaKey) &&
+        (e.key === 's' || e.key === 'S' ||   // Ctrl+S  — save page
+         e.key === 'p' || e.key === 'P' ||   // Ctrl+P  — print / save as PDF
+         e.key === 'a' || e.key === 'A' ||   // Ctrl+A  — select all
+         e.key === 'd' || e.key === 'D')     // Ctrl+D  — bookmark
+      ) {
+        // Allow Ctrl+A / Ctrl+S inside text inputs and textareas (needed for forms & tools)
+        const tag = (e.target as HTMLElement).tagName;
+        if ((e.key === 'a' || e.key === 'A' || e.key === 's' || e.key === 'S') &&
+            (tag === 'INPUT' || tag === 'TEXTAREA')) {
+          return; // Don't block inside form fields
+        }
+        e.preventDefault();
         return false;
       }
     };

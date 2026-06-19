@@ -1002,6 +1002,188 @@ export function Home() {
         </div>
       </section>
 
+      {/* MergeSyncX Promo Section */}
+      <section className="relative overflow-hidden py-20 md:py-28" style={{ background: 'linear-gradient(160deg,#060e0a 0%,#0a1612 40%,#071009 100%)' }}>
+        <style>{`
+          @keyframes msx-grid-fade {
+            0%,100% { opacity:0.18; } 50% { opacity:0.32; }
+          }
+          @keyframes msx-orb-drift {
+            0%   { transform: translate(0,0) scale(1); }
+            33%  { transform: translate(30px,-20px) scale(1.08); }
+            66%  { transform: translate(-20px,15px) scale(0.96); }
+            100% { transform: translate(0,0) scale(1); }
+          }
+          @keyframes msx-border-spin {
+            from { background-position: 0% 50%; }
+            to   { background-position: 200% 50%; }
+          }
+          @keyframes msx-chip-in {
+            from { opacity:0; transform:scale(0.85) translateY(4px); }
+            to   { opacity:1; transform:scale(1) translateY(0); }
+          }
+          .msx-grid-bg {
+            position:absolute; inset:0; pointer-events:none;
+            background-image:
+              linear-gradient(rgba(74,222,128,0.06) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(74,222,128,0.06) 1px, transparent 1px);
+            background-size: 48px 48px;
+            animation: msx-grid-fade 6s ease-in-out infinite;
+          }
+          .msx-orb {
+            position:absolute; border-radius:50%; pointer-events:none; filter:blur(60px);
+            animation: msx-orb-drift 12s ease-in-out infinite;
+          }
+          .msx-label {
+            display:inline-flex; align-items:center; gap:8px;
+            padding:5px 14px; border-radius:999px;
+            border:1px solid rgba(74,222,128,0.3);
+            background:rgba(74,222,128,0.08);
+            font-size:0.7rem; letter-spacing:0.14em; text-transform:uppercase;
+            color:#4ade80; font-family:monospace; font-weight:700;
+            margin-bottom:20px;
+          }
+          .msx-label-dot {
+            width:6px; height:6px; border-radius:50%; background:#4ade80;
+            box-shadow:0 0 8px #4ade80; flex-shrink:0;
+          }
+          .msx-card-wrap {
+            position:relative; border-radius:16px; padding:1px;
+            background:linear-gradient(135deg,rgba(74,222,128,0.25),rgba(74,222,128,0.04) 60%,rgba(139,92,246,0.12));
+            transition:transform 0.3s, box-shadow 0.3s;
+            height:100%;
+          }
+          .msx-card-wrap:hover {
+            transform:translateY(-6px) scale(1.01);
+            box-shadow:0 20px 50px rgba(0,0,0,0.6), 0 0 30px rgba(74,222,128,0.12);
+          }
+          .msx-card-inner {
+            border-radius:15px; padding:22px 22px 20px;
+            background:linear-gradient(145deg,#10201a,#0c1610);
+            height:100%; display:flex; flex-direction:column;
+          }
+          .msx-icon-wrap {
+            width:44px; height:44px; border-radius:12px;
+            display:flex; align-items:center; justify-content:center;
+            font-size:1.2rem; margin-bottom:14px; flex-shrink:0;
+            border:1px solid rgba(255,255,255,0.08);
+          }
+          .msx-card-name {
+            font-size:1rem; font-weight:700; color:#e2ede8;
+            font-family:sans-serif; margin-bottom:5px; line-height:1.3;
+          }
+          .msx-card-desc {
+            font-size:0.82rem; color:rgba(160,200,175,0.6);
+            font-family:sans-serif; line-height:1.55; margin-bottom:14px; flex:1;
+          }
+          .msx-chip {
+            display:inline-block; padding:2px 8px; border-radius:5px;
+            font-size:0.65rem; font-family:monospace; font-weight:600;
+            border:1px solid rgba(74,222,128,0.2);
+            color:rgba(160,200,175,0.7);
+            background:rgba(74,222,128,0.06);
+            margin:2px 2px 0 0; letter-spacing:0.02em;
+          }
+          .msx-divider {
+            border:none; height:1px; margin:32px 0;
+            background:linear-gradient(90deg,transparent,rgba(74,222,128,0.2),transparent);
+          }
+          .msx-cta {
+            display:inline-flex; align-items:center; gap:10px;
+            padding:14px 28px; border-radius:12px;
+            background:linear-gradient(135deg,#16a34a,#22c55e);
+            color:#052010; font-size:0.97rem; font-weight:800;
+            font-family:sans-serif; text-decoration:none;
+            transition:filter 0.2s, transform 0.18s, box-shadow 0.2s;
+            box-shadow:0 4px 20px rgba(34,197,94,0.4), inset 0 1px 0 rgba(255,255,255,0.15);
+          }
+          .msx-cta:hover { filter:brightness(1.12); transform:translateY(-2px); box-shadow:0 10px 32px rgba(34,197,94,0.5); }
+          .msx-x-green {
+            font-weight:800; font-size:1.15em;
+            font-family:'Brush Script MT','Lucida Handwriting',cursive;
+            font-style:italic; color:#052010;
+            display:inline-block; margin:0 1px; transform:rotate(-5deg);
+          }
+          .msx-built {
+            font-family:monospace; font-size:0.78rem;
+            color:rgba(160,200,175,0.4); line-height:1.9;
+          }
+          .msx-built strong { color:rgba(160,200,175,0.65); }
+        `}</style>
+
+        {/* Animated dot grid */}
+        <div className="msx-grid-bg" />
+
+        {/* Glow orbs */}
+        <div className="msx-orb" style={{ width:'420px', height:'420px', top:'-80px', left:'-60px', background:'radial-gradient(circle,rgba(34,197,94,0.13) 0%,transparent 70%)', animationDelay:'0s' }} />
+        <div className="msx-orb" style={{ width:'320px', height:'320px', bottom:'-60px', right:'10%', background:'radial-gradient(circle,rgba(139,92,246,0.1) 0%,transparent 70%)', animationDelay:'-5s' }} />
+        <div className="msx-orb" style={{ width:'240px', height:'240px', top:'40%', right:'5%', background:'radial-gradient(circle,rgba(74,222,128,0.07) 0%,transparent 70%)', animationDelay:'-9s' }} />
+
+        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+
+          {/* Header */}
+          <motion.div initial={{ opacity:0, y:20 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }} transition={{ duration:0.6 }}>
+            <div className="msx-label">
+              <span className="msx-label-dot" />
+              MergeSync<span style={{ fontFamily:"'Brush Script MT',cursive", fontStyle:'italic', fontSize:'1.25em', color:'#fbbf24', fontWeight:800, display:'inline-block', transform:'rotate(-5deg)', margin:'0 1px', filter:'drop-shadow(0 0 4px rgba(251,191,36,0.5))' }}>X</span> Pages
+            </div>
+            <h2 className="font-bold text-white leading-tight mb-4" style={{ fontSize:'clamp(1.75rem,4vw,2.6rem)', fontFamily:'sans-serif' }}>
+              Merge teammate JSON without<br className="hidden sm:block" /> replacing your local data.
+            </h2>
+            <p className="mb-10" style={{ color:'rgba(160,200,175,0.65)', fontSize:'0.95rem', fontFamily:'sans-serif', maxWidth:'600px', lineHeight:'1.7' }}>
+              Each JSON type has its own schema-aware merge strategy. Settings and existing records are never overwritten. Sync with your teammates while using any of the tools below.
+            </p>
+          </motion.div>
+
+          {/* Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-2">
+
+            {[
+              { delay:0, iconBg:'rgba(99,162,88,0.2)', icon:'📚', name:<>NexaLibrary<span className="title-x-styled">X</span> Pages</>, desc:'Prompt manager and knowledge library', chips:['prompts','categories','tags'] },
+              { delay:0.1, iconBg:'rgba(249,115,22,0.2)', icon:'🔨', name:<>TaskForge<span className="title-x-styled">X</span></>, desc:'Project and task management', chips:['projects','tasks','labels','records'] },
+              { delay:0.2, iconBg:'rgba(139,92,246,0.2)', icon:'🗂️', name:<>TabStack<span className="title-x-styled">X</span> Pages</>, desc:'Tab session and workspace manager', chips:['workspaces','tabs','groups'] },
+            ].map((card, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity:0, y:24 }}
+                whileInView={{ opacity:1, y:0 }}
+                viewport={{ once:true }}
+                transition={{ duration:0.55, delay:card.delay }}
+                className="msx-card-wrap"
+              >
+                <div className="msx-card-inner">
+                  <div className="msx-icon-wrap" style={{ background: card.iconBg }}>{card.icon}</div>
+                  <div className="msx-card-name">{card.name}</div>
+                  <div className="msx-card-desc">{card.desc}</div>
+                  <div>{card.chips.map(c => <span key={c} className="msx-chip">{c}</span>)}</div>
+                </div>
+              </motion.div>
+            ))}
+
+          </div>
+
+          <hr className="msx-divider" />
+
+          {/* Bottom bar */}
+          <motion.div initial={{ opacity:0, y:14 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }} transition={{ duration:0.5, delay:0.3 }}
+            className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5"
+          >
+            <a href="https://mergesyncx.pages.dev/" target="_blank" rel="noopener noreferrer" className="msx-cta">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M8 6H3a1 1 0 0 0-1 1v13a1 1 0 0 0 1 1h13a1 1 0 0 0 1-1v-5"/>
+                <polyline points="16 6 22 6 22 12"/><line x1="22" y1="6" x2="11" y2="17"/>
+              </svg>
+              Open MergeSync<span className="msx-x-green">X</span> Pages
+            </a>
+            <div className="msx-built" style={{ textAlign:'right' }}>
+              Built by <strong>Cho Sin Hong (Howell)</strong><br />
+              100% local · no server · no tracking
+            </div>
+          </motion.div>
+
+        </div>
+      </section>
+
       {/* TaskForgeX Promo Section */}
       <section className="relative overflow-hidden py-20 md:py-28" style={{ background: 'linear-gradient(135deg, #0f1628 0%, #141d35 50%, #0d1525 100%)' }}>
         <style>{`
